@@ -97,10 +97,10 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
 
 ### Data Files
-| Data Type   | File Path                        | Format   | Header | Notes                        |
+| Data Type   | File Path                        | Format   | Header | References                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | shgj180u_noheader.a01            | shtools  | True   |                              |
-| Topography  | VenusTopo719.shape               | shtools  | False  |                              |
+| Gravity     | shgj180u_noheader.a01            | shtools  | True   | A. S. Konopliv, W. B. Banerdt, and W. L. Sjogren, ‘Venus Gravity: 180th Degree and Order Model’, Icarus, 1999, doi: 10.1006/icar.1999.6086.                             |
+| Topography  | VenusTopo719.shape               | shtools  | False  | Wieczorek, M. A. (2015). Spherical harmonic model of the planet Venus: VenusTopo719 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.3870926 |
 
 - **Bouguer density:** 2800 kg/m³  
 - **Crustal thickness filter (n_half):** 80
@@ -131,7 +131,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 ### Data Files
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | EGM2008_to2190_TideFree          | shtools  | False  |                              |
+| Gravity     | EGM2008_to2190_TideFree          | shtools  | False  | N. K. Pavlis, S. A. Holmes, S. C. Kenyon, and J. K. Factor, ‘The development and evaluation of the Earth Gravitational Model 2008 (EGM2008)’, Journal of Geophysical Research: Solid Earth, 2012, doi: 10.1029/2011JB008916. |
 | Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  |                              |
 
 - **Bouguer density:** 1800 kg/m³  
@@ -176,7 +176,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 ### Data Files
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | GRGM1200l_data.txt               | shtools  | True   |                              |
+| Gravity     | GRGM1200l_data.txt               | shtools  | True   | Lemoine, F. G., et al. (2014), GRGM900C: A degree 900 lunar gravity model from GRAIL primary and extended mission data, Geophys. Res. Lett., doi:10.1002/2014GL060027, Goossens, S., et al. (2016), A Global Degree and Order 1200 Model of the Lunar Gravity Field using GRAIL Mission Data, Lunar and Planetary Science Conference, Houston, TX, Abstract #1484.|
 | Topography  | MoonTopo2600p.shape              | shtools  | False  |                              |
 
 - **Bouguer density:** 2900 kg/m³  

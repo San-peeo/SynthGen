@@ -120,6 +120,8 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | Mantle      | 3300            | 6020            | downwarded Bouguer anomalies|
 | Crust      | 2800            | 6051.8          | surface|
 
+
+
 ---
 
 ## Earth 
@@ -165,9 +167,12 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | Lower Crust     | 2900            | 6356.0      | polar flattened sphere      |
 | Upper Crust     | 2600            | 6368.0      | surface                     |
 | Sediments       | 1020            | 6371.0      | surface                     |
+
+
+
 ---
 
-## Moon 
+## Moon (WIP)
 ### Bulk Parameters
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
@@ -197,6 +202,9 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | Outer Core      | 0            | 0            | sphere|
 | Mantle    | 0            | 0           | sphere|
 | Crust    | 0            | 0           | sphere|
+
+
+
 ---
 
 ## Ganymede 
@@ -240,15 +248,24 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 # Code Description
 
 ## Libraries
-- **main_library.py**: Core library containing all main functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project.
-- **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models.
+- **main_library.py**: Core library containing all main functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project. Each function is provided with documentation and help for the input variables
+- **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models. see also previous dataset section (Moon interior models is WIP).
 - **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
-- 
+ 
 ## Scripts
+- **main.py**: Handles gravity and topography data in spherical harmonics expansion, evaluating also the power spectrum of the gravity field. It visualises projected maps and produces plots and data files.
+              Inputs:
+                - body          = planetary body from which data is collected and studied  (Mercury, Earth, Venus, Moon)
+                - n_min         = minimum degree of spherical harmonics expansion (n=0 is GM/R, n=1 is when centre of mass is not the same as the centre of coordinates, n=2 indicates the polar flattening and is usually the strongest)
+                - n_max         = maximum degree of spherical harmonics expansion (keep an eye on the grav and topo file maximum degree)
+                - r             = evaluation radius in meters [m] (usually = ref_radius=
+                - i_max         = Bouguer Taylor series index (usually 7 works)
+                - proj_opt      = projection type , default = ccrs.Mollweide() (see ccrs list)
+                - verbose_opt   = verbose option to print on terminal infos
+
+                
 - **main_synthgen.py**: Main script for generating and analyzing synthetic gravity and topography models for planetary interiors. Handles model setup, computation, and visualization for a single configuration.
-
 - **main_synthgen_grid.py**: Automates the generation of a grid of synthetic models across a range of interior parameters. Useful for parameter studies and sensitivity analyses.
-
 - **main_synthgen_grid_loading.py**: Loads, analyzes, and visualizes results from a precomputed grid of synthetic models. Includes threshold analysis and comparison with real planetary data.
 
 

@@ -11,7 +11,7 @@ SynthGen outputs can be used in two ways:
 
 By combining analytical modelling, numerical efficiency, and flexibility across planetary scenarios, SynthGen offers a useful platform for planetary interior investigations from the gravitational point of view. It can handle various planetary shapes, datasets, and scientific objectives, and it is user configurable, together with already implemented configuration files for Mercury, Venus, Earth and Moon, together with a model of Ganymede.
 
-
+####Comparison on Mercury between Synthetic generated data and MESSENGER-derived model
 ![Comparison on Mercury between Synthetic generated data and MESSENGER-derived model](https://github.com/user-attachments/assets/7fa9d8eb-02e0-483a-9b52-42c1022995bc)
 
 
@@ -201,7 +201,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | ref_mass          | 1.48e+23             | kg           | Reference mass                              |
 | ref_rho           | 1942                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor                    |
+| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor (Schubert, Anderson, Spohn, McKinnon, 2004) |                 |
 | r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
 | r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
 
@@ -228,21 +228,23 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 
 
 
-
+  
 
 # Code Description
-- **unet_custom.py**: contains all classes definitions for custom U-Nets developed in our work. It also contains functions to compress, transfer weights and rank adapters
-- **model_library.py**: contains all main functions needed to run training, evaluation and default plotting. It also contains classes definition for the datasets.
-- **model_library_classic.py**: contains functions of model_library customized for classic algorithms (e.g. otsu, canny and hybrid)
-- **model_train.py**: contains functions to train deep learning models using synthetic-moon-dataset. It can be run with wandb (use sweep_config.yaml) or locally.
-- **model_test.py**: contains functions to test and plot results of trained deep learning models 
-- **model_test_classic.py**: contains functions to test classic algorithms
-- **model_test_extdevice.py**: evaluates performance of the deep learning model using external devices (e.g. jetson nano and raspberry pi)
-- **adapters_flops_params.py**: evaluates flops and number of trained params for fine-tuning methods and adapters
-- **baseline_flops_params.py**: evaluates flops and number of trained params for baseline methods
-- **fusemethod_flops_params.py**: evaluates flops and number of trained params for adapter-fusing methods
-- **adapters_pareto.py**: plots pareto curves for adapters and traditional fine-tuning methods
-- **model_storage.py**: evaluates storage memory of deep learning models
-- **plot_layer_ablation.py**: plots results for layer-by-layer ablation study
-- **plotpreds.py**: plots predictions for different datasets (MarsDatasetv3 and Real-Moon)
-- pvalue.py: evaluates p-value for Shapiro-Wilk and Wilcoxon signed-rank test
+
+## Libraries
+- **main_library.py**: Core library containing all main functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project.
+- **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models.
+- **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
+- 
+## Scripts
+- **main_synthgen.py**: Main script for generating and analyzing synthetic gravity and topography models for planetary interiors. Handles model setup, computation, and visualization for a single configuration.
+
+- **main_synthgen_grid.py**: Automates the generation of a grid of synthetic models across a range of interior parameters. Useful for parameter studies and sensitivity analyses.
+
+- **main_synthgen_grid_loading.py**: Loads, analyzes, and visualizes results from a precomputed grid of synthetic models. Includes threshold analysis and comparison with real planetary data.
+
+
+
+
+

@@ -254,14 +254,14 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
  
 ## Scripts
 - **main.py**: Handles gravity and topography data in spherical harmonics expansion, evaluating also the power spectrum of the gravity field. It visualises projected maps and produces plots and data files.
-              Inputs:
-                - body          = planetary body from which data is collected and studied  (Mercury, Earth, Venus, Moon)
-                - n_min         = minimum degree of spherical harmonics expansion (n=0 is GM/R, n=1 is when centre of mass is not the same as the centre of coordinates, n=2 indicates the polar flattening and is usually the strongest)
-                - n_max         = maximum degree of spherical harmonics expansion (keep an eye on the grav and topo file maximum degree)
-                - r             = evaluation radius in meters [m] (usually = ref_radius=
-                - i_max         = Bouguer Taylor series index (usually 7 works)
-                - proj_opt      = projection type , default = ccrs.Mollweide() (see ccrs list)
-                - verbose_opt   = verbose option to print on terminal infos
+  - Inputs:
+    - body          = planetary body from which data is collected and studied  (Mercury, Earth, Venus, Moon)
+    - n_min         = minimum degree of spherical harmonics expansion (n=0 is GM/R, n=1 is when centre of mass is not the same as the centre of coordinates, n=2 indicates the polar flattening and is usually the strongest)
+    - n_max         = maximum degree of spherical harmonics expansion (keep an eye on the grav and topo file maximum degree)
+    - r             = evaluation radius in meters [m] (usually = ref_radius=
+    - i_max         = Bouguer Taylor series index (usually 7 works)
+    - proj_opt      = projection type , default = ccrs.Mollweide() (see ccrs list)
+    - verbose_opt   = verbose option to print on terminal infos
 
                 
 - **main_synthgen.py**: Main script for generating and analyzing synthetic gravity and topography models for planetary interiors. Handles model setup, computation, and visualization for a single configuration.

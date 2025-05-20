@@ -132,7 +132,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | EGM2008_to2190_TideFree          | shtools  | False  | N. K. Pavlis, S. A. Holmes, S. C. Kenyon, and J. K. Factor, ‘The development and evaluation of the Earth Gravitational Model 2008 (EGM2008)’, Journal of Geophysical Research: Solid Earth, 2012, doi: 10.1029/2011JB008916. |
-| Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  |                              |
+| Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  | Hirt, C. and M. Rexer (2015), Earth2014: 1 arc-min shape, topography, bedrock and  ice-sheet models - available as gridded data and degree-10,800 spherical harmonics, International Journal of Applied Earth Observation and Geoinformation, doi:10. 10.1016/j.jag.2015.03.001.|
 
 - **Bouguer density:** 1800 kg/m³  
 - **Crustal thickness filter (n_half):** 80
@@ -177,7 +177,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | GRGM1200l_data.txt               | shtools  | True   | Lemoine, F. G., et al. (2014), GRGM900C: A degree 900 lunar gravity model from GRAIL primary and extended mission data, Geophys. Res. Lett., doi:10.1002/2014GL060027, Goossens, S., et al. (2016), A Global Degree and Order 1200 Model of the Lunar Gravity Field using GRAIL Mission Data, Lunar and Planetary Science Conference, Houston, TX, Abstract #1484.|
-| Topography  | MoonTopo2600p.shape              | shtools  | False  |                              |
+| Topography  | MoonTopo2600p.shape              | shtools  | False  |M. A. Wieczorek, «Spherical harmonic model of the shape of Earth's Moon: MoonTopo2600p». Zenodo, 2015. doi: 10.5281/zenodo.3870924.|
 
 - **Bouguer density:** 2900 kg/m³  
 - **Crustal thickness filter (n_half):** 40

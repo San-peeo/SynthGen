@@ -83,6 +83,152 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 
 
 
+---
+
+## Venus 
+### Bulk Parameters
+
+| Parameter         | Value                | Unit         | Description                                 |
+|-------------------|----------------------|--------------|---------------------------------------------|
+| ref_radius        | 6051.8               | km           | Reference radius                            |
+| GM_const          | 3.248585920790000e+14| m³/s²        | Gravitational constant                      |
+| ref_mass          | 4.8673e+24           | kg           | Reference mass                              |
+| ref_rho           | 5243                 | kg/m³        | Mean density                                |
+| ref_ang_vel       | 3.232e-07            | rad/s        | Angular velocity                            |
+| ref_MoI           | 0.337                | (I/MR²)      | Moment of inertia factor (Margot et al 2021)|
+| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
+| r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
+
+### Data Files
+
+| Data Type   | File Path                        | Format   | Header | Notes                        |
+|-------------|----------------------------------|----------|--------|------------------------------|
+| Gravity     | shgj180u_noheader.a01            | shtools  | True   |                              |
+| Topography  | VenusTopo719.shape               | shtools  | False  |                              |
+
+- **Bouguer density:** 2800 kg/m³  
+- **Crustal thickness filter (n_half):** 80
+
+### Implemented Interior Models
+
+#### 3 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| Core      | 13000            | 3200            | polar flattened sphere|
+| Mantle      | 3300            | 6020            | downwarded Bouguer anomalies|
+| Crust      | 2800            | 6051.8          | surface|
+
+---
+
+## Earth 
+### Bulk Parameters
+
+| Parameter         | Value                | Unit         | Description                                 |
+|-------------------|----------------------|--------------|---------------------------------------------|
+| ref_radius        | 6378.137             | km           | Reference radius                            |
+| GM_const          | 3.986004418e+14      | m³/s²        | Gravitational constant                      |
+| ref_mass          | 5.9722e+24           | kg           | Reference mass                              |
+| ref_rho           | 5514                 | kg/m³        | Mean density                                |
+| ref_ang_vel       | 1.992e-07            | rad/s        | Angular velocity                            |
+| ref_MoI           | 0.3308               | (I/MR²)      | Moment of inertia factor (Williams and James, 1994)|
+| r_e_fact          | 0.9999               | -            | Equatorial flattening factor                |
+| r_p_fact          | 0.9970               | -            | Polar flattening factor                     |
+
+### Data Files
+
+| Data Type   | File Path                        | Format   | Header | Notes                        |
+|-------------|----------------------------------|----------|--------|------------------------------|
+| Gravity     | EGM2008_to2190_TideFree          | shtools  | False  |                              |
+| Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  |                              |
+
+- **Bouguer density:** 1800 kg/m³  
+- **Crustal thickness filter (n_half):** 80
+
+### Implemented Interior Models
+
+#### 5 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| Inner Core      | 13088.5            | 1221.5            | sphere|
+| Outer Core      | 12581.5            | 3480.0            | polar flattened sphere|
+| Lower Mantle    | 7956.5             | 5701.0            | polar flattened sphere|
+| Upper Mantle    | 7090.9             | 6151.0            | polar flattened sphere|
+| Crust           | 2800               | 6371.0            | surface|
+
+#### 8 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| ...    | ...                      | ...                     | ...                           |
+
+---
+
+## Moon 
+### Bulk Parameters
+
+| Parameter         | Value                | Unit         | Description                                 |
+|-------------------|----------------------|--------------|---------------------------------------------|
+| ref_radius        | 1738.1               | km           | Reference radius                            |
+| GM_const          | 4.9028001218467998e+12| m³/s²       | Gravitational constant                      |
+| ref_mass          | 0.07346e+24          | kg           | Reference mass                              |
+| ref_rho           | 3344                 | kg/m³        | Mean density                                |
+| ref_ang_vel       | 2.7e-06              | rad/s        | Angular velocity                            |
+| ref_MoI           | 0.3929               | (I/MR²)      | Moment of inertia factor (Williams and James, 1996)|
+| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
+| r_p_fact          | 0.9988               | -            | Polar flattening factor                     |
+
+### Data Files
+
+| Data Type   | File Path                        | Format   | Header | Notes                        |
+|-------------|----------------------------------|----------|--------|------------------------------|
+| Gravity     | GRGM1200l_data.txt               | shtools  | True   |                              |
+| Topography  | MoonTopo2600p.shape              | shtools  | False  |                              |
+
+- **Bouguer density:** 2900 kg/m³  
+- **Crustal thickness filter (n_half):** 40
+
+### Implemented Interior Models
+
+#### 4 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| ...    | ...                      | ...                     | ...                           |
+
+---
+
+## Ganymede 
+### Bulk Parameters
+
+| Parameter         | Value                | Unit         | Description                                 |
+|-------------------|----------------------|--------------|---------------------------------------------|
+| ref_radius        | 2631.2               | km           | Reference radius                            |
+| GM_const          | 9.8780e+12           | m³/s²        | Gravitational constant                      |
+| ref_mass          | 1.48e+23             | kg           | Reference mass                              |
+| ref_rho           | 1942                 | kg/m³        | Mean density                                |
+| ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
+| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor                    |
+| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
+| r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
+
+### Data Files
+
+| Data Type   | File Path                        | Format   | Header | Notes                        |
+|-------------|----------------------------------|----------|--------|------------------------------|
+| Gravity     | None                             | shtools  | True   |                              |
+| Topography  | None                             | shtools  | False  |                              |
+
+- **Bouguer density:** 920 kg/m³  
+- **Crustal thickness filter (n_half):** 25
+
+### Implemented Interior Models
+
+#### 7 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| ...    | ...                      | ...                     | ...                           |
+
+
+
+
 
 
 # Code Description

@@ -11,7 +11,7 @@ SynthGen outputs can be used in two ways:
 
 By combining analytical modelling, numerical efficiency, and flexibility across planetary scenarios, SynthGen offers a useful platform for planetary interior investigations from the gravitational point of view. It can handle various planetary shapes, datasets, and scientific objectives, and it is user configurable, together with already implemented configuration files for Mercury, Venus, Earth and Moon, together with a model of Ganymede.
 
-####Comparison on Mercury between Synthetic generated data and MESSENGER-derived model
+#### Comparison on Mercury between Synthetic generated data and MESSENGER-derived model
 ![Comparison on Mercury between Synthetic generated data and MESSENGER-derived model](https://github.com/user-attachments/assets/7fa9d8eb-02e0-483a-9b52-42c1022995bc)
 
 

@@ -296,9 +296,9 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
       - n_counts = number of valid models to produce;
       - range = range of parameters to explore (see `InputRange` function)
      
-      - 
+       
 - **main_synthgen_grid_loading.py**: Analyse the models' results from the grid evaluations (keep the same main input parameter as `main_synthgen_grid.py` to analyse the same grid). Use must choose the metric list to calculate and then rank the models.  
- - Inputs:
+  - Inputs:
     - `body`: Planetary body to simulate (Mercury, Earth, Venus, Moon, Ganymede)
     - `n_layers`: Number of interior layers in the synthetic model
     - `n_min`, `n_max`: Minimum and maximum spherical harmonic degree for expansion

@@ -289,7 +289,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
       - range = range of parameters to explore (see `InputRange` function)
 
 
-- **main_synthgen_grid.py**: Random grid exploration of the user-input parameters space: it produces *N* models generated within the desired range around a pre-setted initial model (from `Planets_ConfigFiles.py`). The user must insert some input information and/or use default values ( +/- 200 km, +/- 200 kg/m^3 and n_{half}\in[3-100]).
+- **main_synthgen_grid.py**: Random grid exploration of the user-input parameters space: it produces *N* models generated within the desired range around a pre-setted initial model (from `Planets_ConfigFiles.py`). The user must insert some input information and/or use default values ( +/- 200 km, +/- 200 kg/m^3 and n_{1/2} € [3-100]).
   - Inputs:
     - same as `main_synthgen.py`"
     - User inputs:

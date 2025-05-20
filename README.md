@@ -41,7 +41,6 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 
 ## Mercury 
 ### Bulk Parameters
-
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 2439.4               | km           | Reference radius                            |
@@ -54,7 +53,6 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | r_p_fact          | 0.9995               | -            | Polar flattening factor                     |
 
 ### Data Files
-
 | Data Type   | File Path                                      | Format   | Header | Reference                        |
 |-------------|------------------------------------------------|----------|--------|------------------------------|
 | Gravity     | HgM009.sha                 | shtools  | True   | A. Genova et al., â€˜Regional variations of Mercuryâ€™s crustal density and porosity from MESSENGER gravity dataâ€™, Icarus, 2023, doi: 10.1016/j.icarus.2022.115332.          |
@@ -87,7 +85,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 
 ## Venus 
 ### Bulk Parameters
-
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 6051.8               | km           | Reference radius                            |
@@ -100,7 +97,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
 
 ### Data Files
-
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | shgj180u_noheader.a01            | shtools  | True   |                              |
@@ -110,7 +106,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 - **Crustal thickness filter (n_half):** 80
 
 ### Implemented Interior Models
-
 #### 3 Layers
 | Layers | Densities (kg/mÂ³)         | Radii (km)              | Interface Types                | 
 |--------|--------------------------|-------------------------|-------------------------------|
@@ -122,7 +117,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 
 ## Earth 
 ### Bulk Parameters
-
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 6378.137             | km           | Reference radius                            |
@@ -135,7 +129,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | r_p_fact          | 0.9970               | -            | Polar flattening factor                     |
 
 ### Data Files
-
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | EGM2008_to2190_TideFree          | shtools  | False  |                              |
@@ -145,7 +138,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 - **Crustal thickness filter (n_half):** 80
 
 ### Implemented Interior Models
-
 #### 5 Layers
 | Layers | Densities (kg/mÂ³)         | Radii (km)              | Interface Types                | 
 |--------|--------------------------|-------------------------|-------------------------------|
@@ -155,16 +147,21 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | Upper Mantle    | 7090.9             | 6151.0            | polar flattened sphere|
 | Crust           | 2800               | 6371.0            | surface|
 
-#### 8 Layers
-| Layers | Densities (kg/mÂ³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| ...    | ...                      | ...                     | ...                           |
-
+#### 8 Layers 
+| Layer           | Density (kg/mÂ³) | Radius (km) | Interface Type              |
+|-----------------|-----------------|-------------|-----------------------------|
+| Inner Core      | 13088.5         | 1221.5      | sphere                      |
+| Outer Core      | 12581.5         | 3480.0      | polar flattened sphere      |
+| Lower Mantle    | 7956.5          | 5701.0      | polar flattened sphere      |
+| Upper Mantle    | 7090.9          | 6151.0      | polar flattened sphere      |
+| Transition Zone | 2691.0          | 6346.0      | downwarded Bouguer anomalies|
+| Lower Crust     | 2900            | 6356.0      | polar flattened sphere      |
+| Upper Crust     | 2600            | 6368.0      | surface                     |
+| Sediments       | 1020            | 6371.0      | surface                     |
 ---
 
 ## Moon 
 ### Bulk Parameters
-
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 1738.1               | km           | Reference radius                            |
@@ -177,7 +174,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | r_p_fact          | 0.9988               | -            | Polar flattening factor                     |
 
 ### Data Files
-
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | GRGM1200l_data.txt               | shtools  | True   |                              |
@@ -187,17 +183,17 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 - **Crustal thickness filter (n_half):** 40
 
 ### Implemented Interior Models
-
 #### 4 Layers
 | Layers | Densities (kg/mÂ³)         | Radii (km)              | Interface Types                | 
 |--------|--------------------------|-------------------------|-------------------------------|
-| ...    | ...                      | ...                     | ...                           |
-
+| Inner Core      | 0            | 0            | sphere|
+| Outer Core      | 0            | 0            | sphere|
+| Mantle    | 0            | 0           | sphere|
+| Crust    | 0            | 0           | sphere|
 ---
 
 ## Ganymede 
 ### Bulk Parameters
-
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 2631.2               | km           | Reference radius                            |
@@ -210,7 +206,6 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 | r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
 
 ### Data Files
-
 | Data Type   | File Path                        | Format   | Header | Notes                        |
 |-------------|----------------------------------|----------|--------|------------------------------|
 | Gravity     | None                             | shtools  | True   |                              |
@@ -220,12 +215,16 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
 - **Crustal thickness filter (n_half):** 25
 
 ### Implemented Interior Models
-
 #### 7 Layers
-| Layers | Densities (kg/mÂ³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| ...    | ...                      | ...                     | ...                           |
-
+| Layer           | Density (kg/mÂ³) | Radius (km) | Interface Type |
+|-----------------|-----------------|-------------|---------------|
+| Core            | 8000            | 570         | sphere        |
+| Mantle         | 3400            | 1820        | sphere        |
+| Crust         | 3100            | 1870        | rng           |
+| Ice VI         | 1320            | 2000        | sphere        |
+| Ice V         | 1235            | 2280        | sphere        |
+| Ocean         | 1100            | 2460        | sphere        |
+| Ice I       | 920             | 2631.2      | surface(rng)       |
 
 
 

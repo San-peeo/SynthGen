@@ -1,2 +1,103 @@
-# SynthGen
-SynthGen repository
+# SynthGen: A Gravitational Simulator for Planetary Interior Modelling
+
+Determining the internal structure of planetary bodies from gravitational observations is a key challenge in planetary geophysics. Gravity inversion techniques make it possible to estimate mass distribution by combining information on a body's shape, gravitational field, and rotational dynamics. However, gravity data alone present a well-known ambiguity between mass magnitude and depth, making the interpretation of internal layering a complex inverse problem. 
+
+We present SynthGen, a code developed to simulate the gravitational response of planetary bodies based on parametric interior models. It exploits the spherical harmonics framework described in Wieczorek [1], through the computation of gravitational harmonic coefficients [C_{nm}, S_{nm}] which characterise the global gravitational field, thanks to the SHTools [2] routines. SynthGen takes as input a simplified multi-layer interior model, assuming them homogenous. Model parameters consist of the number of internal layers, their mean thickness and density, and eventually, the topography of internal interfaces. On the latter, several ways are implemented: sphere, polar/equatorial flattened ellipsoid, randomly generated topography, downwarded Bouguer anomaly (see Wieczorek & Phillips [2], avoiding isostacy assumptions) and finally an input user grid. Given these inputs, SynthGen computes the corresponding gravitational potential, Free-Air anomalies, and Bouguer anomaly fields for the modelled body, generating full-resolution global maps.
+
+SynthGen outputs can be used in two ways: 
+1) If it is used to simulate a known body, so a gravity model is already available, the synthetic results can be compared to the real measurements, assessing the validity of the evaluated interior model and measuring its performance through different metrics. In this case, SynthGen performed an automated parameter-space exploration (controlled by the user). By randomly sampling model parameters within physically plausible bounds that it is user-configurable (constrained by the satisfaction of the conservation of total mass and moment of inertia, together with external shape constraints), it iteratively evaluates a wide range of configurations. The optimal internal structure is determined by identifying the parameter set that minimises discrepancies between simulated and observed gravitational data. This is performed through a suite of statistical metrics (e.g. RMSE, MAE, R2, SSIM, NCC, PSNR, etc.), finally combined into one.
+
+2) In addition to this procedure, SynthGen can be used predictively in case of an “unmeasured” body. It enables forward modelling of gravitational signals expected from future targets (for example Ganymede, for ESA’s JUICE mission). It can thus serve as a valuable tool for testing theoretical interior structures and simulating their measurable gravitational signatures.
+
+By combining analytical modelling, numerical efficiency, and flexibility across planetary scenarios, SynthGen offers a useful platform for planetary interior investigations from the gravitational point of view. It can handle various planetary shapes, datasets, and scientific objectives, and it is user configurable, together with already implemented configuration files for Mercury, Venus, Earth and Moon, together with a model of Ganymede.
+
+
+![Comparison on Mercury between Synthetic generated data and MESSENGER-derived model](https://github.com/user-attachments/assets/7fa9d8eb-02e0-483a-9b52-42c1022995bc)
+
+
+Please cite this if you use it in your research
+
+
+
+# Environment Setup
+
+
+## Linux/Windows WSL
+```bash
+# Create a virtual environment
+python -m venv myenv
+
+# Activate the environment
+source myenv/bin/activate
+
+# Install packages
+pip install -r requirements.txt
+```
+
+
+# Datasets:
+see Planets_ConfigFiles.py; In this module configuration classes for the main terrestrial planets and Ganymede, including their physical parameters, gravity and topography data sources, and interior structure models are provided.  
+Each planet class contains methods to retrieve bulk parameters (.bulk()), data file information (.data()), and interior structure parameters for different numbers of layers (.interiors()).
+
+## Mercury 
+### Bulk Parameters
+
+| Parameter         | Value                | Unit         | Description                                 |
+|-------------------|----------------------|--------------|---------------------------------------------|
+| ref_radius        | 2439.4               | km           | Reference radius                            |
+| GM_const          | 2.2031863566e+13     | m³/s²        | Gravitational constant                      |
+| ref_mass          | 3.301e+23            | kg           | Reference mass                              |
+| ref_rho           | 5427                 | kg/m³        | Mean density                                |
+| ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
+| ref_MoI           | 0.34597              | (I/MR²)      | Moment of inertia factor (Margot et al 2018)|
+| r_e_fact          | 1.0005               | -            | Equatorial flattening factor                |
+| r_p_fact          | 0.9995               | -            | Polar flattening factor                     |
+
+### Data Files
+
+| Data Type   | File Path                                      | Format   | Header | Notes                        |
+|-------------|------------------------------------------------|----------|--------|------------------------------|
+| Gravity     | Data/Mercury/HgM009/HgM009.sha                 | shtools  | True   | A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, vol. 391, p. 115332, Feb. 2023, doi: 10.1016/j.icarus.2022.115332.          |
+| Topography  | Data/Mercury/gtmes_150v05/gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
+
+- **Bouguer density:** 2900 kg/m³  
+- **Crustal thickness filter (n_half):** 40
+
+### Implemented Interior Models
+
+#### 3 Layers
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| Core      | 6992            | 2039            | polar flattened sphere|
+| Mantle      | 3200            | 2404            | downwarded Bouguer anomalies|
+| Crust      | 2900            | 2439.4            | surface|
+
+#### 4 Layers 
+J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury’s Internal Structure’, 2018, pp. 85–113. doi: 10.1017/9781316650684.005
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
+|--------|--------------------------|-------------------------|-------------------------------|
+| Inner Core      | 8652.52            | 666.577            | sphere|
+| Outer Core      | 6909.98            | 2023.66            | polar flattened sphere|
+| Mantle      | 3343.35            |  2402.61            | downwarded Bouguer anomalies|
+| Crust      | 2903.03            | 2439.4            | surface|
+
+
+
+
+
+# Code Description
+- **unet_custom.py**: contains all classes definitions for custom U-Nets developed in our work. It also contains functions to compress, transfer weights and rank adapters
+- **model_library.py**: contains all main functions needed to run training, evaluation and default plotting. It also contains classes definition for the datasets.
+- **model_library_classic.py**: contains functions of model_library customized for classic algorithms (e.g. otsu, canny and hybrid)
+- **model_train.py**: contains functions to train deep learning models using synthetic-moon-dataset. It can be run with wandb (use sweep_config.yaml) or locally.
+- **model_test.py**: contains functions to test and plot results of trained deep learning models 
+- **model_test_classic.py**: contains functions to test classic algorithms
+- **model_test_extdevice.py**: evaluates performance of the deep learning model using external devices (e.g. jetson nano and raspberry pi)
+- **adapters_flops_params.py**: evaluates flops and number of trained params for fine-tuning methods and adapters
+- **baseline_flops_params.py**: evaluates flops and number of trained params for baseline methods
+- **fusemethod_flops_params.py**: evaluates flops and number of trained params for adapter-fusing methods
+- **adapters_pareto.py**: plots pareto curves for adapters and traditional fine-tuning methods
+- **model_storage.py**: evaluates storage memory of deep learning models
+- **plot_layer_ablation.py**: plots results for layer-by-layer ablation study
+- **plotpreds.py**: plots predictions for different datasets (MarsDatasetv3 and Real-Moon)
+- pvalue.py: evaluates p-value for Shapiro-Wilk and Wilcoxon signed-rank test

@@ -36,7 +36,7 @@ pip install -r requirements.txt
 
 
 # Datasets:
-see Planets_ConfigFiles.py; In this module configuration classes for the main terrestrial planets and Ganymede, including their physical parameters, gravity and topography data sources, and interior structure models are provided.  
+see Planets_ConfigFiles.py; In this module, configuration classes for the main terrestrial planets and Ganymede, including their physical parameters, gravity and topography data sources, and interior structure models, are provided.  
 Each planet class contains methods to retrieve bulk parameters (.bulk()), data file information (.data()), and interior structure parameters for different numbers of layers (.interiors()).
 
 ## Mercury 
@@ -55,10 +55,10 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 
 ### Data Files
 
-| Data Type   | File Path                                      | Format   | Header | Notes                        |
+| Data Type   | File Path                                      | Format   | Header | Reference                        |
 |-------------|------------------------------------------------|----------|--------|------------------------------|
-| Gravity     | Data/Mercury/HgM009/HgM009.sha                 | shtools  | True   | A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, vol. 391, p. 115332, Feb. 2023, doi: 10.1016/j.icarus.2022.115332.          |
-| Topography  | Data/Mercury/gtmes_150v05/gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
+| Gravity     | HgM009.sha                 | shtools  | True   | A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, 2023, doi: 10.1016/j.icarus.2022.115332.          |
+| Topography  | gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
 
 - **Bouguer density:** 2900 kg/m³  
 - **Crustal thickness filter (n_half):** 40

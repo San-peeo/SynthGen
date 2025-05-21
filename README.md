@@ -15,7 +15,10 @@ Please cite this if you use it in your research
 
 
 
-#### Example 1: Comparison on Mercury between Synthetic generated data and MESSENGER-derived model
+#### Example 1a: SynthGen layer generation for 4-layer Mercury: Layers' topography - Layers' Gravitational Potential U 
+![U-interface](https://github.com/user-attachments/assets/6da4616f-458f-4c4d-9ba5-452f3cb87b9e)
+
+#### Example 1b: Comparison on Mercury between Synthetic generated data and MESSENGER-derived model
 ![Comparison on Mercury between Synthetic generated data and MESSENGER-derived model](https://github.com/user-attachments/assets/7fa9d8eb-02e0-483a-9b52-42c1022995bc)
 
 

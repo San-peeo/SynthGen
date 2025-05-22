@@ -1,0 +1,10 @@
+__pycache__/
+.vscode/
+Data/
+Results/
+old_scripts/
+SynthGen_GitHub_folder/
+
+main_manualgrid.py
+main_synthgen_customplot.py
+test.py

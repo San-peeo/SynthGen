@@ -493,7 +493,7 @@ class Ganymede_ConfigFile():
         ref_mass        = 1.48e+23                                                       # [kg]
         ref_rho         = ref_mass/(4/3*np.pi*ref_radius**3*1e+9)                        # [kg/m^3]
         ref_ang_vel     = 8.264e-07                                                      # [rad/sec]
-        ref_MoI         = 0.3115                                                         # (I/MR^2)    
+        ref_MoI         = 0.3115                                                         # (I/MR^2)    Schubert, G.; Anderson, J. D.; Spohn, T.; McKinnon, W. B. (2004). "Interior composition, structure and dynamics of the Galilean satellites". In Bagenal, F.; Dowling, T. E.; McKinnon, W. B. (eds.). Jupiter: the planet, satellites, and magnetosphere. New York: Cambridge University Press. pp. 281–306. ISBN 978-0521035453. OCLC 54081598. Archived from the original on April 16, 2023. Retrieved July 23, 2019.   
         err_MoI         = 0.01
 
         # Polar Flattening

@@ -1,4 +1,4 @@
-from main_library_Copy import *
+from main_library import *
 from Planets_ConfigFiles import *
 
 plt.ion()
@@ -18,15 +18,15 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 7
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
+n_layers      = 4
 n_min         = 3
-n_max         = 50
-r             = 2631.2*1e+3
+n_max         = 150
+r             = 2440.0*1e+3
 i_max         = 7
-mode          = 'interface'              # 'layer','interface'
+mode          = 'layer'              # 'layer','interface'
 load_opt      = False
-save_opt      = None
+save_opt      = 'all'            # None,'all', 'total'
 
 proj_opt      = ccrs.Mollweide()
 
@@ -121,6 +121,9 @@ if coeffs_tot is not None:
 
 # ------------------------------------------------------------------------------------------------------
 
+# Custom plot of the results:
+
+
     fig, axs = plt.subplots(2, 2, figsize=(13, 7))
 
     U_matrix.plot(ax=axs[0, 0], colorbar='right',projection=proj_opt, title='Gravitational Potential', cb_label='$m^2/s^2$',cmap=cmap)
@@ -156,8 +159,8 @@ if coeffs_tot is not None:
 
     plt.tight_layout()
     plt.show()
-    fig.savefig(saving_dir+"/U_h_FreeAir_spectrum_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=1200)
-    fig.savefig(saving_dir+"/U_h_FreeAir_spectrum_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=1200)
+    fig.savefig(saving_dir+"/U_h_FreeAir_spectrum_nmin"+str(n_min)+"_nmax"+str(n_max)+".pdf", dpi=600)
+    fig.savefig(saving_dir+"/U_h_FreeAir_spectrum_nmin"+str(n_min)+"_nmax"+str(n_max)+".png", dpi=600)
  
 
 

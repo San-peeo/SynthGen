@@ -340,7 +340,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
     if plot_opt=='single':
         fig, ax = U_matrix.plot(colorbar='right',projection=proj_opt, cb_label='$m^2/s^2$')
-        if saving_dir is not None: fig.savefig(saving_dir+"/U_matrix_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=1200)
+        if saving_dir is not None: fig.savefig(saving_dir+"/U_matrix_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
 
     if verbose_opt: 
         print("Done")
@@ -371,7 +371,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
     if plot_opt=='single':
         fig, ax = topog_matrix.plot(colorbar='right',projection=proj_opt, cb_label='km')
-        if saving_dir is not None: fig.savefig(saving_dir+"/topog_matrix.pdf", dpi=1200)
+        if saving_dir is not None: fig.savefig(saving_dir+"/topog_matrix.pdf", dpi=600)
 
     if verbose_opt: 
         print("Done")
@@ -397,7 +397,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
     if plot_opt=='single':
         fig, ax = deltag_freeair.plot(colorbar='right',projection=proj_opt, cb_label='mGal')
-        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=1200)
+        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
 
 
     if verbose_opt: 
@@ -431,7 +431,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
     if plot_opt=='single':
         fig, ax = deltag_boug.plot(colorbar='right', projection=proj_opt, cb_label='mGal')
-        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=1200)
+        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
 
 
     if verbose_opt: 
@@ -459,7 +459,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
         plt.tight_layout()
         plt.show()
-        if saving_dir is not None: fig.savefig(saving_dir+"/U_h_FreeAir_Boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=1200)
+        if saving_dir is not None: fig.savefig(saving_dir+"/U_h_FreeAir_Boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
 
         if verbose_opt:
             print("Done")
@@ -534,8 +534,9 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
 
         else:
             if coeff.coeffs[0][3,0] != 0:   # some topopgrahy (at least polar flattening)
+                # WARNING: use or convention='power',unit='per_lm' or convention='l2norm',unit='per_l' + divide by (2*degree+1)
                 spectrum_grav = pysh.spectralanalysis.spectrum(coeff.coeffs,convention='l2norm',unit='per_l',lmax=n_max)
-                spectrum_grav /= (2*degree_grav+1)  # ERROR in spectrum() for unit='per_lm' (NOT dividing by (2*degree+1))
+                spectrum_grav /= (2*degree_grav+1) # only for 'l2norm'
                 if save_opt == 'all': np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
                 if save_opt == 'total' and ("Layer" in coeff.name) is False: np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
                 if plot_opt:
@@ -555,7 +556,7 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
         plt.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
         plt.grid(visible=True, which='minor', linestyle='--', linewidth=0.2)
         plt.show()
-        if save_opt is not None: plt.savefig(saving_dir+"/spectrum_grav.pdf", dpi=1200, bbox_inches='tight')
+        if save_opt is not None: plt.savefig(saving_dir+"/spectrum_grav.pdf", dpi=600, bbox_inches='tight')
 
 
     if verbose_opt:
@@ -895,7 +896,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                 plt.tight_layout()
                 plt.show()
                 if save_opt == 'all':
-                    fig.savefig(saving_dir+"/Interface - U.pdf", dpi=1200)
+                    fig.savefig(saving_dir+"/Interface - U.pdf", dpi=600)
 
             # ------------------------------------------------------------------------------------------------------
 
@@ -1832,7 +1833,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
     plt.show()
 
 
-    if saving_dir is not None: plt.savefig(saving_dir+'histograms_'+thresh_name+'.png', dpi=1200)
+    if saving_dir is not None: plt.savefig(saving_dir+'histograms_'+thresh_name+'.png', dpi=600)
 
 
     return rho, radius, n_half, fig

@@ -334,14 +334,14 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 
 
 # References
-[1] M. A. Wieczorek, "Gravity and Topography of the Terrestrial Planets", in Treatise on Geophysics, Elsevier, 2015, pp. 153–193. doi:10.1016/B978-0-444-53802-4.00169-X
-[2] M A. Wieczorek and Matthias Meschede (2018). “SHTools — Tools for working with spherical harmonics”, Geochemistry, Geophysics, Geosystems, 19, 2574-2592, doi:10.1029/2018GC007529.
-[3] M. A. Wieczorek and R. J. Phillips, “Potential anomalies on a sphere: Applications to the thickness of the lunar crust”, JGR: Planets, vol. 103, no. E1, pp. 1715–1724, 1998. doi:10.1029/97JE03136
-[4] A. Genova et al., “Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data”, Icarus, vol. 391, p. 115332, 2023.
-[5] A. Rivoldini, T. Van Hoolst, “The interior structure of Mercury constrained by the low-degree gravity field and the rotation of Mercury”, Earth and Planetary Science Letters, 2013, https://doi.org/10.1016/j.epsl.2013.07.021.
-[6] J. L. Margot, et al. "Mercury's internal structure." arXiv preprint arXiv:1806.02024 (2018).
-[7] D. M. Fabrizio et al., ‘Observability of Ganymede’s gravity anomalies related to surface features by the 3GM experiment onboard ESA’s JUpiter ICy moons Explorer (JUICE) mission’, Icarus, 2021.
-[8] Schubert, G., & Anderson, J. (2004). Interior composition, structure and dynamics of the galilean satellites. Jupiter: The planet, satellites and magnetosphere, 1 ,281–306.
+* [1] M. A. Wieczorek, "Gravity and Topography of the Terrestrial Planets", in Treatise on Geophysics, Elsevier, 2015, pp. 153–193. doi:10.1016/B978-0-444-53802-4.00169-X
+* [2] M A. Wieczorek and Matthias Meschede (2018). “SHTools — Tools for working with spherical harmonics”, Geochemistry, Geophysics, Geosystems, 19, 2574-2592, doi:10.1029/2018GC007529.
+* [3] M. A. Wieczorek and R. J. Phillips, “Potential anomalies on a sphere: Applications to the thickness of the lunar crust”, JGR: Planets, vol. 103, no. E1, pp. 1715–1724, 1998. doi:10.1029/97JE03136
+* [4] A. Genova et al., “Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data”, Icarus, vol. 391, p. 115332, 2023.
+* [5] A. Rivoldini, T. Van Hoolst, “The interior structure of Mercury constrained by the low-degree gravity field and the rotation of Mercury”, Earth and Planetary Science Letters, 2013, https://doi.org/10.1016/j.epsl.2013.07.021.
+* [6] J. L. Margot, et al. "Mercury's internal structure." arXiv preprint arXiv:1806.02024 (2018).
+* [7] D. M. Fabrizio et al., ‘Observability of Ganymede’s gravity anomalies related to surface features by the 3GM experiment onboard ESA’s JUpiter ICy moons Explorer (JUICE) mission’, Icarus, 2021.
+* [8] Schubert, G., & Anderson, J. (2004). Interior composition, structure and dynamics of the galilean satellites. Jupiter: The planet, satellites and magnetosphere, 1 ,281–306.
 
 
 

@@ -96,6 +96,9 @@ class Mercury_ConfigFile():
                 radius_layers   = [2039,2404,2439.4]
                 interface_type  = ['sphflat','dwnbg','surf']
 
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0]
+
 
 
             case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
@@ -103,6 +106,10 @@ class Mercury_ConfigFile():
                 rho_layers      = [8652.52,6909.98, 3343.35, 2903.03]
                 radius_layers   = [666.577, 2023.66, 2402.61, 2439.4]
                 interface_type  = ['sph','sphflat','dwnbg','surf']
+
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0,0]
+
 
 
 
@@ -118,7 +125,7 @@ class Mercury_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type]
+        param_int = [rho_layers,radius_layers,interface_type, interface_addinfo]
 
         return param_int
 
@@ -215,7 +222,10 @@ class Venus_ConfigFile():
                 radius_layers   = [3200,6020,6051.8]
                 interface_type  = ['sphflat','dwnbg','surf']
 
-   
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0]
+
+
             case _:
 
                 print('No existing Venus model with '+str(n_layers)+' layers')
@@ -228,7 +238,7 @@ class Venus_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type]
+        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo]
 
         return param_int
 
@@ -327,14 +337,18 @@ class Earth_ConfigFile():
                 radius_layers   = [1221.5,3480.0,5701.0,6151.0,6371.0]
                 interface_type  = ['sph','sphflat','sphflat','dwnbg','surf']
 
-   
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0,0,0]
+
+
             case 8:                     
 
                 rho_layers      = [13088.5,12581.5,7956.5,7090.9,2691.0,2900,2600,1020]
                 radius_layers   = [1221.5,3480.0,5701.0,6151.0,6346.0,6356.0,6368.0,6371.0]
                 interface_type  = ['sph','sphflat','sphflat','sphflat','dwnbg','sphflat','surf','surf']
 
-
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0,0,0,0,0,0]
 
             case _:
 
@@ -348,7 +362,7 @@ class Earth_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type]
+        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo]
 
         return param_int
 
@@ -444,7 +458,9 @@ class Moon_ConfigFile():
                 radius_layers   = [0,0,0,0]
                 interface_type  = ['sph','sphflat','dwnbg','surf']
 
-   
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,0,0]
+
             case _:
 
                 print('No existing Moon model with '+str(n_layers)+' layers')
@@ -457,7 +473,7 @@ class Moon_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type]
+        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo]
 
         return param_int
     
@@ -553,8 +569,10 @@ class Ganymede_ConfigFile():
 
                 rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
                 radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]
-                interface_type  = ['sph','sph','rng','sph','sph','sph','surf']
+                interface_type  = ['sph','sph','rng','sph','sph','sph','rng']
 
+                # Additional information for the interface (rng or custom)
+                interface_addinfo  = [0,0,20,0,0,0,10]
    
             case _:
 
@@ -568,6 +586,6 @@ class Ganymede_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type]
+        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo]
 
         return param_int

@@ -18,10 +18,10 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_min         = 3
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon"
+n_min         = 0
 n_max         = 150
-r             = 2440.0*1e+3
+r             = 2631.2*1e+3
 i_max         = 7
 proj_opt      = ccrs.Mollweide()
 verbose_opt   = True
@@ -44,6 +44,11 @@ print('Body: ' + body+ '\n')
 
 # Reading Data (Gravity - Topography) from files:
 param_bulk,param_body, coeffs_grav, coeffs_topo = DataReader(body, n_max)
+
+if coeffs_grav is None or coeffs_topo is None:
+    print("ERROR: Gravity/Topography are not available.")
+    exit()
+
 
 
 
@@ -68,7 +73,7 @@ print(saving_dir)
 
 # Global analysis (U, H, FreeAir, Bouguer):
 Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                i_max=i_max,saving_dir=saving_dir,plot_opt='multiple',proj_opt=proj_opt,verbose_opt=verbose_opt)
+                i_max=i_max,saving_dir=saving_dir,plot_opt='single',proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
 # Spectrum analysis:

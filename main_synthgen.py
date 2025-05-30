@@ -18,11 +18,11 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 4
-n_min         = 3
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 7
+n_min         = 0
 n_max         = 150
-r             = 2440.0*1e+3
+r             = 2631.2*1e+3
 i_max         = 7
 mode          = 'layer'              # 'layer','interface'
 load_opt      = False
@@ -55,9 +55,29 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 rho_boug        = param_body[7]
 n_half          = param_body[8]
 
+interface_info  = param_int[3]
+
+
 filter_deg = np.zeros(n_layers, dtype=int)
 
 
+
+if coeffs_grav is None or coeffs_topo is None:
+    print("ERROR: Gravity/Topography are not available:")
+
+    print(' - Gravity coefficients set to zero')
+    coeffs_grav = pysh.SHGravCoeffs.from_zeros(lmax=n_max, gm=param_bulk[1], r0=param_bulk[0]*1e+3)
+
+    print(' - Topography RNG generation: DeltaH = ' + str(interface_info[-1]) + ' km')
+    degrees = np.arange(n_max+1, dtype=float)
+    degrees[0] = np.inf
+    coeffs_topo = pysh.SHCoeffs.from_random(degrees**(-2), seed=42*n_layers)
+    coeffs_topo.set_coeffs(param_bulk[0],0,0)
+    surf = coeffs_topo.expand(lmax=n_max,extend=True)
+    deltaH_fact = interface_info[-1]/(np.max(surf.data) - np.min(surf.data))
+    coeffs_topo.coeffs *= deltaH_fact
+    coeffs_topo.set_coeffs(param_bulk[0],0,0)
+    print('\n')
 
 
 
@@ -70,7 +90,9 @@ for i in range(n_layers):
     sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_layers[i]) + '_rho'+str(i+1)+'_'+str(rho_layers[i])
     if interface_type[i] == 'dwnbg':
         sub_dir += '_nhalf'+str(i+1)+'_'+str(n_half)
-        filter_deg[i] = n_half   
+        filter_deg[i] = n_half
+    if interface_type[i] == 'rng':
+        sub_dir += '_'+str(interface_info[i])+'km'   
     if i!= n_layers-1:
         sub_dir+='_'
 
@@ -95,11 +117,13 @@ print("# -----------------------------------------------------------------------
 
 # Synthetic gravitational coefficients generation:
 
+t_start2 = time.time()
 
 coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,filter_deg,saving_dir,mode=mode,
                                     save_opt=save_opt,plot_opt=True,load_opt=load_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
-
+t_end2 = time.time()
+print(f"Execution Time: {t_end2 - t_start2:.2f} seconds")
 
 
 # ------------------------------------------------------------------------------------------------------

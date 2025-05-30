@@ -132,6 +132,7 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
                         rho_layers          [kg/m^3]
                         radius_layers       [km]
                         interface_type      [string]
+                        interface_info      [float]
     coeffs_grav     : pyshtools.SHGravCoeffs
                       Gravitational coefficients
     coeffs_topo     : pyshtools.SHGravCoeffs, [km]
@@ -200,19 +201,17 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
             coeffs_grav = pysh.SHGravCoeffs.from_file(grav_file, format=format_grav, lmax=n_max, header=header_opt_grav,
                                                     r0=ref_radius*1e+3, gm=GM_const)
         coeffs_grav.name = grav_file.split('/')[-1].split('.')[0]
+        coeffs_grav.gm = GM_const                   # m^3/s^2
+        coeffs_grav.r0 = ref_radius*1e+3            # m
     else:
         print('No gravitational file (zero data) \n')
-        coeffs_grav = pysh.SHGravCoeffs.from_zeros(lmax=n_max, gm=GM_const, r0=ref_radius*1e+3)
-        coeffs_grav.name = 'No Data'
-
-    coeffs_grav.gm = GM_const                   # m^3/s^2
-    coeffs_grav.r0 = ref_radius*1e+3            # m
+        coeffs_grav = None 
 
 
 
 
     # Topography data (+ conversion into [km])
-    print('Topography datafile: \n')
+    print('Topography datafile:')
 
     if topo_file is not None:
         print(topo_file + '\n')
@@ -221,16 +220,8 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
             coeffs_topo /= topo_factor
             if body == "Earth": coeffs_topo += ref_radius 
     else:
-        print('Generating RANDOM surface topography coefficients: \n')
-        degrees = np.arange(n_max+1, dtype=float)
-        degrees[0] = np.inf
-        coeffs_topo = pysh.SHCoeffs.from_random(degrees**(-2), seed=42*n_layers)
-        coeffs_topo.set_coeffs(ref_radius,0,0)
-        surf = coeffs_topo.expand(lmax=n_max,extend=True)
-        x = float(input("Insert the DeltaH (max - min) for topography: "))
-        a = x/(np.max(surf.data) - np.min(surf.data))
-        coeffs_topo.coeffs *= a
-        coeffs_topo.set_coeffs(ref_radius,0,0)
+        print('No Topography file (zero data) \n')
+        coeffs_topo = None 
 
 
 
@@ -258,7 +249,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
     - Free-Air anomalies    [mGal]
     - Bouguer anomalies     [mGal]
 
-    Maps are in .pdf files
+    Maps are in .png files
     Data are in .dat files
 
     Parameters
@@ -339,8 +330,8 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
         if saving_dir is not None: U_matrix.to_file(saving_dir+"/U_matrix_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".dat")
 
     if plot_opt=='single':
-        fig, ax = U_matrix.plot(colorbar='right',projection=proj_opt, cb_label='$m^2/s^2$')
-        if saving_dir is not None: fig.savefig(saving_dir+"/U_matrix_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
+        fig, ax = U_matrix.plot(colorbar='right',projection=proj_opt, cb_label='$m^2/s^2$',cmap=cmap)
+        if saving_dir is not None: fig.savefig(saving_dir+"/U_matrix_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=600)
 
     if verbose_opt: 
         print("Done")
@@ -370,8 +361,8 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
             topog_matrix.to_file(saving_dir+"/topog_matrix.dat")
 
     if plot_opt=='single':
-        fig, ax = topog_matrix.plot(colorbar='right',projection=proj_opt, cb_label='km')
-        if saving_dir is not None: fig.savefig(saving_dir+"/topog_matrix.pdf", dpi=600)
+        fig, ax = topog_matrix.plot(colorbar='right',projection=proj_opt, cb_label='km',cmap=cmap)
+        if saving_dir is not None: fig.savefig(saving_dir+"/topog_matrix.png", dpi=600)
 
     if verbose_opt: 
         print("Done")
@@ -396,8 +387,8 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
         if saving_dir is not None: deltag_freeair.to_file(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".dat")
 
     if plot_opt=='single':
-        fig, ax = deltag_freeair.plot(colorbar='right',projection=proj_opt, cb_label='mGal')
-        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
+        fig, ax = deltag_freeair.plot(colorbar='right',projection=proj_opt, cb_label='mGal',cmap=cmap)
+        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=600)
 
 
     if verbose_opt: 
@@ -430,8 +421,8 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
         
 
     if plot_opt=='single':
-        fig, ax = deltag_boug.plot(colorbar='right', projection=proj_opt, cb_label='mGal')
-        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
+        fig, ax = deltag_boug.plot(colorbar='right', projection=proj_opt, cb_label='mGal',cmap=cmap)
+        if saving_dir is not None: fig.savefig(saving_dir+"/deltag_boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=600)
 
 
     if verbose_opt: 
@@ -459,7 +450,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, saving_
 
         plt.tight_layout()
         plt.show()
-        if saving_dir is not None: fig.savefig(saving_dir+"/U_h_FreeAir_Boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".pdf", dpi=600)
+        if saving_dir is not None: fig.savefig(saving_dir+"/U_h_FreeAir_Boug_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=600)
 
         if verbose_opt:
             print("Done")
@@ -556,7 +547,7 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
         plt.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
         plt.grid(visible=True, which='minor', linestyle='--', linewidth=0.2)
         plt.show()
-        if save_opt is not None: plt.savefig(saving_dir+"/spectrum_grav.pdf", dpi=600, bbox_inches='tight')
+        if save_opt is not None: plt.savefig(saving_dir+"/spectrum_grav.png", dpi=600, bbox_inches='tight')
 
 
     if verbose_opt:
@@ -590,8 +581,8 @@ def CrustThickness(coeffs_topo,coeffs_grav,rho_boug,delta_rho,mean_radius,n_max,
 
     coeffs_grav     : pyshtools.SHGravCoeffs 
                       Gravitational coefficients
-    coeffs_topo     : pyshtools.SHGravCoeffs, [km]
-                      Topography coefficients
+    coeffs_topo     : pyshtools.SHCoeffs
+                      Topography coefficients (in kilometers)
     rho_boug        : float, [kg/m^3]
                       Crust density; used both in the Bouguer correction and the crust thickness calculation 
     delta_rho       : float, [kg/m^3]
@@ -623,6 +614,7 @@ def CrustThickness(coeffs_topo,coeffs_grav,rho_boug,delta_rho,mean_radius,n_max,
     
 
     # Bouguer coefficient evaluation
+    # NB: shape needs to be in m, so coeffs_topo*1e+3 (accordance to GM and rho units)
     bouger_correction = pysh.SHGravCoeffs.from_shape(shape=coeffs_topo*1e+3, rho=rho_boug, gm=coeffs_grav.gm, lmax=n_max, nmax=i_max)   
     bouger_correction = bouger_correction.change_ref(r0=coeffs_grav.r0)
     coeff_boug = coeffs_grav - bouger_correction
@@ -716,13 +708,12 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
     rho_layers      = param_int[0]
     radius_layers   = param_int[1]
     interface_type  = param_int[2]
+    interface_addinfo  = param_int[3]
     n_layers= np.size(rho_layers)
 
     # Flattening parameters
     r_e_fact        = param_bulk[8]
     r_p_fact        = param_bulk[9]
-
-    ref_rho        = param_bulk[4]
 
 
 
@@ -784,10 +775,24 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                     degrees[0] = np.inf
                     surf_coeff_rng = pysh.SHCoeffs.from_random(degrees**(-2) * (radius_layers[i]/radius_layers[-1])**(degrees),power_unit='per_lm', seed=42*i)
                     surf = surf_coeff_rng.expand(lmax=n_max,extend=True)+radius_layers[i]
-                    x = float(input("Insert the DeltaH (max - min) for interface topography: "))
-                    a = x/(np.max(surf.data) - np.min(surf.data))
-                    surf_coeff_rng.coeffs *= a
+                    surf_coeff_rng.coeffs *= interface_addinfo[i]/(np.max(surf.data) - np.min(surf.data))
                     surf = surf_coeff_rng.expand(lmax=n_max,extend=True)+radius_layers[i]
+                    if verbose_opt:
+                        print("RNG:")
+                        print("     Delta H [km]: " + str(interface_addinfo[i]))
+
+
+                case 'custom':
+                    # Reading topography from file:
+                    surf = pysh.SHGrid.from_file(interface_addinfo[i])
+                    if surf.lmax != n_max:
+                        print("ERROR: No resolution matching! (Custom interface file has a different lmax)")
+                        exit()
+                    if verbose_opt:
+                        print("Custom datafile:")
+                        print("     file: " + interface_addinfo[i])
+
+
 
                 case _:
                     print("ERROR: No interface type recognized")
@@ -896,7 +901,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                 plt.tight_layout()
                 plt.show()
                 if save_opt == 'all':
-                    fig.savefig(saving_dir+"/Interface - U.pdf", dpi=600)
+                    fig.savefig(saving_dir+"/Interface - U.png", dpi=600)
 
             # ------------------------------------------------------------------------------------------------------
 

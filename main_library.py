@@ -126,7 +126,6 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
                         header_opt_top      [bool] 
                         format_topo         (shtools, bshc)
                         rho_boug            [kg/m^3]
-                        n_half              (cutting degree)
     param_int      : array,
                       Array containing interior parameters (as function of n_layers):
                         rho_layers          [kg/m^3]
@@ -641,7 +640,7 @@ def CrustThickness(coeffs_topo,coeffs_grav,rho_boug,delta_rho,mean_radius,n_max,
 
 
 
-def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg,saving_dir,save_opt: Literal['all','total',None],
+def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: Literal['all','total',None],
              mode: Literal['layer','interface'] ='layer',load_opt=False,plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
 
     """
@@ -672,8 +671,6 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                   Input topography coefficients for each layer interfrace. Used just for 'surface' interface
     i_max       : int
                   Maximum order used in Taylor series expansion for potential coefficients
-    filter_deg  : int
-                  Degree of filter to apply in downward continuation filter (n_half)
     saving_dir  : str
                   Saving directory for the output files (data and images)
     save_opt    : str, option ['all','total',None]
@@ -753,7 +750,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                 case 'dwnbg':
                     surf = CrustThickness(coeffs_topo=coeffs_topo,coeffs_grav=coeffs_grav,rho_boug=rho_layers[i],
                                           delta_rho=rho_layers[i]-rho_layers[i+1],mean_radius=radius_layers[i],
-                                          n_max=n_max,i_max=i_max,filter_opt=1,filter_deg=filter_deg[i],
+                                          n_max=n_max,i_max=i_max,filter_opt=1,filter_deg=interface_addinfo[i],
                                           verbose_opt=verbose_opt)
 
                 case 'surf':
@@ -780,7 +777,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                     surf = surf_coeff_rng.expand(lmax=n_max,extend=True)+radius_layers[i]
                     if verbose_opt:
                         print("RNG:")
-                        print("     Delta H [km]: " + str(interface_addinfo[i]))
+                        print("     Delta H: " + str(interface_addinfo[i]) + 'km')
 
 
                 case 'custom':
@@ -976,7 +973,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
 ##########################################################################################################################
 ##########################################################################################################################
 
-def InputRange(n_layers,param_int,n_half):
+def InputRange(n_layers,param_int):
 
     """
     Usage
@@ -996,8 +993,7 @@ def InputRange(n_layers,param_int,n_half):
                         rho_layers          [kg/m^3]
                         radius_layers       [km]
                         interface_type      [string]    
-    n_half          : int,
-                      Degree of filter to apply in downward continuation filter (n_half)
+
 
 
     Output
@@ -1011,9 +1007,10 @@ def InputRange(n_layers,param_int,n_half):
     n_counts = int(input("Insert number of simulations you want to evaluate: "))
 
 
-    rho_layers      = param_int[0]
-    radius_layers   = param_int[1]
-    interface_type  = param_int[2]
+    rho_layers          = param_int[0]
+    radius_layers       = param_int[1]
+    interface_type      = param_int[2]
+    interface_addinfo   = param_int[3]
 
     rho_range = np.zeros((n_layers,2))
     radius_range = np.zeros((n_layers,2))
@@ -1066,7 +1063,7 @@ def InputRange(n_layers,param_int,n_half):
                 radius_range[i]  = CheckRange(radius_string,[radius_layers[i-1],radius_layers[i+1],"r"])
 
             if interface_type[i] == 'dwnbg':
-                print("Cutting degree n_half: ",n_half)
+                print("Cutting degree n_half: ",interface_addinfo[i])
                 nhalf_string = input("Cutting degree range : ")
                 nhalf_range[i]  = CheckRange(nhalf_string)
 

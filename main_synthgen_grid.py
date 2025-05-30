@@ -19,12 +19,12 @@ tracemalloc.start()
 # Set up the parameters:
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 4
+n_layers      = 3
 n_min         = 0
 n_max         = 150
 r             = 2440.0*1e+3
 i_max         = 7
-load_opt      = True
+load_opt      = False
 save_opt      = 'total'
 proj_opt      = ccrs.Mollweide()
 
@@ -51,11 +51,11 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 
 # Extract useful parameters
 rho_boug        = param_body[7]
-n_half          = param_body[8]
 
-rho_layers      = param_int[0]
-radius_layers   = param_int[1]
-interface_type  = param_int[2]
+rho_layers          = param_int[0]
+radius_layers       = param_int[1]
+interface_type      = param_int[2]
+interface_addinfo   = param_int[3]
 
 
 
@@ -84,7 +84,7 @@ print("# -----------------------------------------------------------------------
 # Setting up the GRID:
 
 
-n_counts,rho_range, radius_range, nhalf_range = InputRange(n_layers,param_int,n_half)
+n_counts,rho_range, radius_range, nhalf_range = InputRange(n_layers,param_int)
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -237,14 +237,13 @@ while valid_counter < n_counts:
     # ------------------------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------------------------
 
-        param_int_grid = [rho_rng[0,:],radius_rng[0,:],interface_type]
-        filter_deg = nhalf_rng[0,:]
+        param_int_grid = [rho_rng[0,:],radius_rng[0,:],interface_type,nhalf_rng[0,:]]
 
 
 
         # Synthetic gravitational coefficients generation:
 
-        coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int_grid,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg,saving_dir_subdir,
+        coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int_grid,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir_subdir,
                                             save_opt=save_opt,load_opt=load_opt,plot_opt=False,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
         # Check SynthGen output:
@@ -275,7 +274,6 @@ while valid_counter < n_counts:
         del radius_rng 
         del nhalf_rng
         del param_int_grid
-        del filter_deg
         del coeffs_tot
         del coeffs_layers
         

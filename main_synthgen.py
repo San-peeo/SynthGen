@@ -18,8 +18,8 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 7
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 4
 n_min         = 0
 n_max         = 150
 r             = 2631.2*1e+3
@@ -53,12 +53,9 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 
 # Extract useful parameters
 rho_boug        = param_body[7]
-n_half          = param_body[8]
-
 interface_info  = param_int[3]
 
 
-filter_deg = np.zeros(n_layers, dtype=int)
 
 
 
@@ -89,8 +86,7 @@ sub_dir=''
 for i in range(n_layers):
     sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_layers[i]) + '_rho'+str(i+1)+'_'+str(rho_layers[i])
     if interface_type[i] == 'dwnbg':
-        sub_dir += '_nhalf'+str(i+1)+'_'+str(n_half)
-        filter_deg[i] = n_half
+        sub_dir += '_nhalf'+str(i+1)+'_'+str(interface_info[i])
     if interface_type[i] == 'rng':
         sub_dir += '_'+str(interface_info[i])+'km'   
     if i!= n_layers-1:
@@ -119,7 +115,7 @@ print("# -----------------------------------------------------------------------
 
 t_start2 = time.time()
 
-coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,filter_deg,saving_dir,mode=mode,
+coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
                                     save_opt=save_opt,plot_opt=True,load_opt=load_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 t_end2 = time.time()

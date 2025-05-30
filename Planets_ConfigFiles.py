@@ -70,14 +70,12 @@ class Mercury_ConfigFile():
 
         # Bouguer density (crustal density)
         rho_boug = 2900   # [Kg/m^3]
-                    
-        # Cutting degree n_half (crust thickness filtering)
-        n_half = 40   
+                 
 
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug,n_half]
+        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug]
         
         return param_body
     
@@ -96,8 +94,9 @@ class Mercury_ConfigFile():
                 radius_layers   = [2039,2404,2439.4]
                 interface_type  = ['sphflat','dwnbg','surf']
 
-                # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0]
+                # Additional information for the interface (dwnbg, rng or custom)
+                n_half = 40  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,n_half,0]
 
 
 
@@ -108,7 +107,8 @@ class Mercury_ConfigFile():
                 interface_type  = ['sph','sphflat','dwnbg','surf']
 
                 # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0,0]
+                n_half = 40  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,0,n_half,0]
 
 
 
@@ -196,14 +196,11 @@ class Venus_ConfigFile():
         # Bouguer density (crustal density)
         rho_boug = 2800   # [Kg/m^3]
                     
-                    
-        # Cutting degree n_half (crust thickness filtering)
-        n_half = 80   
 
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug,n_half]
+        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug]
         
         return param_body
     
@@ -222,8 +219,9 @@ class Venus_ConfigFile():
                 radius_layers   = [3200,6020,6051.8]
                 interface_type  = ['sphflat','dwnbg','surf']
 
-                # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0]
+                # Additional information for the interface (dwnbg,rng or custom)
+                n_half = 80  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,n_half,0]
 
 
             case _:
@@ -312,13 +310,11 @@ class Earth_ConfigFile():
         # Bouguer density (crustal density)
         rho_boug = 1800   # [Kg/m^3]
                     
-        # Cutting degree n_half (crust thickness filtering)
-        n_half = 80   
 
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug,n_half]
+        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug]
         
         return param_body
     
@@ -337,8 +333,9 @@ class Earth_ConfigFile():
                 radius_layers   = [1221.5,3480.0,5701.0,6151.0,6371.0]
                 interface_type  = ['sph','sphflat','sphflat','dwnbg','surf']
 
-                # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0,0,0]
+                # Additional information for the interface (dwnbg,rng or custom)
+                n_half = 80  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,0,0,n_half,0]
 
 
             case 8:                     
@@ -347,8 +344,9 @@ class Earth_ConfigFile():
                 radius_layers   = [1221.5,3480.0,5701.0,6151.0,6346.0,6356.0,6368.0,6371.0]
                 interface_type  = ['sph','sphflat','sphflat','sphflat','dwnbg','sphflat','surf','surf']
 
-                # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0,0,0,0,0,0]
+                # Additional information for the interface (dwnbg,rng or custom)
+                n_half = 80  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,0,0,0,n_half,0,0,0]
 
             case _:
 
@@ -431,14 +429,11 @@ class Moon_ConfigFile():
 
         # Bouguer density (crustal density)
         rho_boug = 2900   # [Kg/m^3]
-                    
-        # Cutting degree n_half (crust thickness filtering)
-        n_half = 40   
 
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug,n_half]
+        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug]
         
         return param_body
     
@@ -458,8 +453,9 @@ class Moon_ConfigFile():
                 radius_layers   = [0,0,0,0]
                 interface_type  = ['sph','sphflat','dwnbg','surf']
 
-                # Additional information for the interface (rng or custom)
-                interface_addinfo  = [0,0,0,0]
+                # Additional information for the interface (dwnbg,rng or custom)
+                n_half = 40  # Cutting degree n_half (crust thickness filtering)
+                interface_addinfo  = [0,0,n_half,0]
 
             case _:
 
@@ -545,13 +541,11 @@ class Ganymede_ConfigFile():
         # Bouguer density (crustal density)
         rho_boug = 920   # [Kg/m^3]
                     
-        # Cutting degree n_half (crust thickness filtering)
-        n_half = 25   
 
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug,n_half]
+        param_body = [grav_file,top_file,topo_factor,header_opt_grav,format_grav,header_opt_top,format_topo,rho_boug]
         
         return param_body
     

@@ -2,12 +2,12 @@
 
 Determining the internal structure of planetary bodies from gravitational observations is a key challenge in planetary geophysics. Gravity inversion techniques make it possible to estimate mass distribution by combining information on a body's shape, gravitational field, and rotational dynamics. However, gravity data alone present a well-known ambiguity between mass magnitude and depth, making the interpretation of internal layering a complex inverse problem. 
 
-We present **SynthGen**, a code developed to **simulate the gravitational response of planetary bodies based on parametric interior models**. It exploits the spherical harmonics framework described in Wieczorek [1], through the computation of gravitational harmonic coefficients [C_{nm}, S_{nm}] which characterise the global gravitational field, thanks to the **SHTools** [2] routines. *SynthGen* takes as input a simplified multi-layer interior model, assuming them homogenous. Model parameters consist of the **number of internal layers**, their **mean thickness** and **density**, and eventually, the **topography of internal interfaces**. On the latter, several ways are implemented: sphere, polar/equatorial flattened ellipsoid, randomly generated topography, downwarded Bouguer anomaly (see Wieczorek & Phillips [2], avoiding isostacy assumptions) and finally an input user grid. Given these inputs, *SynthGen* computes the corresponding gravitational potential U, Free-Air anomalies, and Bouguer anomaly fields for the modelled body, generating full-resolution global maps.
+We present **SynthGen**, a code developed to **simulate the gravitational response of planetary bodies based on parametric interior models**. It exploits the spherical harmonics framework described in Wieczorek [1], through the computation of gravitational harmonic coefficients [C_{nm}, S_{nm}] which characterise the global gravitational field, thanks to the **SHTools** [2] routines. *SynthGen* takes as input a simplified multi-layer interior model, assuming them homogenous. Model parameters consist of the **number of internal layers**, their **mean thickness** and **density**, and eventually, the **topography of internal interfaces**. On the latter, several ways are implemented: sphere, polar/equatorial flattened ellipsoid, randomly generated topography, downwarded Bouguer anomaly (see Wieczorek & Phillips [3], avoiding isostacy assumptions) and finally an input user grid. Given these inputs, *SynthGen* computes the corresponding gravitational potential U, Free-Air anomalies, and Bouguer anomaly fields for the modelled body, generating full-resolution global maps.
 
 *SynthGen* outputs can be used in two ways: 
 1) If it is used to simulate a **known body**, so a gravity model is already available, the synthetic results can be compared to the real measurements, assessing the validity of the evaluated interior model and measuring its performance through different metrics. In this case, *SynthGen* performed an **automated parameter-space exploration** (controlled by the user). By randomly sampling model parameters within physically plausible bounds that it is user-configurable (constrained by the satisfaction of the conservation of total mass and moment of inertia, together with external shape constraints), it iteratively evaluates a wide range of configurations. The optimal internal structure is determined by identifying the parameter set that minimises discrepancies between simulated and observed gravitational data. This is performed through a suite of statistical metrics (e.g. RMSE, MAE, R2, SSIM, NCC, PSNR, etc.), finally combined into one.
 
-2) In addition to this procedure, *SynthGen* can be used predictively in case of an **“unmeasured” body**. It enables forward modelling of gravitational signals expected from future targets (for example Ganymede, for ESA’s JUICE mission). It can thus serve as a valuable tool for **testing theoretical interior structures** and simulating their measurable gravitational signatures.
+2) In addition to this procedure, *SynthGen* can be used predictively in case of an **“unmeasured” body**. It enables forward modelling of gravitational signals expected from future targets (for example, Ganymede, for ESA’s JUICE mission). It can thus serve as a valuable tool for **testing theoretical interior structures** and simulating their measurable gravitational signatures.
 
 By combining analytical modelling, numerical efficiency, and flexibility across planetary scenarios, *SynthGen* offers a useful platform for planetary interior investigations from the gravitational point of view. It can handle various planetary shapes, datasets, and scientific objectives, and it is user configurable, together with already implemented configuration files for **Mercury, Venus, Earth and Moon, together with a model of Ganymede**.
 
@@ -59,14 +59,14 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | ref_mass          | 3.301e+23            | kg           | Reference mass                              |
 | ref_rho           | 5427                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.34597              | (I/MR²)      | Moment of inertia factor (Margot et al 2018)|
+| ref_MoI           | 0.34597              | (I/MR²)      | Moment of inertia factor [6]|
 | r_e_fact          | 1.0005               | -            | Equatorial flattening factor                |
 | r_p_fact          | 0.9995               | -            | Polar flattening factor                     |
 
 ### Data Files
 | Data Type   | File Path                                      | Format   | Header | Reference                        |
 |-------------|------------------------------------------------|----------|--------|------------------------------|
-| Gravity     | HgM009.sha                 | shtools  | True   | A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, 2023, doi: 10.1016/j.icarus.2022.115332.          |
+| Gravity     | HgM009.sha                 | shtools  | True   | [4] A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, 2023, doi: 10.1016/j.icarus.2022.115332.          |
 | Topography  | gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
 
 - **Bouguer density:** 2900 kg/m³  
@@ -81,8 +81,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Mantle      | 3200            | 2404            | downwarded Bouguer anomalies|
 | Crust      | 2900            | 2439.4            | surface|
 
-#### 4 Layers 
-J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury’s Internal Structure’, 2018, pp. 85–113. doi: 10.1017/9781316650684.005
+#### 4 Layers [6]
 | Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
 |--------|--------------------------|-------------------------|-------------------------------|
 | Inner Core      | 8652.52            | 666.577            | sphere|
@@ -220,7 +219,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | ref_mass          | 1.48e+23             | kg           | Reference mass                              |
 | ref_rho           | 1942                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor (Schubert, Anderson, Spohn, McKinnon, 2004) |                 |
+| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor [8] |                 |
 | r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
 | r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
 
@@ -234,16 +233,16 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 - **Crustal thickness filter (n_half):** 25
 
 ### Implemented Interior Models
-#### 7 Layers
-| Layer           | Density (kg/m³) | Radius (km) | Interface Type |
-|-----------------|-----------------|-------------|---------------|
-| Core            | 8000            | 570         | sphere        |
-| Mantle         | 3400            | 1820        | sphere        |
-| Crust         | 3100            | 1870        | rng           |
-| Ice VI         | 1320            | 2000        | sphere        |
-| Ice V         | 1235            | 2280        | sphere        |
-| Ocean         | 1100            | 2460        | sphere        |
-| Ice I       | 920             | 2631.2      | surface(rng)       |
+#### 7 Layers [7]
+| Layer           | Density (kg/m³) | Radius (km) | Interface Type | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Core            | 8000            | 570         | sphere        |-        |
+| Mantle         | 3400            | 1820        | sphere        |-        |
+| Crust         | 3100            | 1870        | rng           |$\Delta H$ = 20 km        |
+| Ice VI         | 1320            | 2000        | sphere        |-        |
+| Ice V         | 1235            | 2280        | sphere        |-        |
+| Ocean         | 1100            | 2460        | sphere        |-        |
+| Ice I       | 920             | 2631.2      | rng       |$\Delta H$ = 10 km        |
 
 
 
@@ -254,6 +253,13 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 ## Libraries
 - **main_library.py**: Core library containing all main functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project. Each function is provided with documentation and help for the input variables
 - **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models. See also the previous dataset section (Moon interior models is WIP).
+  - *interface_type*: choice options for the interface topographies:
+    - `sph`          = perfect sphere (no topography);
+    - `sphflat`      = flattened spheroid, from scaling the global flattening to the interface depth;
+    - `rng`          = random generated topography following Kaula's rule ($l^{-2}$) *$(R_i/R)^l$; the $\Delta H$ can be set in the additional info array;
+    - `custom`       = topography from datafile provided by user: user's responsibility to match the right resolution (same l_max); put the filename (and path) in the additional info array;
+    - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array)
+    - `surf`         = surface topography from main datafile.
 - **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
  
 ## Scripts
@@ -323,6 +329,19 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
       - `NCC` = Normalized Cross-Correlation;
     - `threshold_arr` = array of thresholds to select the top % models
     
+
+
+
+
+# References
+* [1] M. A. Wieczorek, "Gravity and Topography of the Terrestrial Planets", in Treatise on Geophysics, Elsevier, 2015, pp. 153–193. doi:10.1016/B978-0-444-53802-4.00169-X
+* [2] M A. Wieczorek and Matthias Meschede (2018). “SHTools — Tools for working with spherical harmonics”, Geochemistry, Geophysics, Geosystems, 19, 2574-2592, doi:10.1029/2018GC007529.
+* [3] M. A. Wieczorek and R. J. Phillips, “Potential anomalies on a sphere: Applications to the thickness of the lunar crust”, JGR: Planets, vol. 103, no. E1, pp. 1715–1724, 1998. doi:10.1029/97JE03136
+* [4] A. Genova et al., “Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data”, Icarus, vol. 391, p. 115332, 2023.
+* [5] A. Rivoldini, T. Van Hoolst, “The interior structure of Mercury constrained by the low-degree gravity field and the rotation of Mercury”, Earth and Planetary Science Letters, 2013, https://doi.org/10.1016/j.epsl.2013.07.021.
+* [6] J. L. Margot, et al. "Mercury's internal structure." arXiv preprint arXiv:1806.02024 (2018).
+* [7] D. M. Fabrizio et al., ‘Observability of Ganymede’s gravity anomalies related to surface features by the 3GM experiment onboard ESA’s JUpiter ICy moons Explorer (JUICE) mission’, Icarus, 2021.
+* [8] Schubert, G., & Anderson, J. (2004). Interior composition, structure and dynamics of the galilean satellites. Jupiter: The planet, satellites and magnetosphere, 1 ,281–306.
 
 
 

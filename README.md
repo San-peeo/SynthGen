@@ -55,7 +55,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 2439.4               | km           | Reference radius                            |
-| GM_const          | 2.2031863566e+13     | m³/s²        | Gravitational constant                      |
+| GM_const          | 2.2031863566e+13     | m³/s²        | Standard gravitational parameter            |
 | ref_mass          | 3.301e+23            | kg           | Reference mass                              |
 | ref_rho           | 5427                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
@@ -99,7 +99,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 6051.8               | km           | Reference radius                            |
-| GM_const          | 3.248585920790000e+14| m³/s²        | Gravitational constant                      |
+| GM_const          | 3.248585920790000e+14| m³/s²        | Standard gravitational parameter            |
 | ref_mass          | 4.8673e+24           | kg           | Reference mass                              |
 | ref_rho           | 5243                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 3.232e-07            | rad/s        | Angular velocity                            |
@@ -133,7 +133,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 6378.137             | km           | Reference radius                            |
-| GM_const          | 3.986004418e+14      | m³/s²        | Gravitational constant                      |
+| GM_const          | 3.986004418e+14      | m³/s²        | Standard gravitational parameter            |
 | ref_mass          | 5.9722e+24           | kg           | Reference mass                              |
 | ref_rho           | 5514                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 1.992e-07            | rad/s        | Angular velocity                            |
@@ -181,7 +181,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 1738.1               | km           | Reference radius                            |
-| GM_const          | 4.9028001218467998e+12| m³/s²       | Gravitational constant                      |
+| GM_const          | 4.9028001218467998e+12| m³/s²       | Standard gravitational parameter            |
 | ref_mass          | 0.07346e+24          | kg           | Reference mass                              |
 | ref_rho           | 3344                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 2.7e-06              | rad/s        | Angular velocity                            |
@@ -216,7 +216,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 | Parameter         | Value                | Unit         | Description                                 |
 |-------------------|----------------------|--------------|---------------------------------------------|
 | ref_radius        | 2631.2               | km           | Reference radius                            |
-| GM_const          | 9.8780e+12           | m³/s²        | Gravitational constant                      |
+| GM_const          | 9.8780e+12           | m³/s²        | Standard gravitational parameter            |
 | ref_mass          | 1.48e+23             | kg           | Reference mass                              |
 | ref_rho           | 1942                 | kg/m³        | Mean density                                |
 | ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |

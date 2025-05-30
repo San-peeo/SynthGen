@@ -235,15 +235,15 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, ‘Mercury�
 
 ### Implemented Interior Models
 #### 7 Layers
-| Layer           | Density (kg/m³) | Radius (km) | Interface Type |
-|-----------------|-----------------|-------------|---------------|
-| Core            | 8000            | 570         | sphere        |
-| Mantle         | 3400            | 1820        | sphere        |
-| Crust         | 3100            | 1870        | rng           |
-| Ice VI         | 1320            | 2000        | sphere        |
-| Ice V         | 1235            | 2280        | sphere        |
-| Ocean         | 1100            | 2460        | sphere        |
-| Ice I       | 920             | 2631.2      | surface(rng)       |
+| Layer           | Density (kg/m³) | Radius (km) | Interface Type | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Core            | 8000            | 570         | sphere        |-        |
+| Mantle         | 3400            | 1820        | sphere        |-        |
+| Crust         | 3100            | 1870        | rng           |\Delta H = 20 km        |
+| Ice VI         | 1320            | 2000        | sphere        |-        |
+| Ice V         | 1235            | 2280        | sphere        |-        |
+| Ocean         | 1100            | 2460        | sphere        |-        |
+| Ice I       | 920             | 2631.2      | rng       |\Delta H = 10 km        |
 
 
 

@@ -663,6 +663,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,filter_deg
                   [0] - rho_layers: list of average densities for each layer    [kg/m^3]
                   [1] - radius_layers: list of radii for each layer interface   [km]
                   [2] - interface_type: list of interface types for each layer  [string]
+                  [3] - interface_addinfo: additional info for RNG and custom option  
     n_max       : int
                   Maximum degree of spherical harmonics expansion
     coeffs_grav : pyshtools.SHGravCoeffs

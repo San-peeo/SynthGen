@@ -257,7 +257,7 @@ J.-L. Margot, S. A. H. II, E. Mazarico, S. Padovan, and S. J. Peale, â€˜Mercuryâ
   - *interface_type*: choice options for the interface topographies:
     - `sph`          = perfect sphere (no topography);
     - `sphflat`      = flattened spheroid, from scaling the global flattening to the interface depth;
-    - `rng`          = random generated topography following Kaula's rule ($l^{-2}$) + $(R_i/R)^l$; the $\Delta H$ can be set in the additional info array;
+    - `rng`          = random generated topography following Kaula's rule ($l^{-2}$) *$(R_i/R)^l$; the $\Delta H$ can be set in the additional info array;
     - `custom`       = topography from datafile provided by user: user's responsibility to match the right resolution (same l_max); put the filename (and path) in the additional info array;
     - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array)
     - `surf`         = surface topography from main datafile.

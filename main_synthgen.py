@@ -3,7 +3,7 @@ from Planets_ConfigFiles import *
 
 plt.ion()
 
-
+FreeMemory()
 
 ########################################################################################################
 ########################################################################################################
@@ -18,13 +18,13 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 4
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 7
 n_min         = 0
 n_max         = 150
 r             = 2631.2*1e+3
 i_max         = 7
-mode          = 'layer'              # 'layer','interface'
+mode          = 'interface'              # 'layer','interface'
 load_opt      = False
 save_opt      = 'all'            # None,'all', 'total'
 

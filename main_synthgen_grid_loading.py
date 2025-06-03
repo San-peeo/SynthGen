@@ -1,9 +1,9 @@
-from main_library import *
+from main_libxrary import *
 from Planets_ConfigFiles import *
 
 plt.ion()
 
-
+FreeMemory()
 
 ########################################################################################################
 ########################################################################################################
@@ -24,7 +24,7 @@ n_min         = 0
 n_max         = 150
 radius        = 2440.0*1e+3
 i_max         = 7
-load_opt      = True
+load_opt      = False
 plot_opt      = 'all'               # 'all','top'        
 
 # Metrics choices:
@@ -63,11 +63,12 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 
 # Extract useful parameters
 rho_boug        = param_body[7]
-n_half          = param_body[8]
+
 
 rho_layers      = param_int[0]
 radius_layers   = param_int[1]
 interface_type  = param_int[2]
+interface_info  = param_int[3]
 
 
 print(" ")

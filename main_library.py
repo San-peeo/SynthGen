@@ -866,7 +866,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
             # Interface generation   
             else: 
 
-                if interface == 'surf':
+                if interface == 'surf' or i==n_layers-1:
                     coeffs_i = pysh.SHGravCoeffs.from_shape(shape=surf*1e+3, rho=rho_layers[i],
                                                                         lmax=n_max, nmax=i_max, gm=coeffs_grav.gm)
                 elif interface == 'sph':
@@ -920,8 +920,8 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
         if save_opt=='total' or save_opt=='all': coeffs_tot.to_file(saving_dir+"/coeffs_tot.dat")
 
         if verbose_opt:
-            print("Synthetic Generation done")
-            print("Total's mass: " + str(np.array(M_layer).sum()) + " kg\n")
+            print("Synthetic Generation: DONE")
+            # print("Total's mass: " + str(np.array(M_layer).sum()) + " kg\n")
             print("Synthetic coefficients saved in: " + saving_dir + '\n')
             print(" ")
             print("# ------------------------------------------------------------------------------------------------------\n")
@@ -1289,6 +1289,8 @@ def FreeMemory(verbose_opt=False):
 ##########################################################################################################################
 
 def Corr2_Edo(A,B):
+
+    # Manually calculate the correlation coefficient between two matrices A and B.
 
 
     # Detrending:

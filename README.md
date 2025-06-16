@@ -251,7 +251,16 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 # Code Description
 
 ## Libraries
-- **main_library.py**: Core library containing all main functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project. Each function is provided with documentation and help for the input variables
+- **lib**: Core library main folder, containing all functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project, divided between subdirectories:
+  - globe_analysis = functions for globe analysis, managing datafile and coefficients, plus Spectrum and Crust Thickness evaluations;
+  - io = input and config datafile, with planets models implementation (see *Planets_ConfigFiles.py*);
+  - synthgen = main SynthGen function;
+  - grid = setting up random search grid and metrics analysis of the grid results;
+  - misc = miscellaneous function, like custom Map Plotting or M-MoI solver;
+  - utils = Python utilities (e.g. freeing memory);
+  - *lib_dep.py* = dependencies and required Python packages.
+    Each function is provided with documentation and help for the input variables
+- **main_lib.py**: Import file from `lib` directory
 - **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models. See also the previous dataset section (Moon interior models is WIP).
   - *interface_type*: choice options for the interface topographies:
     - `sph`          = perfect sphere (no topography);

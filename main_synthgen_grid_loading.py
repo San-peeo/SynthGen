@@ -1,5 +1,5 @@
-from main_libxrary import *
-from Planets_ConfigFiles import *
+from model_lib import *
+
 
 plt.ion()
 
@@ -24,7 +24,7 @@ n_min         = 0
 n_max         = 150
 radius        = 2440.0*1e+3
 i_max         = 7
-load_opt      = False
+load_opt      = True
 plot_opt      = 'all'               # 'all','top'        
 
 # Metrics choices:
@@ -263,8 +263,18 @@ for i in range(n_layers):
 
 
 
-coeffs_tot = pysh.SHGravCoeffs.from_file(models_dir+top_dir+'/coeffs_tot.dat')
-coeffs_tot.name = 'SynthGen top$\%$ (' + str(n_layers) + ' layers)'
+
+if os.path.isfile(models_dir+top_dir+'/coeffs_topo.dat'):
+    coeffs_tot = pysh.SHGravCoeffs.from_file(models_dir+top_dir+'/coeffs_tot.dat')
+    coeffs_tot.name = 'SynthGen top$\%$ (' + str(n_layers) + ' layers)'
+else:
+    param_int[0] = top_rho
+    param_int[1] = top_radius
+    param_int[2] = interface_type
+    param_int[3] = top_nhalf
+    coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode='layer',
+                                        save_opt=True,plot_opt=False,load_opt=False,verbose_opt=False)
+   
 
 # SynthGen top model (U, H, FreeAir, Bouguer):
 U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=3-1,n_max=n_max,r=radius,rho_boug=rho_boug,

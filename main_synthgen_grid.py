@@ -1,5 +1,5 @@
-from main_library import *
-from Planets_ConfigFiles import *
+from model_lib import *
+
 
 plt.ion()
 
@@ -19,12 +19,12 @@ tracemalloc.start()
 # Set up the parameters:
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 3
+n_layers      = 4
 n_min         = 0
 n_max         = 150
 r             = 2440.0*1e+3
 i_max         = 7
-load_opt      = True
+load_opt      = False
 save_opt      = 'total'
 proj_opt      = ccrs.Mollweide()
 

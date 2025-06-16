@@ -562,7 +562,7 @@ class Ganymede_ConfigFile():
             case 7:                     
 
                 rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
-                radius_layers   = [570,1820,1970,2000,2280,2460,2631.2]
+                radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]
                 interface_type  = ['sph','sph','rng','sph','sph','sph','rng']
 
                 # Additional information for the interface (rng or custom)

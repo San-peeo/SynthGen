@@ -70,24 +70,24 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Topography  | gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
 
 - **Bouguer density:** 2900 kg/m³  
-- **Crustal thickness filter (n_half):** 40
+- **Crustal thickness filter ($l_{half}$):** 40
 
 ### Implemented Interior Models
 
 #### 3 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| Core      | 6992            | 2039            | polar flattened sphere|
-| Mantle      | 3200            | 2404            | downwarded Bouguer anomalies|
-| Crust      | 2900            | 2439.4            | surface|
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Core      | 6992            | 2039            | polar flattened sphere| - |
+| Mantle      | 3200            | 2404            | downwarded Bouguer anomalies| $l_{half}$=40 |
+| Crust      | 2900            | 2439.4            | surface| - |
 
 #### 4 Layers [6]
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| Inner Core      | 8652.52            | 666.577            | sphere|
-| Outer Core      | 6909.98            | 2023.66            | polar flattened sphere|
-| Mantle      | 3343.35            |  2402.61            | downwarded Bouguer anomalies|
-| Crust      | 2903.03            | 2439.4            | surface|
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Inner Core      | 8652.52            | 666.577            | sphere| - |
+| Outer Core      | 6909.98            | 2023.66            | polar flattened sphere| - |
+| Mantle      | 3343.35            |  2402.61            | downwarded Bouguer anomalies| $l_{half}$=40 |
+| Crust      | 2903.03            | 2439.4            | surface| - |
 
 
 
@@ -113,15 +113,15 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Topography  | VenusTopo719.shape               | shtools  | False  | Wieczorek, M. A. (2015). Spherical harmonic model of the planet Venus: VenusTopo719 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.3870926 |
 
 - **Bouguer density:** 2800 kg/m³  
-- **Crustal thickness filter (n_half):** 80
+- **Crustal thickness filter ($l_{half}$):** 80
 
 ### Implemented Interior Models
 #### 3 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| Core      | 13000            | 3200            | polar flattened sphere|
-| Mantle      | 3300            | 6020            | downwarded Bouguer anomalies|
-| Crust      | 2800            | 6051.8          | surface|
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Core      | 13000            | 3200            | polar flattened sphere| - |
+| Mantle      | 3300            | 6020            | downwarded Bouguer anomalies| $l_{half}$ = 80 |
+| Crust      | 2800            | 6051.8          | surface| - |
 
 
 
@@ -147,29 +147,29 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  | Hirt, C. and M. Rexer (2015), Earth2014: 1 arc-min shape, topography, bedrock and  ice-sheet models - available as gridded data and degree-10,800 spherical harmonics, International Journal of Applied Earth Observation and Geoinformation, doi:10. 10.1016/j.jag.2015.03.001.|
 
 - **Bouguer density:** 1800 kg/m³  
-- **Crustal thickness filter (n_half):** 80
+- **Crustal thickness filter ($l_{half}$):** 80
 
 ### Implemented Interior Models
 #### 5 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| Inner Core      | 13088.5            | 1221.5            | sphere|
-| Outer Core      | 12581.5            | 3480.0            | polar flattened sphere|
-| Lower Mantle    | 7956.5             | 5701.0            | polar flattened sphere|
-| Upper Mantle    | 7090.9             | 6151.0            | polar flattened sphere|
-| Crust           | 2800               | 6371.0            | surface|
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Inner Core      | 13088.5            | 1221.5            | sphere| - |
+| Outer Core      | 12581.5            | 3480.0            | polar flattened sphere| - |
+| Lower Mantle    | 7956.5             | 5701.0            | polar flattened sphere| - |
+| Upper Mantle    | 7090.9             | 6151.0            | downwarded Bouguer anomalies| $l_{half}$=80 |
+| Crust           | 2800               | 6371.0            | surface| - |
 
 #### 8 Layers 
-| Layer           | Density (kg/m³) | Radius (km) | Interface Type              |
-|-----------------|-----------------|-------------|-----------------------------|
-| Inner Core      | 13088.5         | 1221.5      | sphere                      |
-| Outer Core      | 12581.5         | 3480.0      | polar flattened sphere      |
-| Lower Mantle    | 7956.5          | 5701.0      | polar flattened sphere      |
-| Upper Mantle    | 7090.9          | 6151.0      | polar flattened sphere      |
-| Transition Zone | 2691.0          | 6346.0      | downwarded Bouguer anomalies|
-| Lower Crust     | 2900            | 6356.0      | polar flattened sphere      |
-| Upper Crust     | 2600            | 6368.0      | surface                     |
-| Sediments       | 1020            | 6371.0      | surface                     |
+| Layer           | Density (kg/m³) | Radius (km) | Interface Type              |Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Inner Core      | 13088.5         | 1221.5      | sphere                      | - |
+| Outer Core      | 12581.5         | 3480.0      | polar flattened sphere      | - |
+| Lower Mantle    | 7956.5          | 5701.0      | polar flattened sphere      | - |
+| Upper Mantle    | 7090.9          | 6151.0      | polar flattened sphere      | - |
+| Transition Zone | 2691.0          | 6346.0      | downwarded Bouguer anomalies| $l_{half}$=80 |
+| Lower Crust     | 2900            | 6356.0      | polar flattened sphere      | - |
+| Upper Crust     | 2600            | 6368.0      | surface                     | - |
+| Sediments       | 1020            | 6371.0      | surface                     | - |
 
 
 
@@ -195,16 +195,16 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Topography  | MoonTopo2600p.shape              | shtools  | False  |M. A. Wieczorek, «Spherical harmonic model of the shape of Earth's Moon: MoonTopo2600p». Zenodo, 2015. doi: 10.5281/zenodo.3870924.|
 
 - **Bouguer density:** 2900 kg/m³  
-- **Crustal thickness filter (n_half):** 40
+- **Crustal thickness filter ($l_{half}$):** 40
 
 ### Implemented Interior Models
 #### 4 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | 
-|--------|--------------------------|-------------------------|-------------------------------|
-| Inner Core      | 0            | 0            | sphere|
-| Outer Core      | 0            | 0            | sphere|
-| Mantle    | 0            | 0           | sphere|
-| Crust    | 0            | 0           | sphere|
+| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
+|-----------------|-----------------|-------------|---------------|---------------|
+| Inner Core      | 0            | 0            | sphere| - |
+| Outer Core      | 0            | 0            | sphere| - |
+| Mantle    | 0            | 0           | sphere| - |
+| Crust    | 0            | 0           | sphere| - |
 
 
 
@@ -230,7 +230,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Topography  | None                             | shtools  | False  |                              |
 
 - **Bouguer density:** 920 kg/m³  
-- **Crustal thickness filter (n_half):** 25
+- **Crustal thickness filter ($l_{half}$):** 25
 
 ### Implemented Interior Models
 #### 7 Layers [7]
@@ -268,7 +268,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
     - `sphflat`      = flattened spheroid, from scaling the global flattening to the interface depth;
     - `rng`          = random generated topography following Kaula's rule ($l^{-2}$) *$(R_i/R)^l$; the $\Delta H$ can be set in the additional info array;
     - `custom`       = topography from datafile provided by user: user's responsibility to match the right resolution (same l_max); put the filename (and path) in the additional info array;
-    - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array)
+    - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array $l_{half}$)
     - `surf`         = surface topography from main datafile.
     
 - **requirements.txt**: Lists all Python package dependencies and their required versions for the project.

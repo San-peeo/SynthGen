@@ -251,7 +251,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 # Code Description
 
 ## Libraries
-- **lib**: Core library main folder, containing all functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project, divided between subdirectories:
+- **lib**: Core library main folder, containing all functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project, Each function is provided with documentation and help for the input variables and is divided between subdirectories:
   - globe_analysis = functions for globe analysis, managing datafile and coefficients, plus Spectrum and Crust Thickness evaluations;
   - io = input and config datafile, with planets models implementation (see *Planets_ConfigFiles.py*);
   - synthgen = main SynthGen function;
@@ -259,8 +259,9 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
   - misc = miscellaneous function, like custom Map Plotting or M-MoI solver;
   - utils = Python utilities (e.g. freeing memory);
   - *lib_dep.py* = dependencies and required Python packages.
-    Each function is provided with documentation and help for the input variables
+
 - **main_lib.py**: Import file from `lib` directory
+  
 - **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models. See also the previous dataset section (Moon interior models is WIP).
   - *interface_type*: choice options for the interface topographies:
     - `sph`          = perfect sphere (no topography);
@@ -269,6 +270,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
     - `custom`       = topography from datafile provided by user: user's responsibility to match the right resolution (same l_max); put the filename (and path) in the additional info array;
     - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array)
     - `surf`         = surface topography from main datafile.
+    
 - **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
  
 ## Scripts

@@ -202,9 +202,9 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 | Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
 |-----------------|-----------------|-------------|---------------|---------------|
 | Inner Core      | 0            | 0            | sphere| - |
-| Outer Core      | 0            | 0            | sphere| - |
-| Mantle    | 0            | 0           | sphere| - |
-| Crust    | 0            | 0           | sphere| - |
+| Outer Core      | 0            | 0            | polar flattened sphere| - |
+| Mantle    | 0            | 0           | downwarded Bouguer anomalies| $l_{half}$=40 |
+| Crust    | 0            | 0           | surface| - |
 
 
 

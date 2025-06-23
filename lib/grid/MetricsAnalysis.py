@@ -28,8 +28,8 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
                    If False, compute metrics from the GRID models (see models_dir).
     saving_dir   : str
                    Directory where metrics and parameters are saved or loaded from.
-    models_dir   : str
-                   Directory containing GRID subdirectories with synthetic model data.
+    models_dir   : str or list (of str)
+                   Directory/List of directories containing GRID subdirectories with synthetic model data.
     real_matrix  : list
                    List of real data matrices:
                    - [0]: U_matrix_real (Gravitational potential)
@@ -152,77 +152,169 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
         radius_rng_arr  = []
         nhalf_rng_arr   = []
 
-        FreeMemory()
-        # Loop over the sub-directories:
-        for counter, subdir in tqdm(enumerate(os.listdir(models_dir)), total=len(os.listdir(models_dir))):
+     # ------------------------------------------------------------------------------------------------------
+    # If models_dir is a list of directories:
 
-            # memory leak issues:
-            if counter % 100 == 0:
+
+        if type(models_dir) is list:
+            for dir in models_dir:
+                print("Analysing directory: ", dir)
                 FreeMemory()
+                # Loop over the sub-directories:
+                for counter, subdir in tqdm(enumerate(os.listdir(dir)), total=len(os.listdir(dir))):
+
+                    # memory leak issues:
+                    if counter % 100 == 0:
+                        FreeMemory()
 
 
-            # Loading SynthGen coefficients:
-            coeffs_tot=pysh.SHGravCoeffs.from_file(models_dir+subdir+'/coeffs_tot.dat')
+                    # Loading SynthGen coefficients:
+                    coeffs_tot=pysh.SHGravCoeffs.from_file(dir+subdir+'/coeffs_tot.dat')
 
 
-            # Global analysis (U, H, FreeAir, Bouguer):
-            U_matrix,_,deltag_freeair,deltag_boug=Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,
-                                                                  r=r,rho_boug=rho_boug,
-                                                                  i_max=i_max,plot_opt=None,load_opt=False,verbose_opt=False)
-            # Spectrum analysis:
-            spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
-                                        save_opt=None,load_opt=load_opt,verbose_opt=False)
+                    # Global analysis (U, H, FreeAir, Bouguer):
+                    U_matrix,_,deltag_freeair,deltag_boug=Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,
+                                                                        r=r,rho_boug=rho_boug,
+                                                                        i_max=i_max,plot_opt=None,load_opt=False,verbose_opt=False)
+                    # Spectrum analysis:
+                    spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
+                                                save_opt=None,load_opt=load_opt,verbose_opt=False)
 
 
-            # Evaluate metrics:
-            if "Delta_mean" in metrics_list:
-                delta_U_mean.append(np.mean(U_matrix_real-U_matrix.data))
-                delta_FreeAir_mean.append(np.mean(deltag_freeair_real-deltag_freeair.data))
-                delta_Bouguer_mean.append(np.mean(deltag_boug_real-deltag_boug.data))
-            if "Delta_std" in metrics_list:
-                delta_U_std.append(np.std(U_matrix_real-U_matrix.data))
-                delta_FreeAir_std.append(np.std(deltag_freeair_real-deltag_freeair.data))
-                delta_Bouguer_std.append(np.std(deltag_boug_real-deltag_boug.data))
-            if "RMSE" in metrics_list:
-                RMSE_U.append(sklearn.metrics.root_mean_squared_error(U_matrix_real,U_matrix.data))
-                RMSE_FreeAir.append(sklearn.metrics.root_mean_squared_error(deltag_freeair_real,deltag_freeair.data))
-                RMSE_Bouguer.append(sklearn.metrics.root_mean_squared_error(deltag_boug_real,deltag_boug.data))
-            if "MAE" in metrics_list:
-                MAE_U.append(np.mean(np.abs(U_matrix_real-U_matrix.data)))
-                MAE_FreeAir.append(np.mean(np.abs(deltag_freeair_real-deltag_freeair.data)))
-                MAE_Bouguer.append(np.mean(np.abs(deltag_boug_real-deltag_boug.data)))
-            if "R^2" in metrics_list:
-                R2_U.append(Corr2_Edo(U_matrix_real.flatten(),U_matrix.data.flatten()))
-                R2_FreeAir.append(Corr2_Edo(deltag_freeair_real.flatten(),deltag_freeair.data.flatten()))
-                R2_Bouguer.append(Corr2_Edo(deltag_boug_real.flatten(),deltag_boug.data.flatten())) 
-            if "SSIM" in metrics_list:
-                ssim_U.append(skimage.metrics.structural_similarity(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
-                ssim_FreeAir.append(skimage.metrics.structural_similarity(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
-                ssim_Bouguer.append(skimage.metrics.structural_similarity(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
-            if "PSNR" in metrics_list:
-                psnr_U.append(skimage.metrics.peak_signal_noise_ratio(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
-                psnr_FreeAir.append(skimage.metrics.peak_signal_noise_ratio(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
-                psnr_Bouguer.append(skimage.metrics.peak_signal_noise_ratio(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
-            if "NCC" in metrics_list:
-                U_matrix_real_mean = U_matrix_real - np.mean(U_matrix_real)
-                U_matrix_mean = U_matrix.data - np.mean(U_matrix.data)
-                deltag_freeair_real_mean = deltag_freeair_real - np.mean(deltag_freeair_real)
-                deltag_freeair_mean = deltag_freeair.data - np.mean(deltag_freeair.data)
-                deltag_boug_real_mean = deltag_boug_real - np.mean(deltag_boug_real)
-                deltag_boug_mean = deltag_boug.data - np.mean(deltag_boug.data)
-                ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean**2)) * np.sqrt(np.sum(U_matrix_mean**2))))
-                ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean**2)) * np.sqrt(np.sum(deltag_freeair_mean**2))))
-                ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean**2)) * np.sqrt(np.sum(deltag_boug_mean**2))))
-                
-            # if "spectrum" in metrics_list:
-            #     spectrum_ratio.append(np.mean(spectrum_real/spectrum_synth))
+                    # Evaluate metrics:
+                    if "Delta_mean" in metrics_list:
+                        delta_U_mean.append(np.mean(U_matrix_real-U_matrix.data))
+                        delta_FreeAir_mean.append(np.mean(deltag_freeair_real-deltag_freeair.data))
+                        delta_Bouguer_mean.append(np.mean(deltag_boug_real-deltag_boug.data))
+                    if "Delta_std" in metrics_list:
+                        delta_U_std.append(np.std(U_matrix_real-U_matrix.data))
+                        delta_FreeAir_std.append(np.std(deltag_freeair_real-deltag_freeair.data))
+                        delta_Bouguer_std.append(np.std(deltag_boug_real-deltag_boug.data))
+                    if "RMSE" in metrics_list:
+                        RMSE_U.append(sklearn.metrics.root_mean_squared_error(U_matrix_real,U_matrix.data))
+                        RMSE_FreeAir.append(sklearn.metrics.root_mean_squared_error(deltag_freeair_real,deltag_freeair.data))
+                        RMSE_Bouguer.append(sklearn.metrics.root_mean_squared_error(deltag_boug_real,deltag_boug.data))
+                    if "MAE" in metrics_list:
+                        MAE_U.append(np.mean(np.abs(U_matrix_real-U_matrix.data)))
+                        MAE_FreeAir.append(np.mean(np.abs(deltag_freeair_real-deltag_freeair.data)))
+                        MAE_Bouguer.append(np.mean(np.abs(deltag_boug_real-deltag_boug.data)))
+                    if "R^2" in metrics_list:
+                        R2_U.append(Corr2_Edo(U_matrix_real.flatten(),U_matrix.data.flatten()))
+                        R2_FreeAir.append(Corr2_Edo(deltag_freeair_real.flatten(),deltag_freeair.data.flatten()))
+                        R2_Bouguer.append(Corr2_Edo(deltag_boug_real.flatten(),deltag_boug.data.flatten())) 
+                    if "SSIM" in metrics_list:
+                        ssim_U.append(skimage.metrics.structural_similarity(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
+                        ssim_FreeAir.append(skimage.metrics.structural_similarity(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
+                        ssim_Bouguer.append(skimage.metrics.structural_similarity(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
+                    if "PSNR" in metrics_list:
+                        psnr_U.append(skimage.metrics.peak_signal_noise_ratio(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
+                        psnr_FreeAir.append(skimage.metrics.peak_signal_noise_ratio(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
+                        psnr_Bouguer.append(skimage.metrics.peak_signal_noise_ratio(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
+                    if "NCC" in metrics_list:
+                        U_matrix_real_mean = U_matrix_real - np.mean(U_matrix_real)
+                        U_matrix_mean = U_matrix.data - np.mean(U_matrix.data)
+                        deltag_freeair_real_mean = deltag_freeair_real - np.mean(deltag_freeair_real)
+                        deltag_freeair_mean = deltag_freeair.data - np.mean(deltag_freeair.data)
+                        deltag_boug_real_mean = deltag_boug_real - np.mean(deltag_boug_real)
+                        deltag_boug_mean = deltag_boug.data - np.mean(deltag_boug.data)
+                        ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean*2)) * np.sqrt(np.sum(U_matrix_mean*2))))
+                        ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean*2)) * np.sqrt(np.sum(deltag_freeair_mean*2))))
+                        ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean*2)) * np.sqrt(np.sum(deltag_boug_mean*2))))
+                        
+                    # if "spectrum" in metrics_list:
+                    #     spectrum_ratio.append(np.mean(spectrum_real/spectrum_synth))
 
 
 
-            # Store interiors parameters:
-            rho_rng_arr.append(np.loadtxt(models_dir+subdir+'/rho_layers.dat'))
-            radius_rng_arr.append(np.loadtxt(models_dir+subdir+'/radius_layers.dat')) 
-            nhalf_rng_arr.append(np.loadtxt(models_dir+subdir+'/n_half.dat'))
+                    # Store interiors parameters:
+                    rho_rng_arr.append(np.loadtxt(dir+subdir+'/rho_layers.dat'))
+                    radius_rng_arr.append(np.loadtxt(dir+subdir+'/radius_layers.dat')) 
+                    nhalf_rng_arr.append(np.loadtxt(dir+subdir+'/n_half.dat'))
+
+
+    # ------------------------------------------------------------------------------------------------------
+    # If models_dir is a single directory:
+
+
+        else:
+            FreeMemory()
+            # Loop over the sub-directories:
+            for counter, subdir in tqdm(enumerate(os.listdir(models_dir)), total=len(os.listdir(models_dir))):
+
+                # memory leak issues:
+                if counter % 100 == 0:
+                    FreeMemory()
+
+
+                # Loading SynthGen coefficients:
+                coeffs_tot=pysh.SHGravCoeffs.from_file(models_dir+subdir+'/coeffs_tot.dat')
+
+
+                # Global analysis (U, H, FreeAir, Bouguer):
+                U_matrix,_,deltag_freeair,deltag_boug=Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,
+                                                                    r=r,rho_boug=rho_boug,
+                                                                    i_max=i_max,plot_opt=None,load_opt=False,verbose_opt=False)
+                # Spectrum analysis:
+                spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
+                                            save_opt=None,load_opt=load_opt,verbose_opt=False)
+
+
+                # Evaluate metrics:
+                if "Delta_mean" in metrics_list:
+                    delta_U_mean.append(np.mean(U_matrix_real-U_matrix.data))
+                    delta_FreeAir_mean.append(np.mean(deltag_freeair_real-deltag_freeair.data))
+                    delta_Bouguer_mean.append(np.mean(deltag_boug_real-deltag_boug.data))
+                if "Delta_std" in metrics_list:
+                    delta_U_std.append(np.std(U_matrix_real-U_matrix.data))
+                    delta_FreeAir_std.append(np.std(deltag_freeair_real-deltag_freeair.data))
+                    delta_Bouguer_std.append(np.std(deltag_boug_real-deltag_boug.data))
+                if "RMSE" in metrics_list:
+                    RMSE_U.append(sklearn.metrics.root_mean_squared_error(U_matrix_real,U_matrix.data))
+                    RMSE_FreeAir.append(sklearn.metrics.root_mean_squared_error(deltag_freeair_real,deltag_freeair.data))
+                    RMSE_Bouguer.append(sklearn.metrics.root_mean_squared_error(deltag_boug_real,deltag_boug.data))
+                if "MAE" in metrics_list:
+                    MAE_U.append(np.mean(np.abs(U_matrix_real-U_matrix.data)))
+                    MAE_FreeAir.append(np.mean(np.abs(deltag_freeair_real-deltag_freeair.data)))
+                    MAE_Bouguer.append(np.mean(np.abs(deltag_boug_real-deltag_boug.data)))
+                if "R^2" in metrics_list:
+                    R2_U.append(Corr2_Edo(U_matrix_real.flatten(),U_matrix.data.flatten()))
+                    R2_FreeAir.append(Corr2_Edo(deltag_freeair_real.flatten(),deltag_freeair.data.flatten()))
+                    R2_Bouguer.append(Corr2_Edo(deltag_boug_real.flatten(),deltag_boug.data.flatten())) 
+                if "SSIM" in metrics_list:
+                    ssim_U.append(skimage.metrics.structural_similarity(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
+                    ssim_FreeAir.append(skimage.metrics.structural_similarity(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
+                    ssim_Bouguer.append(skimage.metrics.structural_similarity(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
+                if "PSNR" in metrics_list:
+                    psnr_U.append(skimage.metrics.peak_signal_noise_ratio(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
+                    psnr_FreeAir.append(skimage.metrics.peak_signal_noise_ratio(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
+                    psnr_Bouguer.append(skimage.metrics.peak_signal_noise_ratio(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
+                if "NCC" in metrics_list:
+                    U_matrix_real_mean = U_matrix_real - np.mean(U_matrix_real)
+                    U_matrix_mean = U_matrix.data - np.mean(U_matrix.data)
+                    deltag_freeair_real_mean = deltag_freeair_real - np.mean(deltag_freeair_real)
+                    deltag_freeair_mean = deltag_freeair.data - np.mean(deltag_freeair.data)
+                    deltag_boug_real_mean = deltag_boug_real - np.mean(deltag_boug_real)
+                    deltag_boug_mean = deltag_boug.data - np.mean(deltag_boug.data)
+                    ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean*2)) * np.sqrt(np.sum(U_matrix_mean*2))))
+                    ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean*2)) * np.sqrt(np.sum(deltag_freeair_mean*2))))
+                    ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean*2)) * np.sqrt(np.sum(deltag_boug_mean*2))))
+                    
+                # if "spectrum" in metrics_list:
+                #     spectrum_ratio.append(np.mean(spectrum_real/spectrum_synth))
+
+
+
+                # Store interiors parameters:
+                rho_rng_arr.append(np.loadtxt(models_dir+subdir+'/rho_layers.dat'))
+                radius_rng_arr.append(np.loadtxt(models_dir+subdir+'/radius_layers.dat')) 
+                nhalf_rng_arr.append(np.loadtxt(models_dir+subdir+'/n_half.dat'))
+
+
+
+    # ------------------------------------------------------------------------------------------------------
+    # ------------------------------------------------------------------------------------------------------
+
+
 
 
         # Normalize the metrics:

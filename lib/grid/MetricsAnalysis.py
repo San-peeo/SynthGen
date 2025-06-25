@@ -215,9 +215,9 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
                     deltag_freeair_mean = deltag_freeair.data - np.mean(deltag_freeair.data)
                     deltag_boug_real_mean = deltag_boug_real - np.mean(deltag_boug_real)
                     deltag_boug_mean = deltag_boug.data - np.mean(deltag_boug.data)
-                    ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean*2)) * np.sqrt(np.sum(U_matrix_mean*2))))
-                    ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean*2)) * np.sqrt(np.sum(deltag_freeair_mean*2))))
-                    ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean*2)) * np.sqrt(np.sum(deltag_boug_mean*2))))
+                    ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean**2)) * np.sqrt(np.sum(U_matrix_mean**2))))
+                    ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean**2)) * np.sqrt(np.sum(deltag_freeair_mean**2))))
+                    ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean**2)) * np.sqrt(np.sum(deltag_boug_mean**2))))
                     
                 # if "spectrum" in metrics_list:
                 #     spectrum_ratio.append(np.mean(spectrum_real/spectrum_synth))
@@ -386,14 +386,7 @@ def NormalizeData_MinMax(data):
 
 def Corr2_Edo(A,B):
 
-    # Manually calculate the correlation coefficient between two matrices A and B.
-
-
-    # Detrending:
-    A -= np.mean(A)
-    B -= np.mean(B)
-
-    r = np.sum(np.sum(A*B))/np.sqrt(np.sum(np.sum(A*A))*np.sum(np.sum(B*B)))
+    r = 1 - (np.sum((B-A)**2) / np.sum((B - np.mean(B))**2))
 
     return r
 

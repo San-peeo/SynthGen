@@ -31,11 +31,11 @@ plot_opt      = 'all'               # 'all','top'
 
 # metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
 # metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
-metrics_list  = ["PSNR","SSIM","NCC"]                     
+metrics_list  = ["R^2"]                     
 
 
 # Decreasing order to see the overlapping histograms:
-threshold_arr     = [0.20,0.15]       # n%
+threshold_arr     = [0.20,0.15,0.10]       # n%
 # threshold_arr     = [0.75,0.85,0.95]       # n%
 
 

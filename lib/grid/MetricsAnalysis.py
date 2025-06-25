@@ -234,10 +234,9 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
     # ------------------------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------------------------
 
+        # Normalization of the metrics:
+        
 
-
-
-        # # Normalize the metrics:
         if "Delta_mean" in metrics_list:
         #     delta_U_mean         = NormalizeData_MinMax(np.abs(delta_U_mean))
         #     delta_FreeAir_mean   = NormalizeData_MinMax(np.abs(delta_FreeAir_mean))

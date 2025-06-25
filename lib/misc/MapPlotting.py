@@ -1,6 +1,6 @@
 from lib.lib_dep import *
 
-def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), title='', cb_label='', cmap='jet'):
+def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), title='', cb_label='', cmap='jet', clim=None):
 
     """
     Usage
@@ -26,6 +26,8 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
                   Label for the colorbar.
     cmap        : str, optional
                   Colormap for the plot (default: 'jet').
+    clim        : tuple, optional
+                  Color limits for the plot (vmin, vmax). If None, the limits are determined
 
     Output
     ----------
@@ -37,8 +39,12 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
 
     if region is None and isinstance(values, pysh.SHGrid):
         # Global map plotting through pyShtools routine
-        fig, ax = values.plot(colorbar='right',projection=proj_opt,title=title, cb_label=cb_label,cmap=cmap)
-        return fig,ax
+        if parent is not None:
+            values.plot(ax=parent[1],colorbar='right',projection=proj_opt,title=title, cb_label=cb_label,cmap=cmap,cmap_limits=clim)
+            return None
+        else:
+            fig,ax = values.plot(colorbar='right',projection=proj_opt,title=title, cb_label=cb_label,cmap=cmap,cmap_limits=clim)
+            return fig,ax
 
 
     else:  
@@ -81,9 +87,14 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
             ax.set_extent([region[0][0], region[0][1], region[1][0], region[1][1]])
 
         else:
-            values_masked = values
-            vmin = np.nanmin(values)
-            vmax = np.nanmax(values)
+            if clim is not None:
+                values_masked = values
+                vmin = np.nanmin(values)
+                vmax = np.nanmax(values)
+            else:
+                values_masked = values
+                vmin = clim[0]
+                vmax = clim[1]
 
         # Plotting
         map1 = ax.pcolormesh(lon_grid, lat_grid, values, transform=ccrs.PlateCarree(),

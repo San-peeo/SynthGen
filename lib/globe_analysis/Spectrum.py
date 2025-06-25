@@ -37,6 +37,8 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
     spectrum        : list (numpy.ndarray)
                       List of numpy arrays containing the spectrum An = sqrt((Cnm^2 + Snm^2)/(2n+1)) for all of the layers
                       and the total one. Spherical layers have zero effect.
+    fig             : matplotlib.figure.Figure
+                      Figure object containing the plot of the spectrum if plot_opt is True
     """
 
 
@@ -45,8 +47,10 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
 
 
     if plot_opt:
-        plt.figure(figsize=(9,4), constrained_layout=True)
-
+        fig = plt.figure(figsize=(9,4), constrained_layout=True)
+    else:
+        fig = None
+        
 
     degree_grav = np.arange(0,n_max+1)
 
@@ -95,7 +99,7 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
         print("# ------------------------------------------------------------------------------------------------------\n")
 
 
-    return spectrum
+    return spectrum,fig
 
 
 

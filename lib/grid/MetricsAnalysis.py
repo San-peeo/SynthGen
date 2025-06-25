@@ -155,91 +155,11 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
      # ------------------------------------------------------------------------------------------------------
     # If models_dir is a list of directories:
 
-
-        if type(models_dir) is list:
-            for dir in models_dir:
-                print("Analysing directory: ", dir)
-                FreeMemory()
-                # Loop over the sub-directories:
-                for counter, subdir in tqdm(enumerate(os.listdir(dir)), total=len(os.listdir(dir))):
-
-                    # memory leak issues:
-                    if counter % 100 == 0:
-                        FreeMemory()
-
-
-                    # Loading SynthGen coefficients:
-                    coeffs_tot=pysh.SHGravCoeffs.from_file(dir+subdir+'/coeffs_tot.dat')
-
-
-                    # Global analysis (U, H, FreeAir, Bouguer):
-                    U_matrix,_,deltag_freeair,deltag_boug=Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,
-                                                                        r=r,rho_boug=rho_boug,
-                                                                        i_max=i_max,plot_opt=None,load_opt=False,verbose_opt=False)
-                    # Spectrum analysis:
-                    spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
-                                                save_opt=None,load_opt=load_opt,verbose_opt=False)
-
-
-                    # Evaluate metrics:
-                    if "Delta_mean" in metrics_list:
-                        delta_U_mean.append(np.mean(U_matrix_real-U_matrix.data))
-                        delta_FreeAir_mean.append(np.mean(deltag_freeair_real-deltag_freeair.data))
-                        delta_Bouguer_mean.append(np.mean(deltag_boug_real-deltag_boug.data))
-                    if "Delta_std" in metrics_list:
-                        delta_U_std.append(np.std(U_matrix_real-U_matrix.data))
-                        delta_FreeAir_std.append(np.std(deltag_freeair_real-deltag_freeair.data))
-                        delta_Bouguer_std.append(np.std(deltag_boug_real-deltag_boug.data))
-                    if "RMSE" in metrics_list:
-                        RMSE_U.append(sklearn.metrics.root_mean_squared_error(U_matrix_real,U_matrix.data))
-                        RMSE_FreeAir.append(sklearn.metrics.root_mean_squared_error(deltag_freeair_real,deltag_freeair.data))
-                        RMSE_Bouguer.append(sklearn.metrics.root_mean_squared_error(deltag_boug_real,deltag_boug.data))
-                    if "MAE" in metrics_list:
-                        MAE_U.append(np.mean(np.abs(U_matrix_real-U_matrix.data)))
-                        MAE_FreeAir.append(np.mean(np.abs(deltag_freeair_real-deltag_freeair.data)))
-                        MAE_Bouguer.append(np.mean(np.abs(deltag_boug_real-deltag_boug.data)))
-                    if "R^2" in metrics_list:
-                        R2_U.append(Corr2_Edo(U_matrix_real.flatten(),U_matrix.data.flatten()))
-                        R2_FreeAir.append(Corr2_Edo(deltag_freeair_real.flatten(),deltag_freeair.data.flatten()))
-                        R2_Bouguer.append(Corr2_Edo(deltag_boug_real.flatten(),deltag_boug.data.flatten())) 
-                    if "SSIM" in metrics_list:
-                        ssim_U.append(skimage.metrics.structural_similarity(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
-                        ssim_FreeAir.append(skimage.metrics.structural_similarity(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
-                        ssim_Bouguer.append(skimage.metrics.structural_similarity(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
-                    if "PSNR" in metrics_list:
-                        psnr_U.append(skimage.metrics.peak_signal_noise_ratio(U_matrix_real,U_matrix.data, data_range=U_matrix_real.max() - U_matrix_real.min()))
-                        psnr_FreeAir.append(skimage.metrics.peak_signal_noise_ratio(deltag_freeair_real,deltag_freeair.data, data_range=deltag_freeair_real.max() - deltag_freeair_real.min()))
-                        psnr_Bouguer.append(skimage.metrics.peak_signal_noise_ratio(deltag_boug_real,deltag_boug.data, data_range=deltag_boug_real.max() - deltag_boug_real.min()))
-                    if "NCC" in metrics_list:
-                        U_matrix_real_mean = U_matrix_real - np.mean(U_matrix_real)
-                        U_matrix_mean = U_matrix.data - np.mean(U_matrix.data)
-                        deltag_freeair_real_mean = deltag_freeair_real - np.mean(deltag_freeair_real)
-                        deltag_freeair_mean = deltag_freeair.data - np.mean(deltag_freeair.data)
-                        deltag_boug_real_mean = deltag_boug_real - np.mean(deltag_boug_real)
-                        deltag_boug_mean = deltag_boug.data - np.mean(deltag_boug.data)
-                        ncc_U.append(np.sum(U_matrix_real_mean * U_matrix_mean) / (np.sqrt(np.sum(U_matrix_real_mean*2)) * np.sqrt(np.sum(U_matrix_mean*2))))
-                        ncc_FreeAir.append(np.sum(deltag_freeair_real_mean * deltag_freeair_mean) / (np.sqrt(np.sum(deltag_freeair_real_mean*2)) * np.sqrt(np.sum(deltag_freeair_mean*2))))
-                        ncc_Bouguer.append(np.sum(deltag_boug_real_mean * deltag_boug_mean) / (np.sqrt(np.sum(deltag_boug_real_mean*2)) * np.sqrt(np.sum(deltag_boug_mean*2))))
-                        
-                    # if "spectrum" in metrics_list:
-                    #     spectrum_ratio.append(np.mean(spectrum_real/spectrum_synth))
-
-
-
-                    # Store interiors parameters:
-                    rho_rng_arr.append(np.loadtxt(dir+subdir+'/rho_layers.dat'))
-                    radius_rng_arr.append(np.loadtxt(dir+subdir+'/radius_layers.dat')) 
-                    nhalf_rng_arr.append(np.loadtxt(dir+subdir+'/n_half.dat'))
-
-
-    # ------------------------------------------------------------------------------------------------------
-    # If models_dir is a single directory:
-
-
-        else:
+        for dir in models_dir:
+            print("Analysing directory: ", dir)
             FreeMemory()
             # Loop over the sub-directories:
-            for counter, subdir in tqdm(enumerate(os.listdir(models_dir)), total=len(os.listdir(models_dir))):
+            for counter, subdir in tqdm(enumerate(os.listdir(dir)), total=len(os.listdir(dir))):
 
                 # memory leak issues:
                 if counter % 100 == 0:
@@ -247,16 +167,16 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
 
 
                 # Loading SynthGen coefficients:
-                coeffs_tot=pysh.SHGravCoeffs.from_file(models_dir+subdir+'/coeffs_tot.dat')
+                coeffs_tot=pysh.SHGravCoeffs.from_file(dir+subdir+'/coeffs_tot.dat')
 
 
                 # Global analysis (U, H, FreeAir, Bouguer):
                 U_matrix,_,deltag_freeair,deltag_boug=Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,
                                                                     r=r,rho_boug=rho_boug,
                                                                     i_max=i_max,plot_opt=None,load_opt=False,verbose_opt=False)
-                # Spectrum analysis:
-                spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
-                                            save_opt=None,load_opt=load_opt,verbose_opt=False)
+                # # Spectrum analysis:
+                # spectrum_synth = Spectrum(coeffs=[coeffs_tot],n_min=n_min,n_max=n_max,
+                #                             save_opt=None,load_opt=load_opt,verbose_opt=False)
 
 
                 # Evaluate metrics:
@@ -305,89 +225,88 @@ def MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir, real_matrix,
 
 
                 # Store interiors parameters:
-                rho_rng_arr.append(np.loadtxt(models_dir+subdir+'/rho_layers.dat'))
-                radius_rng_arr.append(np.loadtxt(models_dir+subdir+'/radius_layers.dat')) 
-                nhalf_rng_arr.append(np.loadtxt(models_dir+subdir+'/n_half.dat'))
+                rho_rng_arr.append(np.loadtxt(dir+subdir+'/rho_layers.dat'))
+                radius_rng_arr.append(np.loadtxt(dir+subdir+'/radius_layers.dat')) 
+                nhalf_rng_arr.append(np.loadtxt(dir+subdir+'/n_half.dat'))
 
 
-
+   
     # ------------------------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------------------------
 
 
 
 
-        # Normalize the metrics:
+        # # Normalize the metrics:
         if "Delta_mean" in metrics_list:
-            delta_U_mean         = NormalizeData_MinMax(np.abs(delta_U_mean))
-            delta_FreeAir_mean   = NormalizeData_MinMax(np.abs(delta_FreeAir_mean))
-            delta_Bouguer_mean   = NormalizeData_MinMax(np.abs(delta_Bouguer_mean))
+        #     delta_U_mean         = NormalizeData_MinMax(np.abs(delta_U_mean))
+        #     delta_FreeAir_mean   = NormalizeData_MinMax(np.abs(delta_FreeAir_mean))
+        #     delta_Bouguer_mean   = NormalizeData_MinMax(np.abs(delta_Bouguer_mean))
             delta_mean = np.vstack([delta_U_mean, delta_FreeAir_mean, delta_Bouguer_mean])
             np.savetxt(saving_dir+'delta_mean.dat',delta_mean)
 
         if "Delta_std" in metrics_list:
-            delta_U_std          = NormalizeData_MinMax(np.abs(delta_U_std))
-            delta_FreeAir_std    = NormalizeData_MinMax(np.abs(delta_FreeAir_std))
-            delta_Bouguer_std    = NormalizeData_MinMax(np.abs(delta_Bouguer_std))
+        #     delta_U_std          = NormalizeData_MinMax(np.abs(delta_U_std))
+        #     delta_FreeAir_std    = NormalizeData_MinMax(np.abs(delta_FreeAir_std))
+        #     delta_Bouguer_std    = NormalizeData_MinMax(np.abs(delta_Bouguer_std))
             delta_std = np.vstack([delta_U_std, delta_FreeAir_std, delta_Bouguer_std])
             np.savetxt(saving_dir+'delta_std.dat',delta_std)
 
         if "RMSE" in metrics_list:
-            RMSE_U               = NormalizeData_MinMax(np.abs(RMSE_U))
-            RMSE_FreeAir         = NormalizeData_MinMax(np.abs(RMSE_FreeAir))
-            RMSE_Bouguer         = NormalizeData_MinMax(np.abs(RMSE_Bouguer))
-            # RMSE_U                  = 1/(1+np.array(RMSE_U))
-            # RMSE_FreeAir            = 1/(1+np.array(RMSE_FreeAir))
-            # RMSE_Bouguer            = 1/(1+np.array(RMSE_Bouguer))
+        #     RMSE_U               = NormalizeData_MinMax(np.abs(RMSE_U))
+        #     RMSE_FreeAir         = NormalizeData_MinMax(np.abs(RMSE_FreeAir))
+        #     RMSE_Bouguer         = NormalizeData_MinMax(np.abs(RMSE_Bouguer))
+        #     # RMSE_U                  = 1/(1+np.array(RMSE_U))
+        #     # RMSE_FreeAir            = 1/(1+np.array(RMSE_FreeAir))
+        #     # RMSE_Bouguer            = 1/(1+np.array(RMSE_Bouguer))
             RMSE = np.vstack([RMSE_U, RMSE_FreeAir, RMSE_Bouguer])
             np.savetxt(saving_dir+'RMSE.dat',RMSE)
 
             
         if "MAE" in metrics_list:
-            MAE_U               = NormalizeData_MinMax(np.abs(MAE_U))
-            MAE_FreeAir         = NormalizeData_MinMax(np.abs(MAE_FreeAir))
-            MAE_Bouguer         = NormalizeData_MinMax(np.abs(MAE_Bouguer))
-            # MAE_U               = 1/(1+np.array(MAE_U))
-            # MAE_FreeAir         = 1/(1+np.array(MAE_FreeAir))
-            # MAE_Bouguer         = 1/(1+np.array(MAE_Bouguer))
+        #     MAE_U               = NormalizeData_MinMax(np.abs(MAE_U))
+        #     MAE_FreeAir         = NormalizeData_MinMax(np.abs(MAE_FreeAir))
+        #     MAE_Bouguer         = NormalizeData_MinMax(np.abs(MAE_Bouguer))
+        #     # MAE_U               = 1/(1+np.array(MAE_U))
+        #     # MAE_FreeAir         = 1/(1+np.array(MAE_FreeAir))
+        #     # MAE_Bouguer         = 1/(1+np.array(MAE_Bouguer))
             MAE = np.vstack([MAE_U, MAE_FreeAir, MAE_Bouguer])
             np.savetxt(saving_dir+'MAE.dat',MAE)
 
         if "R^2" in metrics_list:
-            # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
-            # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
-            # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
-            R2_U                 = (np.array(R2_U) + 1)/2
-            R2_FreeAir           = (np.array(R2_FreeAir) + 1)/2
-            R2_Bouguer           = (np.array(R2_Bouguer) + 1)/2
+        #     # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
+        #     # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
+        #     # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
+        #     R2_U                 = (np.array(R2_U) + 1)/2
+        #     R2_FreeAir           = (np.array(R2_FreeAir) + 1)/2
+        #     R2_Bouguer           = (np.array(R2_Bouguer) + 1)/2
             R2 = np.vstack([R2_U, R2_FreeAir, R2_Bouguer])
             np.savetxt(saving_dir+'R2.dat',R2)
 
         if "SSIM" in metrics_list:
-            # ssim_U               = NormalizeData_MinMax(np.abs(ssim_U))
-            # R2_FreeAir           = NormalizeData_MinMax(np.abs(ssim_FreeAir))
-            # R2_Bouguer           = NormalizeData_MinMax(np.abs(ssim_Bouguer))
+        #     # ssim_U               = NormalizeData_MinMax(np.abs(ssim_U))
+        #     # R2_FreeAir           = NormalizeData_MinMax(np.abs(ssim_FreeAir))
+        #     # R2_Bouguer           = NormalizeData_MinMax(np.abs(ssim_Bouguer))
             SSIM = np.vstack([ssim_U, ssim_FreeAir, ssim_Bouguer])
             np.savetxt(saving_dir+'SSIM.dat',SSIM)
 
         if "PSNR" in metrics_list:
-            # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
-            # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
-            # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
-            
-            psnr_U                 = np.array(psnr_U)/np.max(psnr_U)
-            psnr_FreeAir           = np.array(psnr_FreeAir)/np.max(psnr_FreeAir)
-            psnr_Bouguer           = np.array(psnr_Bouguer)/np.max(psnr_Bouguer)
+        #     # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
+        #     # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
+        #     # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
+        #     psnr_U                 = np.array(psnr_U)/np.max(psnr_U)
+        #     psnr_FreeAir           = np.array(psnr_FreeAir)/np.max(psnr_FreeAir)
+        #     psnr_Bouguer           = np.array(psnr_Bouguer)/np.max(psnr_Bouguer)
             PSNR = np.vstack([psnr_U, psnr_FreeAir, psnr_Bouguer])
             np.savetxt(saving_dir+'PSNR.dat',PSNR)
 
         if "NCC" in metrics_list:
-            # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
-            # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
-            # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
-            ncc_U                 = (np.array(ncc_U) + 1)/2
-            ncc_FreeAir           = (np.array(ncc_FreeAir) + 1)/2
-            ncc_Bouguer           = (np.array(ncc_Bouguer) + 1)/2
+        #     # R2_U                 = NormalizeData_MinMax(1-(np.abs(R2_U)))
+        #     # R2_FreeAir           = NormalizeData_MinMax(1-(np.abs(R2_FreeAir)))
+        #     # R2_Bouguer           = NormalizeData_MinMax(1-(np.abs(R2_Bouguer)))
+        #     ncc_U                 = (np.array(ncc_U) + 1)/2
+        #     ncc_FreeAir           = (np.array(ncc_FreeAir) + 1)/2
+        #     ncc_Bouguer           = (np.array(ncc_Bouguer) + 1)/2
             NCC = np.vstack([ncc_U, ncc_FreeAir, ncc_Bouguer])
             np.savetxt(saving_dir+'NCC.dat',NCC)
 

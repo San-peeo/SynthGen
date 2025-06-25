@@ -44,9 +44,10 @@ def InputRange(n_layers,param_int):
     radius_range = np.zeros((n_layers,2))
     nhalf_range = np.zeros((n_layers,2))
 
-    default_range=200
+    default_Rrange=500
+    default_rhorange=500
 
-    default_opt = input("Use default ranges? (rho=+/-"+str(default_range)+" [kg/m^3], radius=+/-"+str(default_range)+" [km], n_half=3-100)")
+    default_opt = input("Use default ranges? (rho=+/-"+str(default_rhorange)+" [kg/m^3], radius=+/-"+str(default_Rrange)+" [km], n_half=3-100)")
 
 
 # NB: - starting from 1 because the innermost layer is not part of the grid (M and MoI conservation)
@@ -55,14 +56,14 @@ def InputRange(n_layers,param_int):
 
     if default_opt=="":
         for i in range(1,n_layers):
-            rho_range[i]  = [rho_layers[i]-default_range, rho_layers[i]+default_range]
+            rho_range[i]  = [rho_layers[i]-default_rhorange, rho_layers[i]+default_rhorange]
             if i == n_layers-1:
-                radius_range[i]  = [radius_layers[i]-default_range, radius_layers[i]]
+                radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i]]
             else:
-                if radius_layers[i]+default_range>radius_layers[n_layers-1]:
-                    radius_range[i]  = [radius_layers[i]-default_range, radius_layers[i+1]-5]
+                if radius_layers[i]+default_Rrange>radius_layers[n_layers-1]:
+                    radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i+1]-5]
                 else:
-                    radius_range[i]  = [radius_layers[i]-default_range, radius_layers[i]+default_range]
+                    radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i]+default_Rrange]
             if interface_type[i] == 'dwnbg':
                 nhalf_range[i]  = [3, 100]
 

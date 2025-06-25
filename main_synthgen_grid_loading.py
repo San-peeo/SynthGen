@@ -27,22 +27,16 @@ i_max         = 7
 load_opt      = True
 plot_opt      = 'all'               # 'all','top'        
 
-# Metrics choices:
-# "Delta_mean"
-# "Delta_std"
-# "MAE"
-# "RMSE"
-# "R^2"
-# "SSIM"
-# "PSNR"
-# "NCC"
-# "spectrum"
+# Metrics choices: "Delta_mean", "Delta_std", "MAE", "RMSE", "R^2", "SSIM", "PSNR", "NCC", "spectrum"
+
 # metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
-metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
+# metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
+metrics_list  = ["PSNR","SSIM","NCC"]                     
+
 
 # Decreasing order to see the overlapping histograms:
 threshold_arr     = [0.20,0.15,0.10]       # n%
-# threshold_arr     = [0.25]       # n%
+# threshold_arr     = [0.75,0.85,0.95]       # n%
 
         
 
@@ -77,9 +71,9 @@ print("# -----------------------------------------------------------------------
 print("Grid directories: \n")
 
 # Models grid directory
-models_dir = "Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/models/"
+models_dir = ["Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/models/"]
 print("Models directory:")
-print(models_dir)
+for dir in models_dir: print(dir)
 
 print("\n")
 
@@ -131,24 +125,39 @@ nhalf_rng_arr = interiors_parameters[2]
 
 if plot_opt == 'all':
     fig, axs = plt.subplots(np.shape(metrics_list)[0], 3, figsize=(10,9))
-    axs[0,0].set_title(r'U')
-    axs[0,1].set_title(r'Free-Air')
-    axs[0,2].set_title(r'Bouguer')
-    j=0
-    for i in range(np.shape(metrics_list)[0]):
-        ax=axs[j, 0]
-        n, bins,_ = ax.hist(metrics[3*j,:],bins = 100)
-        ax.grid()
-        ax=axs[j, 1]
-        n, bins,_ = ax.hist(metrics[3*j+1,:],bins = 100)
-        ax.grid()   
-        ax=axs[j, 2]
-        n, bins,_ = ax.hist(metrics[3*j+2,:],bins = 100)
-        ax.grid()
 
-        axs[j,0].set_ylabel(r'$'+metrics_list[j]+'$')
+    if np.shape(metrics_list)[0] == 1:
+        axs[0].set_title(r'U')
+        axs[1].set_title(r'Free-Air')
+        axs[2].set_title(r'Bouguer')
+        for i in range(np.shape(metrics_list)[0]):
+            n, bins,_ = axs[0].hist(metrics[0,:],bins = 100)
+            axs[0].grid()
+            n, bins,_ = axs[1].hist(metrics[1,:],bins = 100)
+            axs[1].grid()   
+            n, bins,_ = axs[2].hist(metrics[2,:],bins = 100)
+            axs[2].grid()
+            axs[0].set_ylabel(r'$'+metrics_list[0]+'$')
 
-        j+=1
+    else:
+        axs[0,0].set_title(r'U')
+        axs[0,1].set_title(r'Free-Air')
+        axs[0,2].set_title(r'Bouguer')
+        j=0
+        for i in range(np.shape(metrics_list)[0]):
+            ax=axs[j, 0]
+            n, bins,_ = ax.hist(metrics[3*j,:],bins = 100)
+            ax.grid()
+            ax=axs[j, 1]
+            n, bins,_ = ax.hist(metrics[3*j+1,:],bins = 100)
+            ax.grid()   
+            ax=axs[j, 2]
+            n, bins,_ = ax.hist(metrics[3*j+2,:],bins = 100)
+            ax.grid()
+
+            axs[j,0].set_ylabel(r'$'+metrics_list[j]+'$')
+
+            j+=1
     plt.show()
 
 
@@ -157,10 +166,13 @@ if plot_opt == 'all':
 
 # ------------------------------------------------------------------------------------------------------
 
-# Final metric
+# Final metric (ONLY IF ALL metrics are normalized [0,1])
+
 final_metric = np.zeros([np.shape(metrics)[1]])
 for i in range(np.shape(metrics)[1]):
     final_metric[i] = np.round(np.sqrt(np.sum(np.square(metrics[:,i]))/np.shape(metrics)[0]),3)
+
+
 
 
 
@@ -257,7 +269,7 @@ for i in range(n_layers):
     print('rho = ' + str(top_rho[i]) + ' kg/m^3')
     print('radius = ' + str(top_radius[i]) + ' m')
     if interface_type[i] == 'dwnbg':
-        print('nhalf = ' + str(top_nhalf[i]) + ' m')
+        print('nhalf = ' + str(top_nhalf[i]))
     print(" ")
 
 

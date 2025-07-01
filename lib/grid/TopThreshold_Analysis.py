@@ -1,6 +1,6 @@
 from lib.lib_dep import *
 
-def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_metric, threshold_arr, plot_opt: Literal['all','top'] = 'top',saving_dir=None):
+def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_metric, threshold_arr, saving_dir=None):
 
     """
     Usage
@@ -22,9 +22,6 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
                        Array of final metric values for all models.
     threshold_arr    : list
                        List of threshold percentages (e.g., [0.05, 0.1]) to select top models.
-    plot_opt         : str, options = ['all', 'top'], default = 'top'
-                       - 'top': Plot histograms for the top models only.
-                       - 'all': Plot histograms for top models + all models.
     saving_dir       : str, default = None
                        Directory to save the generated histogram plots.
                        If None, plots are not saved.
@@ -154,22 +151,20 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
         handles.append(Patch(edgecolor=hist_color[j], facecolor=hist_color[j], fill=True, alpha=0.5))
 
 
+    # All simulations
+    for i in range(n_layers):
+        ax=axs[i, 0]
+        n, bins,_ = ax.hist(rho_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
 
+        ax=axs[i, 1]
+        n, bins,_ = ax.hist(radius_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
 
-    if plot_opt=='all':
-        for i in range(n_layers):
-            ax=axs[i, 0]
-            n, bins,_ = ax.hist(rho_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
+        if nhalf_rng_sort[:,i].all() != 0 or len(nhalf_rng_sort[:,i]) !=0: 
+            ax=axs[i, 2]
+            n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins = int(np.max(nhalf_rng_sort[:,i])-np.min(nhalf_rng_sort[:,i]))+1, alpha=0.5,color=hist_color[j+1])
 
-            ax=axs[i, 1]
-            n, bins,_ = ax.hist(radius_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
-
-            if nhalf_rng_sort[:,i].all() != 0 or len(nhalf_rng_sort[:,i]) !=0: 
-                ax=axs[i, 2]
-                n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins = int(np.max(nhalf_rng_sort[:,i])-np.min(nhalf_rng_sort[:,i]))+1, alpha=0.5,color=hist_color[j+1])
-
-        labels.append('All ('+str(len(final_metric))+' models)')
-        handles.append(Patch(edgecolor=hist_color[j+1], facecolor=hist_color[j+1], fill=True, alpha=0.5))
+    labels.append('All ('+str(len(final_metric))+' models)')
+    handles.append(Patch(edgecolor=hist_color[j+1], facecolor=hist_color[j+1], fill=True, alpha=0.5))
 
 
 
@@ -181,6 +176,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
     if saving_dir is not None: plt.savefig(saving_dir+'histograms_'+thresh_name+'.png', dpi=600)
+
 
 
     return rho, radius, n_half, fig

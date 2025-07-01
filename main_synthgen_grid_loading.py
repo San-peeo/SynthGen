@@ -119,52 +119,13 @@ spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
 
 metrics,interiors_parameters = MetricsAnalysis(metrics_list, load_opt, models_dir,
                                                [U_matrix_real,deltag_freeair_real,deltag_boug_real,coeffs_topo,spectrum_real],
-                                               [n_min,n_max,radius,i_max,rho_boug])
+                                               [n_min,n_max,radius,i_max,rho_boug],
+                                               plot_opt=True)
 
 
 rho_rng_arr = interiors_parameters[0]
 radius_rng_arr = interiors_parameters[1]
 nhalf_rng_arr = interiors_parameters[2]
-
-
-
-if plot_opt == 'all':
-    fig, axs = plt.subplots(np.shape(metrics_list)[0], 3, figsize=(10,9))
-
-    if np.shape(metrics_list)[0] == 1:
-        axs[0].set_title(r'U')
-        axs[1].set_title(r'Free-Air')
-        axs[2].set_title(r'Bouguer')
-        for i in range(np.shape(metrics_list)[0]):
-            n, bins,_ = axs[0].hist(metrics[0,:],bins = 100)
-            axs[0].grid()
-            n, bins,_ = axs[1].hist(metrics[1,:],bins = 100)
-            axs[1].grid()   
-            n, bins,_ = axs[2].hist(metrics[2,:],bins = 100)
-            axs[2].grid()
-            axs[0].set_ylabel(r'$'+metrics_list[0]+'$')
-
-    else:
-        axs[0,0].set_title(r'U')
-        axs[0,1].set_title(r'Free-Air')
-        axs[0,2].set_title(r'Bouguer')
-        j=0
-        for i in range(np.shape(metrics_list)[0]):
-            ax=axs[j, 0]
-            n, bins,_ = ax.hist(metrics[3*j,:],bins = 100)
-            ax.grid()
-            ax=axs[j, 1]
-            n, bins,_ = ax.hist(metrics[3*j+1,:],bins = 100)
-            ax.grid()   
-            ax=axs[j, 2]
-            n, bins,_ = ax.hist(metrics[3*j+2,:],bins = 100)
-            ax.grid()
-
-            axs[j,0].set_ylabel(r'$'+metrics_list[j]+'$')
-
-            j+=1
-    plt.show()
-
 
 
 
@@ -193,6 +154,7 @@ if plot_opt == 'all':
         plt.grid()
 
 
+
 # Sorting:
 idx = np.argsort(final_metric)
 final_metric = np.sort(final_metric,axis=0)
@@ -201,14 +163,6 @@ final_metric = np.sort(final_metric,axis=0)
 rho_rng_sort       = np.zeros(np.shape(rho_rng_arr))
 radius_rng_sort    = np.zeros(np.shape(radius_rng_arr))
 nhalf_rng_sort     = np.zeros(np.shape(nhalf_rng_arr))
-
-# for i in range(len(idx)):
-#     rho_rng_sort[i,:]     = rho_rng_arr[idx[i]]
-#     radius_rng_sort[i,:]  = radius_rng_arr[idx[i]]
-#     nhalf_rng_sort[i,:]   = (nhalf_rng_arr[idx[i]]).astype(int)
-
-
-
 
 
 # Cutting away CORE extreme densities (>= 10e+3)
@@ -229,6 +183,15 @@ nhalf_rng_sort = np.delete(nhalf_rng_sort,idx_rm, axis=0)
 
 final_metric = np.delete(final_metric,idx_rm, axis=0)
 
+
+# for i in range(len(idx)):
+#     rho_rng_sort[i,:]     = rho_rng_arr[idx[i]]
+#     radius_rng_sort[i,:]  = radius_rng_arr[idx[i]]
+#     nhalf_rng_sort[i,:]   = (nhalf_rng_arr[idx[i]]).astype(int)
+
+
+
+
 # ------------------------------------------------------------------------------------------------------
 print(" ")
 print("Top thresholds analysis:\n")
@@ -236,8 +199,7 @@ print("Top thresholds analysis:\n")
 # Top % threshold analysis
 
 rho_stats,radius_stats,n_half_stats,fig = TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort,
-                                                                final_metric, threshold_arr,
-                                                                plot_opt=plot_opt,saving_dir=saving_dir)
+                                                                final_metric, threshold_arr,saving_dir=saving_dir)
 fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
 
@@ -265,210 +227,40 @@ print("# -----------------------------------------------------------------------
 
 
 
-if plot_results == 'top' or plot_results == 'both':
-   
-    print(" ")
-    print("Top Model:")
 
+# Top model plotting (comparison real-synth)
+rho = rho_rng_sort[-1]
+radius = radius_rng_sort[-1]
+nhalf = nhalf_rng_sort[-1]
 
-    # Top model plotting (comparison real-synth)
-    top_rho = rho_rng_sort[-1]
-    top_radius = radius_rng_sort[-1]
-    top_nhalf = nhalf_rng_sort[-1]
+PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,2,n_max,i_max,rho_boug,body,region,proj_opt,
+                rho,radius,nhalf, real_dir,
+                saving_dir,'TOP')
 
 
-    top_dir='TOP_'
-    for i in range(n_layers):
-        top_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(top_radius[i]) + '_rho'+str(i+1)+'_'+str(top_rho[i])
-        if interface_type[i] == 'dwnbg':
-            top_dir += '_nhalf'+str(i+1)+'_'+str(top_nhalf[i])       
-        if i!= n_layers-1:
-            top_dir+='_'
 
 
+# Avg model plotting (comparison real-synth)
+avg_rho = []
+avg_radius = []
+avg_nhalf = []
 
+# Results model plotting (comparison real-synth)
+for i in range(n_layers):
+    avg_rho.append(np.round(rho_stats[i][0],1))
+    avg_radius.append(np.round(radius_stats[i][0],1))
+    avg_nhalf.append(n_half_stats[i][0])
 
-    print(" ")
-    print("Top model directory:")
-    print(top_dir)
-    print("\n")
-    print("Top model parameters:\n")
-    for i in range(n_layers):
-        print('Layer ' + str(i+1) + ':')
-        print('rho = ' + str(top_rho[i]) + ' kg/m^3')
-        print('radius = ' + str(top_radius[i]) + ' m')
-        if interface_type[i] == 'dwnbg':
-            print('nhalf = ' + str(top_nhalf[i]))
-        print(" ")
+avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
 
-    if not os.path.isdir(saving_dir+top_dir):
-        os.makedirs(saving_dir+top_dir)
 
+PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,2,n_max,i_max,rho_boug,body,region,proj_opt,
+                avg_rho,avg_radius,avg_nhalf,real_dir,
+                saving_dir,'AVG')
 
-    # Generating the top model coefficients:
 
-    param_int[0] = top_rho
-    param_int[1] = top_radius
-    param_int[2] = interface_type
-    param_int[3] = top_nhalf
-    coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+top_dir,mode='layer',
-                                        save_opt=True,plot_opt=False,load_opt=False,verbose_opt=False)
 
 
-    # SynthGen top model (U, H, FreeAir, Bouguer):
-    U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=3-1,n_max=n_max,r=radius,rho_boug=rho_boug,
-                                                                    i_max=i_max,saving_dir=saving_dir+top_dir,verbose_opt=False)
-
-
-
-    # Real data model (U, H, FreeAir, Bouguer):
-    U_real,_,deltag_freeair_real,deltag_boug_real = Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=3-1,n_max=n_max,r=radius,rho_boug=rho_boug,
-                                                                    i_max=i_max,load_opt=True,saving_dir=real_dir,verbose_opt=False)
-
-
-
-
-    fig, axs = plt.subplots(3, 2, figsize =(11,8),subplot_kw={'projection': proj_opt})
-    fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers  (TOP)')
-
-    MapPlotting(parent=[fig, axs[0, 0]], values=U_synth, region=region, proj_opt=proj_opt, title=r'$U\ {Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_real.data),np.max(U_real.data)])
-    MapPlotting(parent=[fig, axs[0, 1]], values=U_real, region=region, proj_opt=proj_opt, title=r'$U\ {Real}$', cb_label='$m^2/s^2$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[1, 0]], values=deltag_freeair_synth, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_freeair_real.data),np.max(deltag_freeair_real.data)])
-    MapPlotting(parent=[fig, axs[1, 1]], values=deltag_freeair_real, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Real}$', cb_label='$mGal$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[2, 0]], values=deltag_boug_synth, region=region, proj_opt=proj_opt,title=r'$Boug_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_boug_real.data),np.max(deltag_boug_real.data)])
-    MapPlotting(parent=[fig, axs[2, 1]], values=deltag_boug_real, region=region, proj_opt=proj_opt, title=r'$Boug_{Real}$', cb_label='$mGal$',cmap=cmap)
-
-    plt.tight_layout()
-    plt.show()
-
-    fig.savefig(saving_dir+top_dir+"/Synth_Real_top.png", dpi=600)
-
-
-
-    # Spectrum analysis:
-    _,fig = Spectrum(coeffs=[coeffs_tot,coeffs_grav],n_min=2,n_max=n_max,
-                        plot_opt=True,save_opt='all',saving_dir=saving_dir+top_dir,verbose_opt=False)
-    fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers  (TOP)')
-
-
-    print("\n")
-    print("# ------------------------------------------------------------------------------------------------------")
-
-
-
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
-
-
-if plot_results == 'average' or plot_results == 'both':
-
-        
-         
-    print(" ")
-    print(" ")
-    print("Results Model:")
-
-
-    avg_rho = []
-    avg_radius = []
-    avg_nhalf = []
-
-    # Results model plotting (comparison real-synth)
-    for i in range(n_layers):
-        avg_rho.append(np.round(rho_stats[i][0],1))
-        avg_radius.append(np.round(radius_stats[i][0],1))
-        avg_nhalf.append(n_half_stats[i][0])
-
-    avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
-
-
-
-    avg_dir='AVG_'
-    for i in range(n_layers):
-        avg_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(avg_radius[i]) + '_rho'+str(i+1)+'_'+str(avg_rho[i])
-        if interface_type[i] == 'dwnbg':
-            avg_dir += '_nhalf'+str(i+1)+'_'+str(avg_nhalf[i])       
-        if i!= n_layers-1:
-            avg_dir+='_'
-
-
-
-
-    print(" ")
-    print("Results model directory:")
-    print(avg_dir)
-    print("\n")
-    print("Results model parameters:\n")
-    for i in range(n_layers):
-        print('Layer ' + str(i+1) + ':')
-        print('rho = ' + str(avg_rho[i]) + ' kg/m^3')
-        print('radius = ' + str(avg_radius[i]) + ' m')
-        if interface_type[i] == 'dwnbg':
-            print('nhalf = ' + str(avg_nhalf[i]))
-        print(" ")
-
-
-    if not os.path.isdir(saving_dir+avg_dir):
-        os.makedirs(saving_dir+avg_dir)
-
-
-
-
-
-
-
-    # Generating the results model coefficients:
-
-    param_int[0] = avg_rho
-    param_int[1] = avg_radius
-    param_int[2] = interface_type
-    param_int[3] = avg_nhalf
-
-    coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+avg_dir,mode='layer',
-                                        save_opt=True,plot_opt=False,load_opt=False,verbose_opt=False)
-
-
-    # SynthGen results model (U, H, FreeAir, Bouguer):
-    U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=3-1,n_max=n_max,r=radius,rho_boug=rho_boug,
-                                                                    i_max=i_max,saving_dir=saving_dir+avg_dir,verbose_opt=False)
-
-
-
-    # Real data model (U, H, FreeAir, Bouguer):
-    U_real,_,deltag_freeair_real,deltag_boug_real = Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=3-1,n_max=n_max,r=radius,rho_boug=rho_boug,
-                                                                    i_max=i_max,load_opt=True,saving_dir=real_dir,verbose_opt=False)
-
-
-
-
-    fig, axs = plt.subplots(3, 2, figsize =(11,8),subplot_kw={'projection': proj_opt})
-    fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers  (AVERAGE)')
-
-    MapPlotting(parent=[fig, axs[0, 0]], values=U_synth, region=region, proj_opt=proj_opt, title=r'$U\ {Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_real.data),np.max(U_real.data)])
-    MapPlotting(parent=[fig, axs[0, 1]], values=U_real, region=region, proj_opt=proj_opt, title=r'$U\ {Real}$', cb_label='$m^2/s^2$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[1, 0]], values=deltag_freeair_synth, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_freeair_real.data),np.max(deltag_freeair_real.data)])
-    MapPlotting(parent=[fig, axs[1, 1]], values=deltag_freeair_real, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Real}$', cb_label='$mGal$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[2, 0]], values=deltag_boug_synth, region=region, proj_opt=proj_opt,title=r'$Boug_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_boug_real.data),np.max(deltag_boug_real.data)])
-    MapPlotting(parent=[fig, axs[2, 1]], values=deltag_boug_real, region=region, proj_opt=proj_opt, title=r'$Boug_{Real}$', cb_label='$mGal$',cmap=cmap)
-
-
-    plt.tight_layout()
-    plt.show()
-
-    fig.savefig(saving_dir+avg_dir+"/Synth_Real_average.png", dpi=600)
-
-
-
-    # Spectrum analysis:
-    _,fig = Spectrum(coeffs=[coeffs_tot,coeffs_grav],n_min=2,n_max=n_max,
-                        plot_opt=True,save_opt='all',saving_dir=saving_dir+avg_dir,verbose_opt=False)
-    fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers  (AVERAGE)')
-
-
-    print("\n")
-    print("# ------------------------------------------------------------------------------------------------------")
 
 
 

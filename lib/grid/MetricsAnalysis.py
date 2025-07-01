@@ -4,7 +4,7 @@ from lib.globe_analysis.Global_Analysis import *
 from lib.globe_analysis.Spectrum import *
 
 
-def MetricsAnalysis(metrics_list, load_opt, models_dir, real_matrix, input_param):
+def MetricsAnalysis(metrics_list, load_opt, models_dir, real_matrix, input_param, plot_opt=False):
 
     """
     Usage
@@ -42,6 +42,8 @@ def MetricsAnalysis(metrics_list, load_opt, models_dir, real_matrix, input_param
                    - [2]: r (Radius for evaluation)
                    - [3]: i_max (Maximum order for Taylor expansion)
                    - [4]: rho_boug (Crust density for Bouguer correction)
+    plot_opt     : bool,
+                    If True, plot histograms of the computed metrics.
 
     Output
     ----------
@@ -414,6 +416,51 @@ def MetricsAnalysis(metrics_list, load_opt, models_dir, real_matrix, input_param
         
 
     interiors_parameters = [rho_rng_arr,radius_rng_arr,nhalf_rng_arr]
+
+
+    # ------------------------------------------------------------------------------------------------------
+
+
+    if plot_opt:
+        fig, axs = plt.subplots(np.shape(metrics_list)[0], 3, figsize=(10,9))
+
+        if np.shape(metrics_list)[0] == 1:
+            axs[0].set_title(r'U')
+            axs[1].set_title(r'Free-Air')
+            axs[2].set_title(r'Bouguer')
+            for i in range(np.shape(metrics_list)[0]):
+                n, bins,_ = axs[0].hist(metrics[0,:],bins = 100)
+                axs[0].grid()
+                n, bins,_ = axs[1].hist(metrics[1,:],bins = 100)
+                axs[1].grid()   
+                n, bins,_ = axs[2].hist(metrics[2,:],bins = 100)
+                axs[2].grid()
+                axs[0].set_ylabel(r'$'+metrics_list[0]+'$')
+
+        else:
+            axs[0,0].set_title(r'U')
+            axs[0,1].set_title(r'Free-Air')
+            axs[0,2].set_title(r'Bouguer')
+            j=0
+            for i in range(np.shape(metrics_list)[0]):
+                ax=axs[j, 0]
+                n, bins,_ = ax.hist(metrics[3*j,:],bins = 100)
+                ax.grid()
+                ax=axs[j, 1]
+                n, bins,_ = ax.hist(metrics[3*j+1,:],bins = 100)
+                ax.grid()   
+                ax=axs[j, 2]
+                n, bins,_ = ax.hist(metrics[3*j+2,:],bins = 100)
+                ax.grid()
+
+                axs[j,0].set_ylabel(r'$'+metrics_list[j]+'$')
+
+                j+=1
+        plt.show()
+
+
+
+
 
 
     return metrics, interiors_parameters

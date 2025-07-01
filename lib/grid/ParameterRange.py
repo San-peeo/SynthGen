@@ -78,7 +78,7 @@ def InputRange(n_layers,param_int):
 
                 print("Average Density [kg/m^3]: ",rho_layers[i])
                 rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string,[rho_layers[i-1],rho_layers[i+1],"rho"])
+                rho_range[i]  = CheckRange(rho_string,[rho_layers[i-1],0])
 
             else:
                 print("Layer: ", i+1)
@@ -86,10 +86,10 @@ def InputRange(n_layers,param_int):
 
                 print("Average Density [kg/m^3]: ",rho_layers[i])
                 rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string,[rho_layers[i-1],rho_layers[i+1],"rho"])
+                rho_range[i]  = CheckRange(rho_string,[rho_layers[i-1],rho_layers[i+1]])
                 print("Average Radius [km]: ",radius_layers[i])
                 radius_string = input("Radius range [km]: ")
-                radius_range[i]  = CheckRange(radius_string,[radius_layers[i-1],radius_layers[i+1],"r"])
+                radius_range[i]  = CheckRange(radius_string,[radius_layers[i-1],radius_layers[i+1]])
 
             if interface_type[i] == 'dwnbg':
                 print("Cutting degree n_half: ",interface_addinfo[i])
@@ -107,7 +107,7 @@ def InputRange(n_layers,param_int):
 
 
 
-def CheckRange(array,array_control=None):
+def CheckRange(array):
 
     """
     Usage
@@ -145,26 +145,6 @@ def CheckRange(array,array_control=None):
         print(array.split(",")[1])
         print("ERROR: Invalid input. Range must be in ascending order.")
         sys.exit() 
-
-
-
-    # Checkign values against control array
-    if array_control is not None:
-        match array_control[1]:
-
-            case "rho":
-                if range_arr[0] > array_control[0][0] or range_arr[1] < array_control[0][1]:
-                        print("ERROR: Invalid input. Layer density heavier than the previous one or lighter than the following one.")
-                        sys.exit() 
-
-            case "r":
-                if range_arr[0] < array_control[0][0] or range_arr[1] > array_control[0][1]:
-                        print("ERROR: Invalid input. Layer radius lower than the previous one or higher than the following one.")
-                        sys.exit() 
-
-            case _:
-                print("ERROR: Invalid control. Control parameter type not recognized.")
-                sys.exit()
 
 
 

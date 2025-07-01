@@ -21,6 +21,7 @@ from lib.synthgen.SynthGen import *
 from lib.grid.MetricsAnalysis import *
 from lib.grid.ParameterRange import *
 from lib.grid.TopThreshold_Analysis import *
+from lib.grid.PlottingTopAvg import *
 
 # Utilities (Python)
 from lib.utils.FreeMemory import *

@@ -82,12 +82,20 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
                 (lat_grid >= region[1][0]) & (lat_grid <= region[1][1])
             )
             values_masked = np.where(mask, values, np.nan)
-            vmin = np.nanmin(values_masked)
-            vmax = np.nanmax(values_masked)
             ax.set_extent([region[0][0], region[0][1], region[1][0], region[1][1]])
 
+            if clim is None:
+                values_masked = values
+                vmin = np.nanmin(values_masked)
+                vmax = np.nanmax(values_masked)
+            else:
+                values_masked = values
+                vmin = clim[0]
+                vmax = clim[1]
+
+
         else:
-            if clim is not None:
+            if clim is None:
                 values_masked = values
                 vmin = np.nanmin(values)
                 vmax = np.nanmax(values)

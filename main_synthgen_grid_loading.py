@@ -18,11 +18,11 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
+body          = 'Venus'            # "Mercury", "Earth", "Venus", "Moon"
 n_layers      = 3
 n_min         = 0
-n_max         = 150
-radius        = 2440.0*1e+3
+n_max         = 180
+radius        = 6052.0*1e+3
 i_max         = 7
 load_opt      = True
 plot_opt      = 'all'               # 'all','top'        
@@ -30,8 +30,8 @@ plot_opt      = 'all'               # 'all','top'
 # Metrics choices: "Delta_mean", "Delta_std", "MAE", "RMSE", "R^2", "SSIM", "PSNR", "NCC", "spectrum"
 
 # metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
-# metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
-metrics_list  = ["R^2"]                     
+metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
+# metrics_list  = ["SSIM","NCC"]                     
 
 
 # Decreasing order to see the overlapping histograms:
@@ -43,7 +43,7 @@ threshold_arr     = [0.20,0.15,0.10]       # n%
 region = None   # [lon_min, lon_max, lat_min, lat_max]
 proj_opt      = ccrs.Mollweide()  # Projection option
 
-plot_results = 'both'   # 'top', 'average','both'
+plot_results = 'average'   # 'top', 'average','both'
 
 # ------------------------------------------------------------------------------------------------------
 ########################################################################################################
@@ -117,7 +117,7 @@ spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
 # Loading/Evaluating the metrics
 
 
-metrics,interiors_parameters = MetricsAnalysis(metrics_list, load_opt, saving_dir, models_dir,
+metrics,interiors_parameters = MetricsAnalysis(metrics_list, load_opt, models_dir,
                                                [U_matrix_real,deltag_freeair_real,deltag_boug_real,coeffs_topo,spectrum_real],
                                                [n_min,n_max,radius,i_max,rho_boug])
 
@@ -247,7 +247,19 @@ print(" ")
 print("# ------------------------------------------------------------------------------------------------------\n")
 
 
+
+
+
 # ------------------------------------------------------------------------------------------------------
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
+########################################################################################################
 ########################################################################################################
 # ------------------------------------------------------------------------------------------------------
 
@@ -345,6 +357,9 @@ if plot_results == 'top' or plot_results == 'both':
 
 
 # ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------
 
 
 if plot_results == 'average' or plot_results == 'both':
@@ -410,6 +425,7 @@ if plot_results == 'average' or plot_results == 'both':
     param_int[1] = avg_radius
     param_int[2] = interface_type
     param_int[3] = avg_nhalf
+
     coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+avg_dir,mode='layer',
                                         save_opt=True,plot_opt=False,load_opt=False,verbose_opt=False)
 

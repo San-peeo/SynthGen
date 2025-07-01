@@ -510,7 +510,7 @@ class Ganymede_ConfigFile():
 
         # Polar Flattening
         r_e = 2631.2             # [km]
-        r_p = 2631.2             # [km]
+        r_p = 2631.0             # [km]
         r_e_fact = r_e/ref_radius
         r_p_fact = r_p/ref_radius
 
@@ -560,6 +560,15 @@ class Ganymede_ConfigFile():
         match n_layers:
 
             case 7:                     
+
+                # rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
+                # radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]
+                # interface_type  = ['sph','sphflat','rng','rng','sph','sph','rng']
+
+                # # Additional information for the interface (rng or custom)
+                # interface_addinfo  = [0,0,20,1,0,0,10]
+
+
 
                 rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
                 radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]

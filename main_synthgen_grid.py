@@ -19,12 +19,12 @@ tracemalloc.start()
 # Set up the parameters:
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 4
+n_layers      = 3
 n_min         = 0
 n_max         = 150
 r             = 2440.0*1e+3
 i_max         = 7
-load_opt      = False
+load_opt      = True
 save_opt      = 'total'
 proj_opt      = ccrs.Mollweide()
 
@@ -66,9 +66,26 @@ saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/models/
 if not os.path.isdir(saving_dir):
     print("Creating directory:")
     os.makedirs(saving_dir)
+    print(saving_dir)
+
 else:
     print("Already existing directory:")
-print(saving_dir)
+    print(saving_dir)
+    print("Already existing models: ", len(os.listdir(saving_dir)))
+
+
+
+
+
+# Reading "Real" data:
+real_dir = "Results/Real/"+body+"/"
+
+U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
+
+
 
 
 
@@ -216,9 +233,9 @@ while valid_counter < n_counts:
         
         sub_dir=''
         for i in range(n_layers):
-            sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_rng[0,i]) + '_rho'+str(i+1)+'_'+str(rho_rng[0,i])
+            sub_dir += 'i'+str(i+1)+''+interface_type[i] + '_r'+str(i+1)+''+str(radius_rng[0,i]) + 'rho'+str(i+1)+''+str(rho_rng[0,i])
             if interface_type[i] == 'dwnbg':
-                sub_dir += '_nhalf'+str(i+1)+'_'+str(nhalf_rng[0,i])       
+                sub_dir += 'nhalf'+str(i+1)+''+str(nhalf_rng[0,i])       
             if i!= n_layers-1:
                 sub_dir+='_'
         
@@ -262,12 +279,24 @@ while valid_counter < n_counts:
             valid_counter += 1
 
 
-
-
         # Save the interiors parameters:
         np.savetxt(saving_dir_subdir+'rho_layers.dat',rho_rng)
         np.savetxt(saving_dir_subdir+'radius_layers.dat',radius_rng)
         np.savetxt(saving_dir_subdir+'n_half.dat',nhalf_rng)
+
+
+
+    # ------------------------------------------------------------------------------------------------------
+        # Evaluate metrics:
+        metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
+
+        MetricsEvaluation(metrics_list, [coeffs_tot,coeffs_topo], real_dir, saving_dir_subdir,
+                          n_min, n_max, i_max, r, rho_boug)
+
+
+
+    # ------------------------------------------------------------------------------------------------------
+
 
 
         del rho_rng 

@@ -18,19 +18,19 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Venus'            # "Mercury", "Earth", "Venus", "Moon"
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
 n_layers      = 3
 n_min         = 0
-n_max         = 180
-radius        = 6052.0*1e+3
+n_max         = 150
+r             = 2440.0*1e+3
 i_max         = 7
 load_opt      = True
 plot_opt      = 'all'               # 'all','top'        
 
 # Metrics choices: "Delta_mean", "Delta_std", "MAE", "RMSE", "R^2", "SSIM", "PSNR", "NCC", "spectrum"
 
-# metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
-metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
+metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","PSNR","SSIM","NCC"]
+# metrics_list  = ["R^2","PSNR","SSIM","NCC"]                     
 # metrics_list  = ["SSIM","NCC"]                     
 
 
@@ -41,7 +41,8 @@ threshold_arr     = [0.20,0.15,0.10]       # n%
 
 
 region = None   # [lon_min, lon_max, lat_min, lat_max]
-proj_opt      = ccrs.Mollweide()  # Projection option
+
+proj_opt      = ccrs.Mollweide(central_longitude=180)  # Projection option
 
 plot_results = 'average'   # 'top', 'average','both'
 
@@ -76,20 +77,24 @@ print("# -----------------------------------------------------------------------
 print("Grid directories: \n")
 
 # Models grid directory
-models_dir = ["Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/models/"]
+models_dir = "Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/models/"
 print("Models directory:")
-for dir in models_dir: print(dir)
+
 
 print("\n")
 
 print("Analysis directory:")
-saving_dir = "Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/analysis/"
+saving_dir = "Results/Synthetic/"+ body + "/Grid/"+str(n_layers)+"_layers/analysis_test/"
 if not os.path.isdir(saving_dir):
     os.makedirs(saving_dir)
 print(saving_dir)
 
 
 
+# "Real" data directory:
+real_dir = "Results/Real/"+body+"/"
+print("\nReal data directory:")
+print(real_dir)
 
 
 
@@ -99,28 +104,11 @@ print("# -----------------------------------------------------------------------
 
 
 
-# ------------------------------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------------------------------
-
-# Reading "Real" data:
-real_dir = "Results/Real/"+body+"/"
-
-U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
+# ------------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------
 
 
-# ------------------------------------------------------------------------------------------------------
-
-# Loading/Evaluating the metrics
-
-
-metrics,interiors_parameters = MetricsAnalysis(metrics_list, load_opt, models_dir,
-                                               [U_matrix_real,deltag_freeair_real,deltag_boug_real,coeffs_topo,spectrum_real],
-                                               [n_min,n_max,radius,i_max,rho_boug],
-                                               plot_opt=True)
-
+metrics,interiors_parameters = MetricsAnalysis2(metrics_list, models_dir, real_dir, [coeffs_topo, n_min, n_max, i_max, r], plot_opt=False)
 
 rho_rng_arr = interiors_parameters[0]
 radius_rng_arr = interiors_parameters[1]
@@ -128,8 +116,7 @@ nhalf_rng_arr = interiors_parameters[2]
 
 
 
-
-# ------------------------------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------
 
 # Final metric (ONLY IF ALL metrics are normalized [0,1])
 
@@ -137,10 +124,7 @@ final_metric = np.zeros([np.shape(metrics)[1]])
 for i in range(np.shape(metrics)[1]):
     final_metric[i] = np.round(np.sqrt(np.sum(np.square(metrics[:,i]))/np.shape(metrics)[0]),3)
 
-
-
-
-
+# Plotting the final metric:
 if plot_opt == 'all':
     plt.figure()
     _,bins,_ = plt.hist(final_metric,bins=500, label='All ('+str(len(final_metric))+' models)')
@@ -165,7 +149,6 @@ nhalf_rng_sort     = np.zeros(np.shape(nhalf_rng_arr))
 
 
 # Cutting away CORE extreme densities (>= 10e+3)
-
 idx_rm=[]
 for i in range(len(idx)):
     if rho_rng_arr[idx[i]][0] >= 10e+3: 
@@ -183,6 +166,7 @@ nhalf_rng_sort = np.delete(nhalf_rng_sort,idx_rm, axis=0)
 final_metric = np.delete(final_metric,idx_rm, axis=0)
 
 
+# NO CUTTING:
 # for i in range(len(idx)):
 #     rho_rng_sort[i,:]     = rho_rng_arr[idx[i]]
 #     radius_rng_sort[i,:]  = radius_rng_arr[idx[i]]
@@ -216,14 +200,14 @@ print("# -----------------------------------------------------------------------
 
 
 
-# Top model plotting (comparison real-synth)
-rho = rho_rng_sort[-1]
-radius = radius_rng_sort[-1]
-nhalf = nhalf_rng_sort[-1]
+# # Top model plotting (comparison real-synth)
+# rho = rho_rng_sort[-1]
+# radius = radius_rng_sort[-1]
+# nhalf = nhalf_rng_sort[-1]
 
-PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,2,n_max,i_max,rho_boug,body,region,proj_opt,
-                rho,radius,nhalf, real_dir,
-                saving_dir,'TOP')
+# PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
+#                 rho,radius,nhalf, real_dir,
+#                 saving_dir,'TOP')
 
 
 
@@ -242,7 +226,7 @@ for i in range(n_layers):
 avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
 
 
-PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,2,n_max,i_max,rho_boug,body,region,proj_opt,
+PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
                 avg_rho,avg_radius,avg_nhalf,real_dir,
                 saving_dir,'AVG')
 

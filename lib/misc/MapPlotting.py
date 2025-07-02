@@ -71,7 +71,7 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
 
         # Create longitude and latitude arrays for masking and plotting
         nlat, nlon = values.shape
-        lon = np.linspace(0, 360, nlon)
+        lon = np.linspace(-180,180, nlon)
         lat = np.flip(np.linspace(-90,90, nlat))
         lon_grid, lat_grid = np.meshgrid(lon, lat)
 
@@ -82,7 +82,6 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
                 (lat_grid >= region[1][0]) & (lat_grid <= region[1][1])
             )
             values_masked = np.where(mask, values, np.nan)
-            ax.set_extent([region[0][0], region[0][1], region[1][0], region[1][1]])
 
             if clim is None:
                 values_masked = values
@@ -105,8 +104,11 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
                 vmax = clim[1]
 
         # Plotting
-        map1 = ax.pcolormesh(lon_grid, lat_grid, values, transform=ccrs.PlateCarree(),
-                            cmap=cmap, shading='auto', vmin=vmin, vmax=vmax)
+        # map1 = ax.pcolormesh(lon_grid, lat_grid, values_masked, transform=ccrs.PlateCarree(),
+        #                      cmap=cmap, shading='auto',edgecolors='face', vmin=vmin, vmax=vmax)
+        map1 = ax.imshow(values_masked, transform=ccrs.PlateCarree(),
+                            cmap=cmap, vmin=vmin, vmax=vmax)
+
 
         # Region selection
         if region is not None:

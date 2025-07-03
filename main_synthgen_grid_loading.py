@@ -41,10 +41,12 @@ threshold_arr     = [0.20,0.15,0.10]       # n%
 
 
 region = None   # [lon_min, lon_max, lat_min, lat_max]
-
-proj_opt      = ccrs.Mollweide(central_longitude=180)  # Projection option
+proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
 plot_results = 'average'   # 'top', 'average','both'
+
+
+
 
 # ------------------------------------------------------------------------------------------------------
 ########################################################################################################
@@ -108,7 +110,7 @@ print("# -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------------
 
 
-metrics,interiors_parameters = MetricsAnalysis2(metrics_list, models_dir, real_dir, [coeffs_topo, n_min, n_max, i_max, r], plot_opt=False)
+metrics,interiors_parameters = MetricsAnalysis(metrics_list, models_dir, real_dir, [coeffs_topo, n_min, n_max, i_max, r], plot_opt=False)
 
 rho_rng_arr = interiors_parameters[0]
 radius_rng_arr = interiors_parameters[1]
@@ -199,36 +201,35 @@ print("# -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
 
+if plot_results == 'top' or plot_results == 'both':
+    # Top model plotting (comparison real-synth)
+    rho = rho_rng_sort[-1]
+    radius = radius_rng_sort[-1]
+    nhalf = nhalf_rng_sort[-1]
 
-# # Top model plotting (comparison real-synth)
-# rho = rho_rng_sort[-1]
-# radius = radius_rng_sort[-1]
-# nhalf = nhalf_rng_sort[-1]
-
-# PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
-#                 rho,radius,nhalf, real_dir,
-#                 saving_dir,'TOP')
-
-
+    PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
+                    rho,radius,nhalf, real_dir,
+                    saving_dir,'TOP')
 
 
-# Avg model plotting (comparison real-synth)
-avg_rho = []
-avg_radius = []
-avg_nhalf = []
+if plot_results == 'average' or plot_results == 'both':
+    # Avg model plotting (comparison real-synth)
+    avg_rho = []
+    avg_radius = []
+    avg_nhalf = []
 
-# Results model plotting (comparison real-synth)
-for i in range(n_layers):
-    avg_rho.append(np.round(rho_stats[i][0],1))
-    avg_radius.append(np.round(radius_stats[i][0],1))
-    avg_nhalf.append(n_half_stats[i][0])
+    # Results model plotting (comparison real-synth)
+    for i in range(n_layers):
+        avg_rho.append(np.round(rho_stats[i][0],1))
+        avg_radius.append(np.round(radius_stats[i][0],1))
+        avg_nhalf.append(n_half_stats[i][0])
 
-avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
+    avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
 
 
-PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
-                avg_rho,avg_radius,avg_nhalf,real_dir,
-                saving_dir,'AVG')
+    PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
+                    avg_rho,avg_radius,avg_nhalf,real_dir,
+                    saving_dir,'AVG')
 
 
 

@@ -4,7 +4,7 @@ from lib.grid.MetricsEvaluation import *
 
 
 
-def MetricsAnalysis2(metrics_list, models_dir, real_dir, eval_param, plot_opt=False):
+def MetricsAnalysis(metrics_list, models_dir, real_dir, eval_param, plot_opt=False):
 
 
 

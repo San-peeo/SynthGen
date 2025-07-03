@@ -18,14 +18,19 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Venus'            # "Mercury", "Earth", "Venus", "Moon"
-n_min         = 2
-n_max         = 60
-r             = 6052.0*1e+3
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
+n_min         = 3
+n_max         = 150
+r             = 2439.4*1e+3
 i_max         = 7
 verbose_opt   = True
+plot_opt      = 'multiple'            # 'single','multiple'
 
-n_half = 80  # Venus
+
+
+n_half = 80                         # Venus
+delta_rho = 500                     # Density contrast for Crustal Thickness calculation   [kg/m^3]
+
 
 region = None   # [lon_min, lon_max, lat_min, lat_max]
 proj_opt      = ccrs.Mollweide()  # Projection option
@@ -87,11 +92,12 @@ print(saving_dir)
 
 # Global analysis (U, H, FreeAir, Bouguer):
 Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                i_max=i_max,region=region,saving_dir=saving_dir,plot_opt='single',proj_opt=proj_opt,verbose_opt=verbose_opt)
+                i_max=i_max,region=region,saving_dir=saving_dir,plot_opt=plot_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
 # Spectrum analysis:
-Spectrum(coeffs=[coeffs_grav],n_min=n_min,n_max=n_max,saving_dir=saving_dir,save_opt='total',plot_opt=True,verbose_opt=verbose_opt)
+Spectrum(coeffs=[coeffs_grav],n_min=n_min,n_max=n_max,
+         saving_dir=saving_dir,save_opt='total',plot_opt=True,verbose_opt=verbose_opt)
 
 
 
@@ -101,8 +107,10 @@ Spectrum(coeffs=[coeffs_grav],n_min=n_min,n_max=n_max,saving_dir=saving_dir,save
 
 
 # Global analysis (U, H, FreeAir, Bouguer):
-curst_mantle_topog = CrustThickness(coeffs_topo,coeffs_grav,2800,500,6020,n_max,i_max, 1,filter_deg=n_half,verbose_opt=verbose_opt)
-[fig, ax] = MapPlotting(values=curst_mantle_topog.data-ref_radius, region=region, proj_opt=proj_opt,title=r'Crust thickness $h_{m-c}(\theta,\phi)$', cb_label='$km$',cmap=cmap)
+curst_mantle_topog = CrustThickness(coeffs_topo,coeffs_grav,rho_boug,delta_rho,r/1e+3,n_max,i_max,
+                                     1,filter_deg=n_half,verbose_opt=verbose_opt)
+[fig, ax] = MapPlotting(values=curst_mantle_topog-ref_radius, region=region,
+                         proj_opt=proj_opt,title=r'Crust thickness $h_{m-c}(\theta,\phi)$', cb_label='$km$',cmap=cmap)
 fig.savefig(saving_dir+"/mantle_crust_interface.png", dpi=600)
 
 

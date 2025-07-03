@@ -80,11 +80,6 @@ else:
 # Reading "Real" data:
 real_dir = "Results/Real/"+body+"/"
 
-U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
-
 
 
 
@@ -241,7 +236,7 @@ while valid_counter < n_counts:
         
 
         # Create the sub-directory
-        saving_dir_subdir = saving_dir+sub_dir+'/'
+        saving_dir_subdir = saving_dir+sub_dir
         if not os.path.isdir(saving_dir_subdir):
             os.makedirs(saving_dir_subdir)
         else:
@@ -270,7 +265,7 @@ while valid_counter < n_counts:
             continue
         elif np.isnan(coeffs_tot.coeffs).any():
             print("ERROR: NaN values\n")
-            os.remove(saving_dir_subdir+'coeffs_tot.dat')
+            os.remove(saving_dir_subdir+'/coeffs_tot.dat')
             os.rmdir(saving_dir_subdir)
             continue
         else:
@@ -280,9 +275,9 @@ while valid_counter < n_counts:
 
 
         # Save the interiors parameters:
-        np.savetxt(saving_dir_subdir+'rho_layers.dat',rho_rng)
-        np.savetxt(saving_dir_subdir+'radius_layers.dat',radius_rng)
-        np.savetxt(saving_dir_subdir+'n_half.dat',nhalf_rng)
+        np.savetxt(saving_dir_subdir+'/rho_layers.dat',rho_rng)
+        np.savetxt(saving_dir_subdir+'/radius_layers.dat',radius_rng)
+        np.savetxt(saving_dir_subdir+'/n_half.dat',nhalf_rng)
 
 
 

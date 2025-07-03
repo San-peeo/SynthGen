@@ -217,10 +217,6 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
         MapPlotting([fig, axs[0, 1]], topog_matrix, region=region, proj_opt=proj_opt, title=r'Topography $h(\theta,\phi)$', cb_label='$km$',cmap=cmap)
         MapPlotting([fig, axs[1, 0]], deltag_freeair, region=region, proj_opt=proj_opt, title=r'Free-Air anomalies $\frac{dU}{dr}(\theta,\phi)$', cb_label='$mGal$',cmap=cmap)
         MapPlotting([fig, axs[1, 1]], deltag_boug, region=region, proj_opt=proj_opt,title=r'Bouguer anomalies $Boug(\theta,\phi)$', cb_label='$mGal$',cmap=cmap)
-        # U_matrix.plot(ax=axs[0, 0], colorbar='right',projection=proj_opt, title='Gravitational Potential', cb_label='$m^2/s^2$',cmap=cmap)
-        # topog_matrix.plot(ax=axs[0, 1], colorbar='right',projection=proj_opt, title='Topography', cb_label='km',cmap=cmap)
-        # deltag_freeair.plot(ax=axs[1, 0], colorbar='right',projection=proj_opt, title='Free-Air anomalies', cb_label='mGal',cmap=cmap)
-        # deltag_boug.plot(ax=axs[1, 1], colorbar='right', projection=proj_opt, title='Bouguer anomalies', cb_label='mGal',cmap=cmap)
 
         plt.tight_layout()
         plt.show()

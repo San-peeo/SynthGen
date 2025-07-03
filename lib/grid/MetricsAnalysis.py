@@ -6,7 +6,43 @@ from lib.grid.MetricsEvaluation import *
 
 def MetricsAnalysis(metrics_list, models_dir, real_dir, eval_param, plot_opt=False):
 
+    """
+    Usage
+    ----------
+    Evaluate and aggregate metrics for a set of synthetic gravity models compared to real data.
+    For each model in the provided directory, the function loads or computes the requested metrics
+    (e.g., RMSE, MAE, R^2, SSIM, PSNR, etc.) for gravitational potential, Free-Air, and Bouguer anomalies.
+    It returns arrays of metrics and the corresponding interior parameters. Optionally, it can plot 
+    histograms of the metrics for all models.
 
+    Parameters
+    ----------
+    metrics_list : list
+                   List of metrics to evaluate. Options include:
+                   - "Delta_mean": Mean difference
+                   - "Delta_std": Standard deviation of the difference
+                   - "MAE": Mean Absolute Error
+                   - "RMSE": Root Mean Squared Error
+                   - "R^2": Coefficient of determination
+                   - "PSNR": Peak Signal-to-Noise Ratio
+                   - "SSIM": Structural Similarity Index
+                   - "NCC": Normalized Cross-Correlation
+    models_dir   : str
+                   Directory containing subdirectories for each synthetic model.
+    real_dir     : str
+                   Directory containing real data matrices.
+    eval_param   : list
+                   [coeffs_topo, n_min, n_max, i_max, r]; parameters for evaluation.
+    plot_opt     : bool, optional
+                   If True, plot histograms of the computed metrics (default: False).
+
+    Output
+    ----------
+    metrics               : numpy.ndarray
+                            Array containing the computed metrics for all models and requested metrics.
+    interiors_parameters  : list
+                            [rho_rng_arr, radius_rng_arr, nhalf_rng_arr]; lists of interior parameters for each model.
+    """
 
     # ------------------------------------------------------------------------------------------------------------
     # ------------------------------------------------------------------------------------------------------------

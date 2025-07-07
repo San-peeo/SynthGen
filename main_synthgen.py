@@ -18,13 +18,13 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 4
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 7
 n_min         = 3
-n_max         = 150
-r             = 2440*1e+3
+n_max         = 50
+r             = 2631.2e+3
 i_max         = 7
-mode          = 'interface'              # 'layer','interface'
+mode          = 'layer'              # 'layer','interface'
 load_opt      = True
 save_opt      = 'all'            # None,'all', 'total'
 
@@ -143,39 +143,40 @@ if coeffs_tot is not None:
 
     # ------------------------------------------------------------------------------------------------------
 
-    # Comparison with real data (if available):
+    if body != 'Ganymede':
+        # Comparison with real data (if available):
 
-    print("Comparison with real data: ")
-
-
-    region = [[-180, 180], [0, 90]]
+        print("Comparison with real data: ")
 
 
-    # Reading "Real" data:
-    real_dir = "Results/Real/"+body+"/"
-
-    U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-    deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-    deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-    spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
+        region = [[-180, 180], [0, 90]]
 
 
+        # Reading "Real" data:
+        real_dir = "Results/Real/"+body+"/"
 
-    fig, axs = plt.subplots(3, 2, figsize =(11,8),subplot_kw={'projection': proj_opt})
-    fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
-
-    MapPlotting(parent=[fig, axs[0, 0]], values=U_matrix, region=region, proj_opt=proj_opt, title=r'$U\ {Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_matrix_real),np.max(U_matrix_real)])
-    MapPlotting(parent=[fig, axs[0, 1]], values=U_matrix_real, region=region, proj_opt=proj_opt, title=r'$U\ {Real}$', cb_label='$m^2/s^2$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[1, 0]], values=deltag_freeair, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_freeair_real),np.max(deltag_freeair_real)])
-    MapPlotting(parent=[fig, axs[1, 1]], values=deltag_freeair_real, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Real}$', cb_label='$mGal$',cmap=cmap)
-    MapPlotting(parent=[fig, axs[2, 0]], values=deltag_boug, region=region, proj_opt=proj_opt,title=r'$Boug_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_boug_real),np.max(deltag_boug_real)])
-    MapPlotting(parent=[fig, axs[2, 1]], values=deltag_boug_real, region=region, proj_opt=proj_opt, title=r'$Boug_{Real}$', cb_label='$mGal$',cmap=cmap)
+        U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+        deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+        deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
+        spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
 
 
-    plt.tight_layout()
-    plt.show()
 
-    fig.savefig(saving_dir+"/Synth_Real.png", dpi=600)
+        fig, axs = plt.subplots(3, 2, figsize =(11,8),subplot_kw={'projection': proj_opt})
+        fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
+
+        MapPlotting(parent=[fig, axs[0, 0]], values=U_matrix, region=region, proj_opt=proj_opt, title=r'$U\ {Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_matrix_real),np.max(U_matrix_real)])
+        MapPlotting(parent=[fig, axs[0, 1]], values=U_matrix_real, region=region, proj_opt=proj_opt, title=r'$U\ {Real}$', cb_label='$m^2/s^2$',cmap=cmap)
+        MapPlotting(parent=[fig, axs[1, 0]], values=deltag_freeair, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_freeair_real),np.max(deltag_freeair_real)])
+        MapPlotting(parent=[fig, axs[1, 1]], values=deltag_freeair_real, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Real}$', cb_label='$mGal$',cmap=cmap)
+        MapPlotting(parent=[fig, axs[2, 0]], values=deltag_boug, region=region, proj_opt=proj_opt,title=r'$Boug_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_boug_real),np.max(deltag_boug_real)])
+        MapPlotting(parent=[fig, axs[2, 1]], values=deltag_boug_real, region=region, proj_opt=proj_opt, title=r'$Boug_{Real}$', cb_label='$mGal$',cmap=cmap)
+
+
+        plt.tight_layout()
+        plt.show()
+
+        fig.savefig(saving_dir+"/Synth_Real.png", dpi=600)
 
 
 

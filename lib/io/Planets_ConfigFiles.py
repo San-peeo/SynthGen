@@ -106,7 +106,7 @@ class Mercury_ConfigFile():
                 radius_layers   = [666.577, 2023.66, 2402.61, 2439.4]
                 interface_type  = ['sph','sphflat','dwnbg','surf']
 
-                # Additional information for the interface (rng or custom)
+                # Additional information for the interface (dwnbg,rng or custom)
                 n_half = 40  # Cutting degree n_half (crust thickness filtering)
                 interface_addinfo  = [0,0,n_half,0]
 
@@ -562,19 +562,23 @@ class Ganymede_ConfigFile():
             case 7:                     
 
                 # rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
-                # radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]
+                # radius_layers   = [500,1680,1870,2000,2280,2460,2631.2]
                 # interface_type  = ['sph','sphflat','rng','rng','sph','sph','rng']
 
                 # # Additional information for the interface (rng or custom)
                 # interface_addinfo  = [0,0,20,1,0,0,10]
 
 
+                # rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
+                # radius_layers   = [500,1680,1870,2000,2280,2460,2631.2]
 
-                rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
-                radius_layers   = [570,1820,1870,2000,2280,2460,2631.2]
+
+
+                rho_layers      = [8000, 3200, 2900, 1320, 1235, 1100, 920]
+                radius_layers   = [670,1840,1870,2000,2280,2460,2631.2]
                 interface_type  = ['sph','sph','rng','sph','sph','sph','rng']
 
-                # Additional information for the interface (rng or custom)
+                # Additional information for the interface (dwnbg,rng or custom)
                 interface_addinfo  = [0,0,20,0,0,0,10]
    
             case _:

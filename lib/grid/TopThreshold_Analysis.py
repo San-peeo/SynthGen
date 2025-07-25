@@ -46,17 +46,56 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
     hist_color=matlab_colors
 
-    rho     = np.zeros((n_layers,2))
-    radius  = np.zeros((n_layers,2))
-    n_half  = np.zeros((n_layers,2))
+    rho     = np.zeros((len(threshold_arr),n_layers,2))
+    radius  = np.zeros((len(threshold_arr),n_layers,2))
+    n_half  = np.zeros((len(threshold_arr),n_layers,2))
     thresh_name=''
 
     # ------------------------------------------------------------------------------------------------------
 
     # Selecting top [threshold] %
-    fig, axs = plt.subplots(n_layers, 3, figsize=(12,10))
+    fig, axs = plt.subplots(n_layers, 3, figsize=(11,9))
     labels=[]
     handles = []
+    bins_all1 = []
+    bins_all2 = []
+    bins_all3 = []
+
+
+    # All simulations
+    for i in range(n_layers):
+        ax=axs[i, 0]
+        if np.std(rho_rng_sort[:,i])==0: bins =  'fd'
+        else: bins =np.arange(np.min(rho_rng_sort[:,i]),np.max(rho_rng_sort[:,i])+1,1,dtype=np.int64)
+        n, bins,_ = ax.hist(rho_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        bins_all1.append(bins)
+        
+        ax=axs[i, 1]
+        if np.std(radius_rng_sort[:,i])==0: bins =  'fd'
+        else: bins =np.arange(np.min(radius_rng_sort[:,i]),np.max(radius_rng_sort[:,i])+1,1,dtype=np.int64)
+        n, bins,_ = ax.hist(radius_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        bins_all2.append(bins)
+
+        ax=axs[i, 2]
+        if np.std(nhalf_rng_sort[:,i])==0: bins =  'fd'
+        else: bins = np.arange(np.min(nhalf_rng_sort[:,i]),np.max(nhalf_rng_sort[:,i])+1,1,dtype=np.int64)
+        n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        bins_all3.append(bins)
+        if np.max(nhalf_rng_sort[:,i])==0:
+            ax.set_xlim([-5,5])
+            ax.set_xticks(np.arange(-5,6))
+        else:
+            ax.set_xlim([0,np.max(nhalf_rng_sort[:,i])])
+            ax.set_xticks(np.arange(0,np.max(nhalf_rng_sort[:,i]+10),10))
+
+    labels.append('All ('+str(len(final_metric))+' models)')
+    handles.append(Patch(edgecolor=hist_color[1], facecolor=hist_color[1], fill=True, alpha=0.5))
+
+
+
+
+
+
 
     for j,thresh in enumerate(threshold_arr):
 
@@ -84,66 +123,148 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
         for i in range(n_layers):
 
             ax=axs[i, 0]
-            n, bins,_ = ax.hist(rho_rng_valid_sort_best[:,i],bins = 100, alpha=1,color=hist_color[j])
-            # Fitting normal distribution:
+            n, bins,_ = ax.hist(rho_rng_valid_sort_best[:,i],bins = bins_all1[i], alpha=1,color=hist_color[j])
+
+            # Fitting Distribution:
             if np.std(rho_rng_valid_sort_best[:,i]) != 0:
                 try:
+                    func=Gaussian_func
                     bin_centers = (bins[:-1] + bins[1:]) / 2
-                    popt, _ = curve_fit(Gaussian_func, bin_centers, n, p0=[np.max(n), np.mean(rho_rng_valid_sort_best[:,i]), np.std(rho_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(rho_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(rho_rng_valid_sort_best[:,i]), np.inf)))
-                    mu,sigma = popt[1],popt[2]
-                    ax.plot(bin_centers, Gaussian_func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\mu=%.1f,\ \sigma=%.1f$' %(mu, sigma), color=hist_color[j])
+                    popt_G, _ = curve_fit(func, bin_centers, n, p0=[np.max(n), np.mean(rho_rng_valid_sort_best[:,i]), np.std(rho_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(rho_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(rho_rng_valid_sort_best[:,i]), np.inf)))
+                    r2_G = R2_gof(n,func(bin_centers,*popt_G))
+                    mu,sigma = popt_G[1],popt_G[2]
+                    rho[j,i,0] = mu
+                    rho[j,i,1] = sigma
+                    popt=popt_G
+
+                    if r2_G<0.9:
+                        func=Skew_func
+                        popt, _ = curve_fit(func, bin_centers, n, p0=[np.max(n), np.mean(rho_rng_valid_sort_best[:,i]), np.std(rho_rng_valid_sort_best[:,i]),+10],bounds=((-np.inf, np.min(rho_rng_valid_sort_best[:,i]), -np.inf,-np.inf),(np.inf, np.max(rho_rng_valid_sort_best[:,i]), np.inf,np.inf)))
+                        r2 = R2_gof(n,func(bin_centers,*popt))
+                        mu,sigma,gamma = popt[1],popt[2],popt[3]
+                        delta = gamma/(np.sqrt(1+gamma**2))
+                        rho[j,i,0] = mu + sigma*(np.sqrt(2/np.pi)*delta - (1-np.pi/4)*(np.sqrt(2/np.pi)*delta)**3/(1-2/np.pi*delta**2) - np.sign(gamma)/2*np.exp(-2*np.pi/np.abs(gamma)) )
+                        rho[j,i,1] = sigma*np.sqrt(1-2*delta**2/np.pi)
+
+
+                        if r2<r2_G:
+                            func=Gaussian_func
+                            popt=popt_G
+                            r2=r2_G
+                            mu,sigma = popt[1],popt[2]
+                            rho[j,i,0] = mu
+                            rho[j,i,1] = sigma
+
+
+                    ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\rho=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(rho[j,i,0], rho[j,i,1],r2), color=hist_color[j])
                     ax.legend()
-                    rho[i,0] = mu
-                    rho[i,1] = sigma
+
                 except:
-                    print('No Gaussian fit (Density)')
+                    print('No Fit (Density)')
+
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Density $[kg/m^3]$')
             ax.set_title(r'Layer '+str(i+1))
 
 
+            # ------------------------------------------------------------------------------------------------------
 
 
             ax=axs[i, 1]
-            n, bins,_ = ax.hist(radius_rng_valid_sort_best[:,i],bins = 100, alpha=1,color=hist_color[j])
-            # Fitting normal distribution:
+            n, bins,_ = ax.hist(radius_rng_valid_sort_best[:,i],bins = bins_all2[i], alpha=1,color=hist_color[j])
+            
+            # Fitting Distribution:
             if np.std(radius_rng_valid_sort_best[:,i]) != 0:
                 try:
+                    func = Gaussian_func
                     bin_centers = (bins[:-1] + bins[1:]) / 2
-                    popt, _ = curve_fit(Gaussian_func, bin_centers, n, p0=[np.max(n), np.mean(radius_rng_valid_sort_best[:,i]), np.std(radius_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(radius_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(radius_rng_valid_sort_best[:,i]), np.inf)))
-                    mu,sigma = popt[1],popt[2]
-                    ax.plot(bin_centers, Gaussian_func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\mu=%.1f,\ \sigma=%.1f$' %(mu, sigma), color=hist_color[j])
+                    popt_G, _ = curve_fit(Gaussian_func, bin_centers, n, p0=[np.max(n), np.mean(radius_rng_valid_sort_best[:,i]), np.std(radius_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(radius_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(radius_rng_valid_sort_best[:,i]), np.inf)))
+                    r2_G = R2_gof(n,Gaussian_func(bin_centers,*popt_G))
+                    mu,sigma = popt_G[1],popt_G[2]
+                    radius[j,i,0] = mu
+                    radius[j,i,1] = sigma
+                    popt=popt_G
+
+
+                    if r2_G<=0.9:
+                        func = Skew_func
+                        bin_centers = (bins[:-1] + bins[1:]) / 2
+                        popt, _ = curve_fit(func, bin_centers, n, p0=[np.max(n), np.mean(radius_rng_valid_sort_best[:,i]), np.std(radius_rng_valid_sort_best[:,i]),-10],bounds=((-np.inf, np.min(radius_rng_valid_sort_best[:,i]), -np.inf,-np.inf),(np.inf, np.max(radius_rng_valid_sort_best[:,i]), np.inf,np.inf)))
+                        r2 = R2_gof(n,func(bin_centers,*popt))
+                        mu,sigma,gamma = popt[1],popt[2],popt[3]
+                        delta = gamma/(np.sqrt(1+gamma**2))
+                        radius[j,i,0] = mu + sigma*(np.sqrt(2/np.pi)*delta - (1-np.pi/4)*(np.sqrt(2/np.pi)*delta)**3/(1-2/np.pi*delta**2) - np.sign(gamma)/2*np.exp(-2*np.pi/np.abs(gamma)) )
+                        radius[j,i,1] = sigma*np.sqrt(1-2*delta**2/np.pi) 
+                                
+                        if r2<r2_G:
+                            func=Gaussian_func
+                            popt=popt_G
+                            r2=r2_G
+                            mu,sigma = popt[1],popt[2]
+                            radius[j,i,0] = mu
+                            radius[j,i,1] = sigma
+
+                    ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $R=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(radius[j,i,0], radius[j,i,1],r2), color=hist_color[j])
                     ax.legend()
-                    radius[i,0] = mu
-                    radius[i,1] = sigma
+
                 except:
-                    print('No Gaussian fit (Radius)')
+                    print('No Fit (Radius)')
+
+
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Radius $[km]$')
             ax.set_title(r'Layer '+str(i+1))
 
 
+            # ------------------------------------------------------------------------------------------------------
+
+
             ax=axs[i, 2]
-            if nhalf_rng_valid_sort_best[:,i].all() != 0 and len(nhalf_rng_valid_sort_best[:,i]) !=0:
-                n, bins,_ = ax.hist(nhalf_rng_valid_sort_best[:,i],bins = int(np.max(nhalf_rng_valid_sort_best[:,i])-np.min(nhalf_rng_valid_sort_best[:,i]))+1, alpha=1,color=hist_color[j])
-                # Fitting normal distribution:
-                if np.std(nhalf_rng_valid_sort_best[:,i]) != 0:
-                    try:
+            n, bins,_ = ax.hist(nhalf_rng_valid_sort_best[:,i],bins = bins_all3[i], alpha=1,color=hist_color[j])
+            
+            # Fitting Distribution:
+            if np.max(nhalf_rng_valid_sort_best[:,i])!=0:
+                try:
+                    func=Gaussian_func
+                    bin_centers = (bins[:-1] + bins[1:]) / 2
+                    popt_G, _ = curve_fit(func, bin_centers, n, p0=[np.max(n), np.mean(nhalf_rng_valid_sort_best[:,i]), np.std(nhalf_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(nhalf_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(nhalf_rng_valid_sort_best[:,i]), np.inf)))
+                    r2_G = R2_gof(n,func(bin_centers,*popt_G))
+                    mu,sigma = popt_G[1],popt_G[2]
+                    n_half[j,i,0] = mu
+                    n_half[j,i,1] = sigma
+                    popt=popt_G
+
+
+                    if r2_G<=0.9:
+                        func=Skew_func
                         bin_centers = (bins[:-1] + bins[1:]) / 2
-                        popt, _ = curve_fit(Gaussian_func, bin_centers, n, p0=[np.max(n), np.mean(nhalf_rng_valid_sort_best[:,i]), np.std(nhalf_rng_valid_sort_best[:,i])],bounds=((-np.inf, np.min(nhalf_rng_valid_sort_best[:,i]), -np.inf),(np.inf, np.max(nhalf_rng_valid_sort_best[:,i]), np.inf)))
-                        mu,sigma = np.round(popt[1]),np.round(popt[2])
-                        ax.plot(bin_centers, Gaussian_func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\mu=%.1f,\ \sigma=%.1f$' %(mu, sigma), color=hist_color[j])
-                        ax.legend()
-                        n_half[i,0] = mu
-                        n_half[i,1] = sigma
-                    except:
-                        print('No Gaussian fit (n_half)')
-            else:
-                ax.set_xlim([-5,5])
-                ax.set_xticks(np.arange(-5,6))
+                        popt, _ = curve_fit(func, bin_centers, n, p0=[np.max(n), np.mean(nhalf_rng_valid_sort_best[:,i]), np.std(nhalf_rng_valid_sort_best[:,i]),+10],bounds=((-np.inf, np.min(nhalf_rng_valid_sort_best[:,i]), -np.inf,-np.inf),(np.inf, np.max(nhalf_rng_valid_sort_best[:,i]), np.inf,np.inf)))
+                        r2 = R2_gof(n,func(bin_centers,*popt))  
+                        mu,sigma,gamma = np.round(popt[1]),np.round(popt[2]),np.round(popt[3])
+                        delta = gamma/(np.sqrt(1+gamma**2))
+                        n_half[j,i,0] = int(mu + sigma*(np.sqrt(2/np.pi)*delta - (1-np.pi/4)*(np.sqrt(2/np.pi)*delta)**3/(1-2/np.pi*delta**2) - np.sign(gamma)/2*np.exp(-2*np.pi/np.abs(gamma)) ))
+                        n_half[j,i,1] = int(sigma*np.sqrt(1-2*delta**2/np.pi))
+                
+                        if r2<r2_G:
+                            func=Gaussian_func
+                            popt=popt_G
+                            r2=r2_G
+                            mu,sigma = np.round(popt[1]),np.round(popt[2])
+                            n_half[j,i,0] = mu
+                            n_half[j,i,1] = sigma
+
+
+                    ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $l_{half}=%.f \pm %.f,\ \textit{R}^2=%.3f$' %(n_half[j,i,0], n_half[j,i,1],r2), color=hist_color[j])
+                    ax.legend()
+                except:
+                    print('No Fit (l_half)')
+
+
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
-            ax.set_xlabel(r'Degree n_{half}')
+            ax.set_xlabel(r'Degree $l_{half}$')
             ax.set_title(r'Layer '+str(i+1))
+
+
 
 
 
@@ -151,20 +272,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
         handles.append(Patch(edgecolor=hist_color[j], facecolor=hist_color[j], fill=True, alpha=0.5))
 
 
-    # All simulations
-    for i in range(n_layers):
-        ax=axs[i, 0]
-        n, bins,_ = ax.hist(rho_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
 
-        ax=axs[i, 1]
-        n, bins,_ = ax.hist(radius_rng_sort[:,i],bins = 100, alpha=0.5,color=hist_color[j+1])
-
-        if nhalf_rng_sort[:,i].all() != 0 or len(nhalf_rng_sort[:,i]) !=0: 
-            ax=axs[i, 2]
-            n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins = int(np.max(nhalf_rng_sort[:,i])-np.min(nhalf_rng_sort[:,i]))+1, alpha=0.5,color=hist_color[j+1])
-
-    labels.append('All ('+str(len(final_metric))+' models)')
-    handles.append(Patch(edgecolor=hist_color[j+1], facecolor=hist_color[j+1], fill=True, alpha=0.5))
 
 
 
@@ -201,3 +309,30 @@ def Gaussian_func(x, a, x0, sigma):
 
 ##########################################################################################################################
 ##########################################################################################################################
+
+
+def Skew_func(x, a, x0, sigma,gamma):
+
+    return a * np.exp(-(x-x0)**2/(2*sigma**2)) * (1+erf(gamma*(x-x0)/(sigma*np.sqrt(2))))
+
+
+##########################################################################################################################
+##########################################################################################################################
+
+
+def R2_gof(y, yfit):
+
+    # residual sum of squares
+    ss_res = np.sum((y - yfit) ** 2)
+
+    # total sum of squares
+    ss_tot = np.sum((y - np.mean(y)) ** 2)
+
+    # r-squared
+    r2 = 1 - (ss_res / ss_tot)
+
+
+    return r2
+
+
+

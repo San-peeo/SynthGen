@@ -30,10 +30,13 @@ import numpy as np
 import cv2
 from scipy.ndimage import zoom
 from scipy.interpolate import interp2d
+from scipy.special import erf
+import regex as re
+import pickle
 
 
-random.seed(41)
-
+random.seed(42)
+np.random.seed(42)
 
 # SHTOOLs default figstyle settings
 # pysh.utils.figstyle()

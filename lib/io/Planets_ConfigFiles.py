@@ -559,6 +559,13 @@ class Ganymede_ConfigFile():
         #layers:
         match n_layers:
 
+            case 2:
+                rho_layers          = [3436.3,1136.1]
+                radius_layers       = [1870,2631.2]
+                interface_type      = ['rng','surf']
+                interface_addinfo   = [20,10]
+
+
             case 7:                     
 
                 # rho_layers      = [8000, 3400, 3100, 1320, 1235, 1100, 920]
@@ -574,9 +581,18 @@ class Ganymede_ConfigFile():
 
 
 
-                rho_layers      = [8000, 3200, 2900, 1320, 1235, 1100, 920]
-                radius_layers   = [670,1840,1870,2000,2280,2460,2631.2]
-                interface_type  = ['sph','sph','rng','sph','sph','sph','rng']
+                # rho_layers      = [8000, 3200, 2900, 1320, 1235, 1100, 920]
+                # radius_layers   = [670,1840,1870,2000,2280,2460,2631.2]
+                # interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
+
+
+                # rho_layers      = [8000, 3200, 2900, 1320, 1235, 1100, 920]
+                # radius_layers   = [588,1837.5,1867.5,2015,2281.5,2594.3,2631.2]
+                # interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
+
+                rho_layers      = [8000, 3300, 2900, 1320, 1235, 1100, 920]
+                radius_layers   = [600,1840,1870,2014.8,2281.3,2594.1,2631.2]
+                interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
 
                 # Additional information for the interface (dwnbg,rng or custom)
                 interface_addinfo  = [0,0,20,0,0,0,10]

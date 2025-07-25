@@ -24,10 +24,10 @@ from lib.grid.ParameterRange import *
 from lib.grid.TopThreshold_Analysis import *
 from lib.grid.PlottingTopAvg import *
 
-# Utilities (Python)
-from lib.utils.FreeMemory import *
-
-# Miscellaneous 
+# Miscellaneous and Utilities (Python)
 from lib.misc.Blurring_map import *
 from lib.misc.MapPlotting import *
 from lib.misc.Solver_M_MoI import *
+from lib.misc.FreeMemory import *
+from lib.misc.Mass import *
+from lib.misc.MomentofInertia import *

@@ -1,5 +1,5 @@
 from lib.lib_dep import *
-from lib.utils.FreeMemory import *
+from lib.misc.FreeMemory import *
 from lib.grid.MetricsEvaluation import *
 
 

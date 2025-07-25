@@ -19,13 +19,13 @@ t_start = time.time()
 # Set up the parameters:
 
 body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 7
+n_layers      = 2
 n_min         = 3
 n_max         = 50
 r             = 2631.2e+3
 i_max         = 7
-mode          = 'layer'              # 'layer','interface'
-load_opt      = True
+mode          = 'interface'              # 'layer','interface'
+load_opt      = False
 save_opt      = 'all'            # None,'all', 'total'
 
 proj_opt      = ccrs.Mollweide()
@@ -129,7 +129,7 @@ if coeffs_tot is not None:
 
     # Global analysis (U, H, FreeAir, Bouguer):
     [U_matrix, topog_matrix, deltag_freeair, deltag_boug] = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='multiple',proj_opt=proj_opt,verbose_opt=verbose_opt)
+                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='single',proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
     # Spectrum analysis:

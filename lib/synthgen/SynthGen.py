@@ -1,5 +1,5 @@
 from lib.lib_dep import *
-from lib.utils.FreeMemory import *
+from lib.misc.FreeMemory import *
 from lib.globe_analysis.CrustThickness import *
 
 
@@ -110,8 +110,10 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
             match interface:
 
+
                 case 'sph':
                     surf = pysh.SHGrid.from_zeros(lmax=n_max)+radius_layers[i]
+
 
                 case 'dwnbg':
                     surf = CrustThickness(coeffs_topo=coeffs_topo,coeffs_grav=coeffs_grav,rho_boug=rho_layers[i],
@@ -121,6 +123,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
                 case 'surf':
                     surf = coeffs_topo.expand(lmax=n_max,extend=True)
+
 
                 case 'sphflat':
                     r_p = radius_layers[i]*r_p_fact
@@ -133,11 +136,12 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
                         print("     polar radius R_p: " + str(np.round(r_p,2)))
                         print("     equatorial radius R_e: " + str(np.round(r_e,2)))
 
+
                 case 'rng':
                     # Kaula's rule + lowpass filtering (Ri/R ^n)
                     degrees = np.arange(n_max+1, dtype=float)
                     degrees[0] = np.inf
-                    surf_coeff_rng = pysh.SHCoeffs.from_random(degrees**(-2) * (radius_layers[i]/radius_layers[-1])**(degrees),power_unit='per_lm', seed=42*i)
+                    surf_coeff_rng = pysh.SHCoeffs.from_random(degrees**(-2) * (radius_layers[i]/radius_layers[-1])**(degrees),power_unit='per_lm', seed=41*i)
                     surf = surf_coeff_rng.expand(lmax=n_max,extend=True)+radius_layers[i]
                     surf_coeff_rng.coeffs *= interface_addinfo[i]/(np.max(surf.data) - np.min(surf.data))
                     surf = surf_coeff_rng.expand(lmax=n_max,extend=True)+radius_layers[i]
@@ -168,12 +172,12 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
             # Check for topography conflicts (between current layer and the previous one):
 
-            if ((surf.data - surf_prec.data)< 0).any():
+            if ((surf.data - surf_prec.data)<= 0).any():
                 print("ERROR: Interface Conflict")
                 print("Layer "+str(i+1)+"-th lower than "+str(i)+"-th\n")
 
                 if plot_opt:
-                    topog_conflict = pysh.SHGrid.from_array((surf.data-surf_prec.data) < 0)
+                    topog_conflict = pysh.SHGrid.from_array((surf.data-surf_prec.data) <= 0)
 
                     # [fig_confl,ax_confl] = MapPlotting(values=topog_conflict.data, region=region, proj_opt=proj_opt, title=r'Interface conflict Layer '+str(i+1)+'-th - '+str(i)+'-th',cmap=cmap)
                     # MapPlotting([fig, axs[i, 0]], surf.data, region=region, proj_opt=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
@@ -265,7 +269,7 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
                 # MapPlotting([fig, axs[i,1]], U_layer.data, region=region, proj_opt=proj_opt, title=coeffs_i.name, cb_label=r'$m^2/s^2$',cmap=cmap)
                 # MapPlotting([fig, axs[i,0]], surf.data, region=region, proj_opt=proj_opt, title='Interface '+str(i+1), cb_label=r'$km$',cmap=cmap)
-                U_layer.plot(ax=axs[i,1], colorbar='right',projection=proj_opt, title=coeffs_i.name, cb_label='$m^2/s^2$',cmap=cmap)
+                U_layer.plot(ax=axs[i,1], colorbar='right',projection=proj_opt, title='$U_'+str(i+1)+'$', cb_label='$m^2/s^2$',cmap=cmap)
                 surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
                 plt.tight_layout()
                 plt.show()

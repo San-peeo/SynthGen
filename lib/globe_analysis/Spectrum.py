@@ -68,17 +68,19 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
                 # WARNING: use or convention='power',unit='per_lm' or convention='l2norm',unit='per_l' + divide by (2*degree+1)
                 spectrum_grav = pysh.spectralanalysis.spectrum(coeff.coeffs,convention='l2norm',unit='per_l',lmax=n_max)
                 spectrum_grav /= (2*degree_grav+1) # only for 'l2norm'
+                spectrum_grav = np.sqrt(spectrum_grav)
+                
                 if save_opt == 'all': np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
                 if save_opt == 'total' and ("Layer" in coeff.name) is False: np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
                 if plot_opt:
-                    plt.plot(degree_grav[n_min:],np.sqrt(spectrum_grav[n_min:]), linewidth=2, label=coeff.name)
+                    plt.plot(degree_grav[n_min:],spectrum_grav[n_min:], linewidth=2, label=coeff.name)
 
-        spectrum.append(np.sqrt(spectrum_grav))
+        spectrum.append(spectrum_grav)
       
 
     if plot_opt:
-        ymin = np.min(np.sqrt(spectrum_grav[n_min:]))
-        ymax = np.max(np.sqrt(spectrum_grav[n_min:]))
+        ymin = np.min(spectrum_grav[n_min:])
+        ymax = np.max(spectrum_grav[n_min:])
         plt.ylim([10**-np.ceil(-np.log10(ymin)), 10**-np.ceil(-np.log10(ymax)-1)])
         plt.xlim([0, n_max])
         plt.yscale("log")

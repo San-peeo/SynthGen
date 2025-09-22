@@ -19,10 +19,10 @@ tracemalloc.start()
 # Set up the parameters:
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 3
+n_layers      = 4
 n_min         = 0
 n_max         = 150
-r             = 2440.0*1e+3
+r             = [2440.0*1e+3]
 i_max         = 7
 save_opt      = None
 proj_opt      = ccrs.Mollweide()
@@ -41,13 +41,15 @@ maps_list     = ["U","Free-Air","Bouguer"]
 
 
 # Decreasing order to see the overlapping histograms:
-threshold_arr     = [0.075]       # n%
+# threshold_arr     = [0.2,0.15,0.10]       # n%
+threshold_arr     = [0.2]       # n%
 
 
-region = None   # [lon_min, lon_max, lat_min, lat_max]
+# region =  None    # [[lon_min, lon_max], [lat_min, lat_max]]
+region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]]
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
-plot_results = 'average'   # 'top', 'average','both'
+plot_results = 'top'   # 'top', 'average','both'
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -81,7 +83,7 @@ interface_addinfo   = param_int[3]
 
 
 
-saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/"
+saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation/"
 if not os.path.isdir(saving_dir):
     print("Creating directory:")
     os.makedirs(saving_dir)
@@ -96,8 +98,8 @@ else:
 
 
 # Reading "Real" data:
-real_dir = "Results/Real/"+body+"/"
-
+# real_dir = "Results/Real/"+body+"/"
+real_dir = "Results/Synthetic/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/"
 
 print(" ")
 print("Selected Metrics:")
@@ -302,10 +304,12 @@ else:
         valid_flag = False
 
 
-        nhalf_rng   =  np.zeros([1,n_layers])
+
+        
         rho_rng     =  np.zeros([1,n_layers])
         radius_rng  =  np.zeros([1,n_layers])
-
+        nhalf_rng   =  np.zeros([1,n_layers])       
+        interface_addinfo_rng = interface_addinfo
 
         # LAYERS:
 
@@ -313,6 +317,7 @@ else:
 
             if interface_type[i] == 'dwnbg':
                 nhalf_rng[0,i] = random.randint(nhalf_range[i][0],nhalf_range[i][1])
+                interface_addinfo_rng[i] = nhalf_rng[0,i]
 
             if interface_type[i] == 'surf':
                 rho_rng[0,i] = random.uniform(rho_range[i][0],rho_range[i][1])
@@ -394,13 +399,14 @@ else:
         # ------------------------------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------------------------------
 
-            param_int_grid = [rho_rng[0,:],radius_rng[0,:],interface_type,nhalf_rng[0,:]]
+            # param_int_grid = [rho_rng[0,:],radius_rng[0,:],interface_type,nhalf_rng[0,:]]
+            param_int_grid = [rho_rng[0,:],radius_rng[0,:],interface_type,interface_addinfo_rng]
 
 
 
             # Synthetic gravitational coefficients generation:
 
-            coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int_grid,n_max,coeffs_grav,coeffs_topo,i_max,[],
+            coeffs_tot,coeffs_layers = SynthGen(param_int_grid,n_max,coeffs_grav,coeffs_topo,i_max,[],
                                                 save_opt=None,load_opt=False,plot_opt=False,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
             # Check SynthGen output:
@@ -678,6 +684,9 @@ rho_stats,radius_stats,n_half_stats,fig = TopThreshold_Analysis(rho_rng_sort,rad
                                                                 final_metric, threshold_arr,saving_dir=saving_dir+run_name)
 fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
+# rho_stats,radius_stats,fig = TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort,
+#                                                                 final_metric, threshold_arr,saving_dir=saving_dir+run_name)
+# fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
 
 print(" ")
@@ -695,7 +704,7 @@ if plot_results == 'top' or plot_results == 'both':
     radius = radius_rng_sort[-1]
     nhalf = nhalf_rng_sort[-1]
 
-    PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
+    PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,body,region,proj_opt,
                     rho,radius,nhalf, real_dir,
                     saving_dir+run_name,'TOP')
     
@@ -708,6 +717,8 @@ if plot_results == 'top' or plot_results == 'both':
     print("Reference mass : " + str(format(ref_mass,'.3E')) + " [kg]\n")
     print("Total MoI (norm) : " + str(MoI/(M*radius[-1]**2*1e+6)))
     print("Reference MoI (norm) : " + str(np.round(ref_MoI,3)) +" +/- " +str(np.round(err_MoI,3)) )
+    print("\n")
+    print("# ------------------------------------------------------------------------------------------------------\n")
 
 
 
@@ -728,7 +739,7 @@ if plot_results == 'average' or plot_results == 'both':
     avg_radius[-1] = radius_layers[-1]  # Last layer radius is fixed
 
 
-    PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,rho_boug,body,region,proj_opt,
+    PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,3,n_max,i_max,body,region,proj_opt,
                     avg_rho,avg_radius,avg_nhalf,real_dir,
                     saving_dir+run_name,'AVG')
 

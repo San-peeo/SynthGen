@@ -18,14 +18,14 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 2
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 4
 n_min         = 3
-n_max         = 50
-r             = 2631.2e+3
+n_max         = 150
+r             = [2439.4*1e+3]
 i_max         = 7
-mode          = 'interface'              # 'layer','interface'
-load_opt      = False
+mode          = 'layer'              # 'layer','interface'
+load_opt      = True
 save_opt      = 'all'            # None,'all', 'total'
 
 proj_opt      = ccrs.Mollweide()
@@ -55,7 +55,8 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 rho_boug        = param_body[7]
 interface_info  = param_int[3]
 
-
+ref_mass        = param_bulk[3]
+ref_MoI         = param_bulk[6]
 
 
 
@@ -115,8 +116,19 @@ print("# -----------------------------------------------------------------------
 
 t_start2 = time.time()
 
-coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
+coeffs_tot,coeffs_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
                                     save_opt=save_opt,plot_opt=True,load_opt=load_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
+
+
+M   = Mass(param_int[1],param_int[0])
+MoI = MomentofInertia(param_int[1],param_int[0])
+print("Total mass : " + str(format(M,'.3E')) + " [kg]")
+print("Reference mass : " + str(format(ref_mass,'.3E')) + " [kg]\n")
+print("Total MoI (norm) : " + str(np.round(MoI/(M*param_int[1][-1]**2*1e+6),3)))
+print("Reference MoI (norm) : " + str(np.round(ref_MoI,3)) + " +/- " + str(np.round(param_bulk[7],3)))
+
+
+
 
 t_end2 = time.time()
 print(f"SynthGen Execution Time: {t_end2 - t_start2:.2f} seconds")
@@ -129,7 +141,7 @@ if coeffs_tot is not None:
 
     # Global analysis (U, H, FreeAir, Bouguer):
     [U_matrix, topog_matrix, deltag_freeair, deltag_boug] = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='single',proj_opt=proj_opt,verbose_opt=verbose_opt)
+                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='multiple',proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
     # Spectrum analysis:
@@ -154,11 +166,14 @@ if coeffs_tot is not None:
 
         # Reading "Real" data:
         real_dir = "Results/Real/"+body+"/"
+        # real_dir = "Data/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/"
+
+
 
         U_matrix_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
-        spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
+        # spectrum_real = np.loadtxt(real_dir+'spectrum_grav_'+coeffs_grav.name+'.dat')
 
 
 

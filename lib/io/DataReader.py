@@ -2,7 +2,7 @@ from lib.lib_dep import *
 from lib.io.Planets_ConfigFiles import *
 
 
-def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max, n_layers=None):
+def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede","Ceres"], n_max, n_layers=None):
 
     """
     Usage
@@ -13,7 +13,7 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
 
     Parameters
     ----------
-    body            : str, option ["Mercury", "Earth", "Venus", "Moon"]
+    body            : str, option ["Mercury", "Earth", "Venus", "Moon","Ganymede","Ceres"]
                       Planetary body implemented (see Planets_ConfigFiles.py)
     n_max           : int
                       The maximum spherical harmonic degree of the output spherical harmonic coefficients.
@@ -86,6 +86,11 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede"], n_max
                 param_bulk = Ganymede_ConfigFile.bulk()
                 param_body = Ganymede_ConfigFile.data()
                 if n_layers is not None: param_int  = Ganymede_ConfigFile.interiors(n_layers)
+
+            case "Ceres":
+                param_bulk = Ceres_ConfigFile.bulk()
+                param_body = Ceres_ConfigFile.data()
+                if n_layers is not None: param_int  = Ceres_ConfigFile.interiors(n_layers)
 
             case _:
                 print("Invalid body name")

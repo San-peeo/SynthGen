@@ -50,7 +50,7 @@ plt.rcParams.update({
 
 
 
-cmap = 'jet'   # WARNING: not colorblind map
+cmap = 'turbo'   # WARNING: not colorblind map   'jet'
 
 
 G_const = 6.6743e-11   # m^3/(Kg*s^2)

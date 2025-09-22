@@ -4,7 +4,7 @@ from lib.globe_analysis.Global_Analysis import *
 from lib.globe_analysis.Spectrum import *
 
 
-def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,rho_boug,body,region,proj_opt,
+def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,region,proj_opt,
                    rho,radius,nhalf, real_dir,
                    saving_dir,folder_prefix:Literal['TOP','AVG']='AVG'):
 
@@ -19,8 +19,6 @@ def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_ma
 
     Parameters
     ----------
-    param_bulk    : list
-                    Bulk parameters for the planetary body.
     param_int     : list
                     Interior structure parameters (e.g., densities, radii, interface types, nhalf).
     coeffs_grav   : numpy.ndarray
@@ -33,8 +31,6 @@ def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_ma
                     Maximum spherical harmonic degree.
     i_max         : int
                     Maximum order for Taylor expansion.
-    rho_boug      : float
-                    Crust density for Bouguer correction.
     body          : str
                     Name of the planetary body (used for file paths).
     region        : list
@@ -66,6 +62,7 @@ def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_ma
 
 
     interface_type  = param_int[2]
+    interface_addinfo  = param_int[3]
     n_layers = len(param_int[0])  
 
 
@@ -79,7 +76,8 @@ def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_ma
     for i in range(n_layers):
         plot_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius[i]) + '_rho'+str(i+1)+'_'+str(rho[i])
         if interface_type[i] == 'dwnbg':
-            plot_dir += '_nhalf'+str(i+1)+'_'+str(nhalf[i])       
+            plot_dir += '_nhalf'+str(i+1)+'_'+str(nhalf[i])  
+            interface_addinfo[i] = int(nhalf[i])
         if i!= n_layers-1:
             plot_dir+='_'
 
@@ -105,24 +103,25 @@ def PlottingTopAvg(param_bulk,param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_ma
 
     # Generating the top model coefficients:
 
+
     param_int[0] = rho
     param_int[1] = radius
     param_int[2] = interface_type
-    param_int[3] = nhalf
-    coeffs_tot,coeffs_layers = SynthGen(param_bulk,param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+plot_dir,mode='layer',
+    param_int[3] = interface_addinfo
+    coeffs_tot,coeffs_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+plot_dir,mode='layer',
                                         save_opt=True,plot_opt=True,load_opt=False,verbose_opt=False)
 
 
     if coeffs_tot is not None:
 
         # SynthGen top model (U, H, FreeAir, Bouguer):
-        U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=radius,rho_boug=rho[-1],
+        U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=[radius[-1]],rho_boug=rho[-1],
                                                                         i_max=i_max,saving_dir=saving_dir+plot_dir,verbose_opt=False)
 
 
 
         # Real data model (U, H, FreeAir, Bouguer):
-        real_dir = "Results/Real/"+body+"/"
+        # real_dir = "Results/Real/"+body+"/"
         U_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')

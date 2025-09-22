@@ -24,7 +24,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
     coeffs_topo         : pyshtools.SHGravCoeffs, [km]
                           Topography coefficients
     r                   : float, [km]
-                          Radius where the maps are to be evaluated.
+                          Radius where the maps are to be evaluated or r = [a,f] for an ellipsoidal evaluation (a = semi-major axis, f = flattening =(b-a)/a)
     n_max               : int
                           The maximum spherical harmonic degree of the output spherical harmonic coefficients.
     rho_boug            : float, [kg/m^3]
@@ -73,12 +73,18 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
         print("Global analysis:")
         print("\n")
 
+
+
+
     # ------------------------------------------------------------------------------------------------------
 
 
     # Compute Gravity (U - FreeAir)
-    grav = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,r=r,extend=True)
-    if n_min>=0: grav_min = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,lmax_calc=n_min,r=r,extend=True)
+    if len(r)==1: grav = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,r=r,extend=True)
+    else: grav = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,a=r[0],f=r[1],extend=True)
+    if n_min>=0: 
+        if len(r)==1: grav_min = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,lmax_calc=n_min,r=r,extend=True)
+        else: grav_min = pysh.SHGravCoeffs.expand(coeffs_grav,lmax=n_max,lmax_calc=n_min,a=r[0],f=r[1],extend=True)
 
 
     # ------------------------------------------------------------------------------------------------------
@@ -119,7 +125,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
     else:
         topog_matrix = coeffs_topo.expand(lmax=n_max,extend=True)
         if n_min>=0:
-            topog_matrix_min = coeffs_topo.expand(lmax=n_max,lmax_calc=0,extend=True)
+            topog_matrix_min = coeffs_topo.expand(lmax=n_max,lmax_calc=n_min,extend=True)
             topog_matrix = topog_matrix-topog_matrix_min
 
         theta = topog_matrix.lats()
@@ -182,9 +188,11 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
         bouger_correction = bouger_correction.change_ref(r0=coeffs_grav.r0)
 
         bouguer_coeff = coeffs_grav - bouger_correction
-        bouguer = bouguer_coeff.expand(lmax=n_max,r=r,extend=True)
+        if len(r)==1: bouguer = bouguer_coeff.expand(lmax=n_max,r=r,extend=True)
+        else: bouguer = bouguer_coeff.expand(lmax=n_max,a=r[0],f=r[1],extend=True)
         if n_min>=0:
-            bouguer_min = bouguer_coeff.expand(lmax=n_max,lmax_calc=n_min,r=r,extend=True)
+            if len(r)==1: bouguer_min = bouguer_coeff.expand(lmax=n_max,lmax_calc=n_min,r=r,extend=True)
+            else: bouguer_min = bouguer_coeff.expand(lmax=n_max,lmax_calc=n_min,a=r[0],f=r[1],extend=True)
             deltag_boug = bouguer.total*1e+5 - bouguer_min.total*1e+5
         else:
             deltag_boug = bouguer.total*1e+5

@@ -3,7 +3,7 @@ from lib.misc.FreeMemory import *
 from lib.globe_analysis.CrustThickness import *
 
 
-def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: Literal['all','total',None],region=None,
+def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: Literal['all','total',None],region=None,
              mode: Literal['layer','interface'] ='layer',load_opt=False,plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
 
     """
@@ -17,9 +17,6 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
     Parameters
     -----------
-    param_bulk   : list
-                  A list containing body bulk parameters, namely:
-                    - r_e_fact,r_p_fact: equatorial radius factor
     param_int   : list
                   A list containing interior model parameters:
                   [0] - rho_layers: list of average densities for each layer    [kg/m^3]
@@ -75,9 +72,8 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
     interface_addinfo  = param_int[3]
     n_layers= np.size(rho_layers)
 
-    # Flattening parameters
-    r_e_fact        = param_bulk[8]
-    r_p_fact        = param_bulk[9]
+
+
 
 
 
@@ -126,8 +122,12 @@ def SynthGen(param_bulk,param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir
 
 
                 case 'sphflat':
+                    # Flattening parameters
+                    r_e_fact        = interface_addinfo[i][0]
+                    r_p_fact        = interface_addinfo[i][1]
                     r_p = radius_layers[i]*r_p_fact
                     r_e = radius_layers[i]*r_e_fact
+
                     theta_grid = np.reshape(np.repeat(theta,np.size(phi),axis=0),np.shape(surf_prec.data))
                     surf = pysh.SHGrid.from_array(np.sqrt(r_p*r_p + (r_e*r_e -r_p*r_p)*np.cos(theta_grid)*np.cos(theta_grid)))
                     if verbose_opt:

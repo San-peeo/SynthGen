@@ -9,6 +9,7 @@ from lib.lib_dep import *
 from lib.io.Planets_ConfigFiles import *
 from lib.io.DataReader import *
 
+
 # Global Analysis modules
 from lib.globe_analysis.Global_Analysis import *
 from lib.globe_analysis.CrustThickness import *
@@ -22,6 +23,7 @@ from lib.grid.MetricsAnalysis import *
 from lib.grid.MetricsEvaluation import *
 from lib.grid.ParameterRange import *
 from lib.grid.TopThreshold_Analysis import *
+from lib.grid.TopThreshold_Analysis_nodeg import *
 from lib.grid.PlottingTopAvg import *
 
 # Miscellaneous and Utilities (Python)

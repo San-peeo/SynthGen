@@ -20,6 +20,7 @@ tracemalloc.start()
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
 n_layers      = 4
+layer_name    = ["Inner Core","Outer Core","Mantle","Crust"]
 n_min         = 0
 n_max         = 150
 r             = [2440.0*1e+3]
@@ -49,7 +50,7 @@ threshold_arr     = [0.2]       # n%
 region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]]
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
-plot_results = 'top'   # 'top', 'average','both'
+plot_results = 'both'   # 'top', 'average','both'
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -83,6 +84,7 @@ interface_addinfo   = param_int[3]
 
 
 
+# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009/"
 saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation/"
 if not os.path.isdir(saving_dir):
     print("Creating directory:")
@@ -329,29 +331,29 @@ else:
 
 
         # CORE (Mass and MoI conservation):
+        MoI_rng = random.uniform(ref_MoI-err_MoI,ref_MoI+err_MoI)
 
-        [R_core_min,R_core_max, rho_core_min,rho_core_max] = Solver_M_MoI(param_bulk,[rho_rng[0,:],radius_rng[0,:]])
+        [R_core, rho_core] = Solver_M_MoI([ref_mass,MoI_rng],[rho_rng[0,:],radius_rng[0,:]])
 
-        # Checking core solution validity:
-        if R_core_min is None or  any(x < 0 for x in [R_core_min,R_core_max, rho_core_min,rho_core_max]):
-            print("ERROR: Core parameters not valid")
-            error_flag = True
-            if verbose_opt:
-                print("R_core (min,max) =  ", R_core_min," - ",R_core_max)
-                print("rho_core (min,max) =  ", rho_core_min," - ",rho_core_max)
 
+
+        if R_core is None or rho_core is None:
+            error_flag=True
+
+        # Core parameters:
         if not error_flag:
-            rho_rng[0,0] = random.uniform(rho_core_min,rho_core_max)
-            radius_rng[0,0] = random.uniform(R_core_min,R_core_max)
+            radius_rng[0,0] = R_core
+            rho_rng[0,0] = rho_core
 
 
+
+
+        # ----------------------------------------------------------------------------------------------------------------
 
 
         # Rounding grid extraction results:
         rho_rng      = np.round(rho_rng)
         radius_rng   = np.round(radius_rng)
-
-        # ----------------------------------------------------------------------------------------------------------------
 
 
         # Checking the extracted parameters:
@@ -393,8 +395,6 @@ else:
             print()
             print("PARAMETERS SET: VALID")
             valid_flag=True
-
-
 
         # ------------------------------------------------------------------------------------------------------
         # ------------------------------------------------------------------------------------------------------
@@ -681,7 +681,7 @@ print("Top thresholds analysis:\n")
 # Top % threshold analysis
 
 rho_stats,radius_stats,n_half_stats,fig = TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort,
-                                                                final_metric, threshold_arr,saving_dir=saving_dir+run_name)
+                                                                final_metric, threshold_arr,layer_name,saving_dir=saving_dir+run_name)
 fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
 # rho_stats,radius_stats,fig = TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort,

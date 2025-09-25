@@ -35,7 +35,7 @@ class Mercury_ConfigFile():
         ref_rho         = ref_mass/(4/3*np.pi*ref_radius**3*1e+9)   # [kg/m^3]
         ref_ang_vel     = 8.264e-07                                                         # [rad/sec]
         ref_MoI         = 0.34597                                                           # (I/MR^2)   Margot et al, 2018
-        err_MoI         = 0.014                                                           # formal error = 0.00089, distribution error = 0.014  (different estimates)
+        err_MoI         = 0.014                                                                 # formal error = 0.00089, distribution error = 0.014  (different estimates)
 
         # Polar Flattening
         r_e = 2440.5             # [km]
@@ -55,11 +55,11 @@ class Mercury_ConfigFile():
     def data():
 
         # Gravity data file
-        grav_file = 'Data/Mercury/HgM009/HgM009.sha'
-        header_opt_grav = True
-
-        # grav_file = 'Data/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/coeffs_tot.dat'
+        # grav_file = 'Data/Mercury/HgM009/HgM009.sha'
         # header_opt_grav = True
+
+        grav_file = 'Data/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/coeffs_tot.dat'
+        header_opt_grav = True
 
         format_grav='shtools'
 
@@ -104,26 +104,26 @@ class Mercury_ConfigFile():
 
 
 
-            # case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
-
-            #     rho_layers      = [8652.52,6909.98, 3343.35, 2903.03]
-            #     radius_layers   = [666.577, 2023.66, 2402.61, 2439.4]
-            #     interface_type  = ['sph','sphflat','dwnbg','surf']
-
-            #     # Additional information for the interface (dwnbg,rng or custom)
-            #     n_half = 40  # Cutting degree n_half (crust thickness filtering)
-            #     interface_addinfo  = [0,[r_e_fact,r_p_fact],n_half,0]
-
-
             case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
 
-                rho_layers      = [7140,7000,3400,2800]
-                radius_layers   = [1119.7,2019.7,2399.7,2439.4]
+                rho_layers      = [8652.52,6909.98, 3343.35, 2903.03]
+                radius_layers   = [666.577, 2023.66, 2402.61, 2439.4]
                 interface_type  = ['sph','sphflat','dwnbg','surf']
 
                 # Additional information for the interface (dwnbg,rng or custom)
                 n_half = 40  # Cutting degree n_half (crust thickness filtering)
                 interface_addinfo  = [0,[r_e_fact,r_p_fact],n_half,0]
+
+
+            # case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
+
+            #     rho_layers      = [7140,7000,3400,2800]
+            #     radius_layers   = [1119.7,2019.7,2399.7,2439.4]
+            #     interface_type  = ['sph','sphflat','dwnbg','surf']
+
+            #     # Additional information for the interface (dwnbg,rng or custom)
+            #     n_half = 40  # Cutting degree n_half (crust thickness filtering)
+            #     interface_addinfo  = [0,[r_e_fact,r_p_fact],n_half,0]
 
 
             case _:

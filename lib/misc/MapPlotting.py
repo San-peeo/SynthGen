@@ -115,7 +115,7 @@ def MapPlotting(parent=None, values=[], region=None, proj_opt=ccrs.Mollweide(), 
             ax.set_extent([region[0][0], region[0][1], region[1][0], region[1][1]],crs=ccrs.PlateCarree())
 
 
-        gl = ax.gridlines(draw_labels=True, dms=True,linewidth=0.75, color='gray', alpha=0.5, linestyle='--')
+        gl = ax.gridlines(draw_labels=False, dms=True,linewidth=0.75, color='gray', alpha=0.5, linestyle='--')
 
         ax.set_title(title)
         fig.colorbar(map1,ax=ax,label=cb_label, location='right', anchor=(0.5,0.5), shrink=0.7)

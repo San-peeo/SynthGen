@@ -47,7 +47,7 @@ plt.rcParams.update({
     "text.usetex": True,  
     "font.family": "serif",
 })
-
+plt.rcParams['font.size'] = '14'
 
 
 cmap = 'turbo'   # WARNING: not colorblind map   'jet'

@@ -1,6 +1,6 @@
 from lib.lib_dep import *
 
-def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_metric, threshold_arr, saving_dir=None):
+def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_metric, threshold_arr, layer_name=[], saving_dir=None):
 
     """
     Usage
@@ -22,6 +22,8 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
                        Array of final metric values for all models.
     threshold_arr    : list
                        List of threshold percentages (e.g., [0.05, 0.1]) to select top models.
+    layer_name       : list, default = []
+                       List of layers name for plotting title.
     saving_dir       : str, default = None
                        Directory to save the generated histogram plots.
                        If None, plots are not saved.
@@ -164,7 +166,8 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Density $[kg/m^3]$')
-            ax.set_title(r'Layer '+str(i+1))
+            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+            else: ax.set_title(layer_name[i])
 
 
             # ------------------------------------------------------------------------------------------------------
@@ -213,7 +216,8 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Radius $[km]$')
-            ax.set_title(r'Layer '+str(i+1))
+            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+            else: ax.set_title(layer_name[i])
 
 
             # ------------------------------------------------------------------------------------------------------
@@ -262,7 +266,8 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Degree $l_{half}$')
-            ax.set_title(r'Layer '+str(i+1))
+            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+            else: ax.set_title(layer_name[i])
 
 
 

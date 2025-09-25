@@ -1,6 +1,6 @@
 from lib.lib_dep import *
 
-def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, threshold_arr, saving_dir=None):
+def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, threshold_arr, layer_name=[], saving_dir=None):
 
     """
     Usage
@@ -20,6 +20,8 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
                        Array of final metric values for all models.
     threshold_arr    : list
                        List of threshold percentages (e.g., [0.05, 0.1]) to select top models.
+    layer_name       : list, default = []
+                       List of layers name for plotting title.
     saving_dir       : str, default = None
                        Directory to save the generated histogram plots.
                        If None, plots are not saved.
@@ -104,6 +106,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
 
         # Histogram and Analysis
 
+
         for i in range(n_layers):
 
             ax=axs[i, 0]
@@ -141,14 +144,15 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\rho=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(rho[j,i,0], rho[j,i,1],r2), color=hist_color[j])
-                    # ax.legend()
+                    ax.legend()
 
                 except:
                     print('No Fit (Density)')
 
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Density $[kg/m^3]$')
-            ax.set_title(r'Layer '+str(i+1))
+            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+            else: ax.set_title(layer_name[i])
 
 
             # ------------------------------------------------------------------------------------------------------
@@ -189,7 +193,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
                             radius[j,i,1] = sigma
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $R=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(radius[j,i,0], radius[j,i,1],r2), color=hist_color[j])
-                    # ax.legend()
+                    ax.legend()
 
                 except:
                     print('No Fit (Radius)')
@@ -197,7 +201,8 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
 
             ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
             ax.set_xlabel(r'Radius $[km]$')
-            ax.set_title(r'Layer '+str(i+1))
+            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+            else: ax.set_title(layer_name[i])
 
 
         labels.append(str(thresh*100)+'\% ('+str(np.shape(best_idx_arr)[1])+' models)')

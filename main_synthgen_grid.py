@@ -35,7 +35,8 @@ verbose_opt = False
 
 
 # metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
-metrics_list  = ["SSIM","NCC"]
+# metrics_list  = ["SSIM","NCC"]
+metrics_list  = ["SSIM"]
 
 # maps_list  = ["U","Free-Air","Bouguer"]
 maps_list     = ["U","Free-Air","Bouguer"]
@@ -43,11 +44,10 @@ maps_list     = ["U","Free-Air","Bouguer"]
 
 # Decreasing order to see the overlapping histograms:
 # threshold_arr     = [0.2,0.15,0.10]       # n%
-threshold_arr     = [0.2]       # n%
+threshold_arr     = [0.05]       # n%
 
 
-# region =  None    # [[lon_min, lon_max], [lat_min, lat_max]]
-region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]]
+region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]] or None
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
 plot_results = 'both'   # 'top', 'average','both'
@@ -85,7 +85,7 @@ interface_addinfo   = param_int[3]
 
 
 # saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009/"
-saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation/"
+saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.00089/"
 if not os.path.isdir(saving_dir):
     print("Creating directory:")
     os.makedirs(saving_dir)
@@ -114,7 +114,9 @@ print(maps_list)
 
 print(" ")
 print("# ------------------------------------------------------------------------------------------------------")
-print("# ------------------------------------------------------------------------------------------------------\n")
+print("#########################################################################################################")
+print("# ------------------------------------------------------------------------------------------------------")
+print(" ")
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
@@ -195,7 +197,7 @@ if any(n_counts<=run_n_counts):
 
     # End timing
     t_end_grid = time.time()
-    print(f"Grid loading time: {t_end_grid - t_start_grid:.2f} seconds\n")
+    print(f"Loading time: {t_end_grid - t_start_grid:.2f} seconds\n")
 
 
 

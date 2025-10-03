@@ -3,17 +3,13 @@ import sys
 
 
 
-# NB: interiors interface options:
-#         - sph        = sph on the layer radius (No interface topography)
-#         - sphflat    = polar flattening
-#         - dwnbg      = Downwarding Bouguer anomalies to infer the interface relief
-#         - surf       = surf topography (from data)
+# Files for a custom planetary body
+# To be filled by the user with the desired parameters
 
 
 
 
-
-class Mercury_ConfigFile():
+class Custom_ConfigFile():
 
     '''
     Methods:
@@ -86,8 +82,8 @@ class Mercury_ConfigFile():
 
     def interiors(n_layers):
 
-        r_e_fact = Mercury_ConfigFile.bulk()[8]
-        r_p_fact = Mercury_ConfigFile.bulk()[9]
+        r_e_fact = Custom_ConfigFile.bulk()[8]
+        r_p_fact = Custom_ConfigFile.bulk()[9]
 
         #layers:
         match n_layers:
@@ -104,7 +100,7 @@ class Mercury_ConfigFile():
 
 
 
-            case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
+            case 4:                     
 
                 rho_layers      = [8652.52,6909.98, 3343.35, 2903.03]
                 radius_layers   = [666.577, 2023.66, 2402.61, 2439.4]
@@ -115,20 +111,10 @@ class Mercury_ConfigFile():
                 interface_addinfo  = [0,[r_e_fact,r_p_fact],n_half,0]
 
 
-            # case 4:                     # see Margot et al., "Mercury's Internal Structure, 2018
-
-            #     rho_layers      = [7140,7000,3400,2800]
-            #     radius_layers   = [1119.7,2019.7,2399.7,2439.4]
-            #     interface_type  = ['sph','sphflat','dwnbg','surf']
-
-            #     # Additional information for the interface (dwnbg,rng or custom)
-            #     n_half = 40  # Cutting degree n_half (crust thickness filtering)
-            #     interface_addinfo  = [0,[r_e_fact,r_p_fact],n_half,0]
-
 
             case _:
 
-                print('No existing Mercury model with '+str(n_layers)+' layers')
+                print('No existing model with '+str(n_layers)+' layers')
                 print('\n')
                 sys.exit()
                 return

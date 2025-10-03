@@ -7,5 +7,6 @@ from lib.io.Moon_ConfigFile import *
 from lib.io.Ganymede_ConfigFile import *
 from lib.io.Ceres_ConfigFile import *
 
+from lib.io.Custom_ConfigFile import *
 
 

@@ -2,7 +2,7 @@ from lib.lib_dep import *
 from lib.io.Planets_ConfigFiles import *
 
 
-def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede","Ceres"], n_max, n_layers=None):
+def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede","Ceres","Custom"], n_max, n_layers=None):
 
     """
     Usage
@@ -91,6 +91,12 @@ def DataReader(body: Literal["Mercury","Venus","Earth","Moon","Ganymede","Ceres"
                 param_bulk = Ceres_ConfigFile.bulk()
                 param_body = Ceres_ConfigFile.data()
                 if n_layers is not None: param_int  = Ceres_ConfigFile.interiors(n_layers)
+
+                
+            case "Custom":
+                param_bulk = Custom_ConfigFile.bulk()
+                param_body = Custom_ConfigFile.data()
+                if n_layers is not None: param_int  = Custom_ConfigFile.interiors(n_layers)
 
             case _:
                 print("Invalid body name")

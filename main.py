@@ -21,7 +21,7 @@ t_start = time.time()
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
 n_min         = 3
 n_max         = 150
-r             = [2440*1e+3]            # Reference radius [m]
+r             = [2440*1e+3,0.0009]            # Reference radius [m]
 # r             = [482e+3, 0.075]   # Reference ellipsoid [a,f] (a=semi-major axis, f=flattening=(b-a)/a)  
 i_max         = 7
 verbose_opt   = True

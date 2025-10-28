@@ -18,13 +18,13 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 4
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
+n_layers      = 7
 n_min         = 3
-n_max         = 150
-r             = [2439.4*1e+3]
+n_max         = 50
+r             = [2631.2*1e+3] #, 0.0009]
 i_max         = 7
-mode          = 'layer'              # 'layer','interface'
+mode          = 'interface'              # 'layer','interface'
 load_opt      = True
 save_opt      = 'all'            # None,'all', 'total'
 
@@ -33,6 +33,8 @@ proj_opt      = ccrs.Mollweide(central_longitude=180)
 
 verbose_opt   = True
 
+
+region = [[-180, 180], [0, 90]]     # None,    Mercury = [[-180, 180], [0, 90]]
 
 
 
@@ -57,6 +59,8 @@ interface_info  = param_int[3]
 
 ref_mass        = param_bulk[3]
 ref_MoI         = param_bulk[6]
+
+layers_name     = param_int[4]
 
 
 
@@ -87,7 +91,7 @@ sub_dir=''
 for i in range(n_layers):
     sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_layers[i]) + '_rho'+str(i+1)+'_'+str(rho_layers[i])
     if interface_type[i] == 'dwnbg':
-        sub_dir += '_nhalf'+str(i+1)+'_'+str(interface_info[i])
+        sub_dir += '_nhalf'+str(i+1)+'_'+str(np.round(interface_info[i]))
     if interface_type[i] == 'rng':
         sub_dir += '_'+str(interface_info[i])+'km'   
     if i!= n_layers-1:
@@ -117,7 +121,8 @@ print("# -----------------------------------------------------------------------
 t_start2 = time.time()
 
 coeffs_tot,coeffs_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
-                                    save_opt=save_opt,plot_opt=True,load_opt=load_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
+                                    save_opt=save_opt,plot_opt=True,layers_name=layers_name,
+                                    load_opt=load_opt,verbose_opt=verbose_opt)
 
 
 M   = Mass(param_int[1],param_int[0])
@@ -161,9 +166,6 @@ if coeffs_tot is not None:
         print("Comparison with real data: ")
 
 
-        # region = [[-180, 180], [0, 90]]
-        region = None
-
 
         # Reading "Real" data:
         real_dir = "Results/Real/"+body+"/"
@@ -181,8 +183,8 @@ if coeffs_tot is not None:
         fig, axs = plt.subplots(3, 2, figsize =(11,8),subplot_kw={'projection': proj_opt})
         fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
-        MapPlotting(parent=[fig, axs[0, 0]], values=U_matrix.data, region=region, proj_opt=proj_opt, title=r'$U\ {Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_matrix_real),np.max(U_matrix_real)])
-        MapPlotting(parent=[fig, axs[0, 1]], values=U_matrix_real, region=region, proj_opt=proj_opt, title=r'$U\ {Real}$', cb_label='$m^2/s^2$',cmap=cmap)
+        MapPlotting(parent=[fig, axs[0, 0]], values=U_matrix.data, region=region, proj_opt=proj_opt, title=r'$U_{Synth}$', cb_label='$m^2/s^2$',cmap=cmap,clim=[np.min(U_matrix_real),np.max(U_matrix_real)])
+        MapPlotting(parent=[fig, axs[0, 1]], values=U_matrix_real, region=region, proj_opt=proj_opt, title=r'$U_{Real}$', cb_label='$m^2/s^2$',cmap=cmap)
         MapPlotting(parent=[fig, axs[1, 0]], values=deltag_freeair.data, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_freeair_real),np.max(deltag_freeair_real)])
         MapPlotting(parent=[fig, axs[1, 1]], values=deltag_freeair_real, region=region, proj_opt=proj_opt, title=r'$FreeAir_{Real}$', cb_label='$mGal$',cmap=cmap)
         MapPlotting(parent=[fig, axs[2, 0]], values=deltag_boug.data, region=region, proj_opt=proj_opt,title=r'$Boug_{Synth}$', cb_label='$mGal$',cmap=cmap,clim=[np.min(deltag_boug_real),np.max(deltag_boug_real)])

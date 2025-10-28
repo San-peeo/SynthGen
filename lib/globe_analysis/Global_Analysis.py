@@ -1,7 +1,9 @@
 from lib.lib_dep import *
 from lib.misc.MapPlotting import *
 
-def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=None, saving_dir=None,plot_opt: Literal[None,'single','multiple'] = None, load_opt=False,n_min=3, proj_opt=ccrs.Mollweide(),verbose_opt=False):
+def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=None, saving_dir=None,
+                    plot_opt: Literal[None,'single','multiple'] = None, load_opt=False, proj_opt=ccrs.Mollweide(),n_min=3,
+                    verbose_opt=False):
 
 
     """
@@ -23,7 +25,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
                           Gravitational coefficients
     coeffs_topo         : pyshtools.SHGravCoeffs, [km]
                           Topography coefficients
-    r                   : float, [km]
+    r                   : float, [m]
                           Radius where the maps are to be evaluated or r = [a,f] for an ellipsoidal evaluation (a = semi-major axis, f = flattening =(b-a)/a)
     n_max               : int
                           The maximum spherical harmonic degree of the output spherical harmonic coefficients.
@@ -163,7 +165,7 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
         if saving_dir is not None: deltag_freeair.to_file(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".dat")
 
     if plot_opt=='single':
-        [fig,ax] = MapPlotting(values=deltag_freeair, region=region, proj_opt=proj_opt, title=r'Free-Air anomalies $\frac{dU}{dr}(\theta,\phi)$', cb_label='$mGal$',cmap=cmap)
+        [fig,ax] = MapPlotting(values=deltag_freeair, region=region, proj_opt=proj_opt, title=r'Free-Air anomalies $\frac{\partial U}{\partial r}(\theta,\phi)$', cb_label='$mGal$',cmap=cmap)
         # fig, ax = deltag_freeair.plot(colorbar='right',projection=proj_opt, cb_label='mGal',cmap=cmap)
         if saving_dir is not None: fig.savefig(saving_dir+"/deltag_freeair_nmin"+str(n_min+1)+"_nmax"+str(n_max)+".png", dpi=600)
 

@@ -100,7 +100,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
 
 
         thresh_name+= str(np.round(thresh*100))
-        if j!=np.shape(threshold_arr)[0]: thresh_name +='_'
+        if j!=np.shape(threshold_arr)[0] or j!=len(threshold_arr)-1: thresh_name +='_'
 
         # ------------------------------------------------------------------------------------------------------
 
@@ -144,7 +144,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\rho=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(rho[j,i,0], rho[j,i,1],r2), color=hist_color[j])
-                    ax.legend()
+                    # ax.legend()
 
                 except:
                     print('No Fit (Density)')
@@ -193,7 +193,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
                             radius[j,i,1] = sigma
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $R=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(radius[j,i,0], radius[j,i,1],r2), color=hist_color[j])
-                    ax.legend()
+                    # ax.legend()
 
                 except:
                     print('No Fit (Radius)')
@@ -220,7 +220,7 @@ def TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort, final_metric, thre
     plt.show()
 
 
-    if saving_dir is not None: plt.savefig(saving_dir+'histograms_'+thresh_name+'_nodeg.png', dpi=600)
+    if saving_dir is not None: plt.savefig(saving_dir+'histograms_'+thresh_name+'nodeg.png', dpi=600)
 
 
 

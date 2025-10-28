@@ -356,3 +356,9 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
 
 
 
+# License
+This project uses the BSD 3-Clause license, as found in the LICENSE file.
+If you want to request access to the development repository, contact: edoardo.santeromormile@gmail.com
+```
+
+

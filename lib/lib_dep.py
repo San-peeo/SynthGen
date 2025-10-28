@@ -47,10 +47,10 @@ plt.rcParams.update({
     "text.usetex": True,  
     "font.family": "serif",
 })
-plt.rcParams['font.size'] = '14'
+plt.rcParams['font.size'] = '16'
 
 
-cmap = 'turbo'   # WARNING: not colorblind map   'jet'
+cmap = 'turbo'   # WARNING: not colorblind map   'jet','turbo'
 
 
 G_const = 6.6743e-11   # m^3/(Kg*s^2)

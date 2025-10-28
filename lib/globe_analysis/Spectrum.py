@@ -71,9 +71,14 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
                 spectrum_grav = np.sqrt(spectrum_grav)
                 
                 if save_opt == 'all': np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
-                if save_opt == 'total' and ("Layer" in coeff.name) is False: np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
+                if save_opt == 'total' and ("(layer)" in coeff.name or "(interface)" in coeff.name) is False: np.savetxt(saving_dir+"/spectrum_grav_"+coeff.name+".dat",spectrum_grav)
                 if plot_opt:
-                    plt.plot(degree_grav[n_min:],spectrum_grav[n_min:], linewidth=2, label=coeff.name)
+                    if "(layer)" in coeff.name or "(interface)" in coeff.name: 
+                        if "(layer)" in coeff.name: label = coeff.name.replace(' (layer)','')
+                        if "(interface)" in coeff.name: label = coeff.name.replace(' (interface)','')
+                        plt.plot(degree_grav[n_min:],spectrum_grav[n_min:], linewidth=1.5, label=label)
+                    else:
+                        plt.plot(degree_grav[n_min:],spectrum_grav[n_min:], linewidth=2.5, label=coeff.name)
 
         spectrum.append(spectrum_grav)
       
@@ -81,7 +86,7 @@ def Spectrum(coeffs,n_max,saving_dir=None,save_opt: Literal['all','total',None] 
     if plot_opt:
         ymin = np.min(spectrum_grav[n_min:])
         ymax = np.max(spectrum_grav[n_min:])
-        plt.ylim([10**-np.ceil(-np.log10(ymin)), 10**-np.ceil(-np.log10(ymax)-1)])
+        plt.ylim([10**np.ceil(np.log10(ymin)-1), 10**np.ceil(np.log10(ymax)+1)])
         plt.xlim([0, n_max])
         plt.yscale("log")
         plt.xlabel("degree $l$")

@@ -4,7 +4,7 @@ from lib.globe_analysis.CrustThickness import *
 
 
 def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: Literal['all','total',None],region=None,
-             mode: Literal['layer','interface'] ='layer',load_opt=False,plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
+             mode: Literal['layer','interface'] ='layer',load_opt=False,layers_name=[],plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
 
     """
     Usage
@@ -47,6 +47,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
     load_opt    : bool, default = False
                   If True, load previously calculated coefficients from files
                   IF False, generate new coefficients
+    layer_name  : list, default = []
+                  List of layers name for plotting title.
     plot_opt    : bool, default = False
                   Plotting Interface - U 
     proj_opt    : cartopy.crs, default = ccrs.Mollweide()
@@ -73,8 +75,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
     n_layers= np.size(rho_layers)
 
 
-
-
+    if layers_name == []:
+        layers_name = ['Layer '+str(i+1) for i in range(n_layers)]
 
 
     if not load_opt or os.path.isfile(saving_dir+"/coeffs_tot.dat") is False:
@@ -90,8 +92,9 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
         coeffs_list=[]
         coeffs_tot = pysh.SHGravCoeffs.from_zeros(lmax=n_max, gm=coeffs_grav.gm, r0=coeffs_grav.r0)
 
+
         if plot_opt:
-            fig, axs = plt.subplots(n_layers, 2, figsize =(8,8),subplot_kw={'projection': proj_opt})
+            fig, axs = plt.subplots(n_layers, 2, figsize =(9,9),subplot_kw={'projection': proj_opt})
 
         for i,interface in enumerate(interface_type):
 
@@ -230,9 +233,12 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
                         coeffs_top = pysh.SHGravCoeffs.from_shape(shape=surf*1e+3, rho=rho_layers[i],
                                                                 lmax=n_max, nmax=i_max, gm=coeffs_grav.gm)
 
-                    coeffs_i.coeffs = coeffs_top.coeffs - coeffs_bot.coeffs
-                
-                coeffs_i.name = "Layer "+str(i+1)
+                    coeffs_top = coeffs_top.change_ref(r0=coeffs_grav.r0,gm=coeffs_grav.gm)
+                    coeffs_bot = coeffs_bot.change_ref(r0=coeffs_grav.r0,gm=coeffs_grav.gm)
+                    coeffs_i = coeffs_top - coeffs_bot
+                    
+                coeffs_i = coeffs_i.change_ref(r0=coeffs_grav.r0,gm=coeffs_grav.gm)
+                coeffs_i.name = layers_name[i]+" (layer)"
 
 
             # ------------------------------------------------------------------------------------------------------
@@ -248,7 +254,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
                     coeffs_i = pysh.SHGravCoeffs.from_shape(shape=surf*1e+3, rho=rho_layers[i]-rho_layers[i+1],
                                                                         lmax=n_max, nmax=i_max, gm=coeffs_grav.gm)
 
-                coeffs_i.name = "Interface "+str(i+1)
+                coeffs_i = coeffs_i.change_ref(r0=coeffs_grav.r0,gm=coeffs_grav.gm)
+                coeffs_i.name = layers_name[i]+" (interface)"
             
 
             # ------------------------------------------------------------------------------------------------------
@@ -270,17 +277,17 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
                 # MapPlotting([fig, axs[i,1]], U_layer.data, region=region, proj_opt=proj_opt, title=coeffs_i.name, cb_label=r'$m^2/s^2$',cmap=cmap)
                 # MapPlotting([fig, axs[i,0]], surf.data, region=region, proj_opt=proj_opt, title='Interface '+str(i+1), cb_label=r'$km$',cmap=cmap)
                 U_layer.plot(ax=axs[i,1], colorbar='right',projection=proj_opt, title='$U_'+str(i+1)+'$', cb_label='$m^2/s^2$',cmap=cmap)
-                surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
+                surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title= layers_name[i] + ' $h_'+str(i+1)+'$', cb_label='$km$',cmap=cmap)
                 plt.tight_layout()
                 plt.show()
                 if save_opt == 'all':
-                    fig.savefig(saving_dir+"/Interface - U.png", dpi=600)
+                    fig.savefig(saving_dir+"/Interface_U.png", dpi=600)
 
             # ------------------------------------------------------------------------------------------------------
 
             # Summing the coefficients:
             coeffs_list.append(coeffs_i)
-            coeffs_tot.coeffs += coeffs_i.coeffs
+            coeffs_tot += coeffs_i
 
             surf_prec = surf
             if verbose_opt: print("\n")
@@ -310,11 +317,11 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
         coeffs_list=[]
 
         if plot_opt:
-            fig, axs = plt.subplots(n_layers, 2, figsize =(8,8),subplot_kw={'projection': proj_opt})
+            fig, axs = plt.subplots(n_layers, 2, figsize =(9,9),subplot_kw={'projection': proj_opt})
 
         for i in range(0,n_layers):
-            if mode=='layer': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_layer"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name="Layer "+str(i+1))
-            if mode=='interface': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_interface"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name="Interface "+str(i+1))
+            if mode=='layer': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_layer"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name=layers_name[i]+" (layer)")
+            if mode=='interface': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_interface"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name=layers_name[i]+" (interface)")
             coeffs_list.append(coeffs_i)
 
             surf =  pysh.SHGrid.from_file(saving_dir+"/interface"+str(i+1)+".dat")
@@ -326,8 +333,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
             if plot_opt:
                 # MapPlotting([fig, axs[i,1]], U_i.data, region=region, proj_opt=proj_opt, title=coeffs_i.name, cb_label=r'$m^2/s^2$',cmap=cmap)
                 # MapPlotting([fig, axs[i,0]], surf.data, region=region, proj_opt=proj_opt, title=r'Interface '+str(i+1), cb_label=r'$km$',cmap=cmap)
-                U_i.plot(ax=axs[i,1], colorbar='right',projection=proj_opt, title=coeffs_i.name, cb_label='$m^2/s^2$',cmap=cmap)
-                surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
+                U_i.plot(ax=axs[i,1], colorbar='right',projection=proj_opt, title='$U_'+str(i+1)+'$', cb_label='$m^2/s^2$',cmap=cmap)
+                surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title=layers_name[i]+' $h_'+str(i+1)+'$', cb_label='$km$',cmap=cmap)
                 plt.tight_layout()
                 plt.show()
 

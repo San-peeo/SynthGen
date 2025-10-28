@@ -19,7 +19,6 @@ from lib.globe_analysis.Spectrum import *
 from lib.synthgen.SynthGen import *
 
 # Grid modules (generation and analysis)
-from lib.grid.MetricsAnalysis import *
 from lib.grid.MetricsEvaluation import *
 from lib.grid.ParameterRange import *
 from lib.grid.TopThreshold_Analysis import *

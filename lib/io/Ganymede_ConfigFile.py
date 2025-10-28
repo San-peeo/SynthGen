@@ -26,8 +26,8 @@ class Ganymede_ConfigFile():
         err_MoI         = 0.01
 
         # Polar Flattening
-        r_e = 2631.2             # [km]
-        r_p = 2631.0             # [km]
+        r_e = 2633.2             # [km]
+        r_p = 2628.8             # [km]
         r_e_fact = r_e/ref_radius
         r_p_fact = r_p/ref_radius
 
@@ -79,12 +79,22 @@ class Ganymede_ConfigFile():
         #layers:
         match n_layers:
 
-            case 2:
-                rho_layers          = [3436.3,1136.1]
-                radius_layers       = [1870,2631.2]
-                interface_type      = ['rng','surf']
-                interface_addinfo   = [20,10]
+            # case 2:
+            #     rho_layers          = [3530.0,1136.1]
+            #     radius_layers       = [1830,2631.2]
+            #     interface_type      = ['rng','surf']
+            #     interface_addinfo   = [20,10]
 
+            #     layers_name    = ["Rocky interior","Hydrosphere"]                     
+
+
+            case 2:
+                rho_layers          = [3650.0,1136.1]
+                radius_layers       = [1800,2631.2]
+                interface_type      = ['rng','surf']
+                interface_addinfo   = [20,5]
+
+                layers_name    = ["Rocky interior","Hydrosphere"]          
 
             case 7:                     
 
@@ -110,13 +120,21 @@ class Ganymede_ConfigFile():
                 # radius_layers   = [588,1837.5,1867.5,2015,2281.5,2594.3,2631.2]
                 # interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
 
-                rho_layers      = [8000, 3300, 2900, 1320, 1235, 1100, 920]
-                radius_layers   = [600,1840,1870,2014.8,2281.3,2594.1,2631.2]
-                interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
+                # rho_layers      = [5300, 3300, 2900, 1320, 1235, 1100, 920]
+                # radius_layers   = [620,1750,1800,2014.8,2281.3,2594.1,2631.2]
+                # interface_type  = ['sph','sphflat','rng','rng','sph','sph','surf']
+                # interface_addinfo  = [0,[r_e_fact,r_p_fact],20,2,0,0,5]
 
-                # Additional information for the interface (dwnbg,rng or custom)
-                interface_addinfo  = [0,[r_e_fact,r_p_fact],20,0,0,0,10]
+                rho_layers      = [5300, 3300, 3650, 1136, 1235, 1100, 1136]
+                radius_layers   = [620,1700,1800,2014.8,2281.3,2594.1,2631.2]
+                interface_type  = ['sph','sph','rng','sph','sph','sph','surf']
+                interface_addinfo  = [0,0,20,0,0,0,5]
+
+
    
+                layers_name    = ["Core","Mantle","Crust","Ice VI","Ice V","Ocean","Ice I"]                         
+
+
             case _:
 
                 print('No existing Moon model with '+str(n_layers)+' layers')
@@ -129,7 +147,7 @@ class Ganymede_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo]
+        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo,layers_name]
 
         return param_int
     

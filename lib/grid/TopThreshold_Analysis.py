@@ -67,28 +67,32 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
     # All simulations
     for i in range(n_layers):
         ax=axs[i, 0]
-        if np.std(rho_rng_sort[:,i])==0: bins =  'fd'
-        else: bins =np.arange(np.min(rho_rng_sort[:,i]),np.max(rho_rng_sort[:,i])+1,1,dtype=np.int64)
-        n, bins,_ = ax.hist(rho_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        if np.std(rho_rng_sort[:,i])!=0: 
+            bins =np.arange(np.min(rho_rng_sort[:,i]),np.max(rho_rng_sort[:,i])+1,1,dtype=np.int64)
+            n, bins,_ = ax.hist(rho_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        else: bins =  'fd'
         bins_all1.append(bins)
-        
+ 
         ax=axs[i, 1]
-        if np.std(radius_rng_sort[:,i])==0: bins =  'fd'
-        else: bins =np.arange(np.min(radius_rng_sort[:,i]),np.max(radius_rng_sort[:,i])+1,1,dtype=np.int64)
-        n, bins,_ = ax.hist(radius_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        if np.std(radius_rng_sort[:,i])!=0:
+            bins =np.arange(np.min(radius_rng_sort[:,i]),np.max(radius_rng_sort[:,i])+1,1,dtype=np.int64)
+            n, bins,_ = ax.hist(radius_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        else: bins =  'fd'
         bins_all2.append(bins)
 
         ax=axs[i, 2]
-        if np.std(nhalf_rng_sort[:,i])==0: bins =  'fd'
-        else: bins = np.arange(np.min(nhalf_rng_sort[:,i]),np.max(nhalf_rng_sort[:,i])+1,1,dtype=np.int64)
-        n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+        if np.std(nhalf_rng_sort[:,i])!=0:
+            bins = np.arange(np.min(nhalf_rng_sort[:,i]),np.max(nhalf_rng_sort[:,i])+1,1,dtype=np.int64)
+            n, bins,_ = ax.hist(nhalf_rng_sort[:,i],bins=bins, alpha=0.5,color=hist_color[1])
+            if np.max(nhalf_rng_sort[:,i])==0:
+                ax.set_xlim([-5,5])
+                ax.set_xticks(np.arange(-5,6))
+            else:
+                ax.set_xlim([0,np.max(nhalf_rng_sort[:,i])])
+                ax.set_xticks(np.arange(0,np.max(nhalf_rng_sort[:,i]+10),10))
+        else: bins =  'fd'
         bins_all3.append(bins)
-        if np.max(nhalf_rng_sort[:,i])==0:
-            ax.set_xlim([-5,5])
-            ax.set_xticks(np.arange(-5,6))
-        else:
-            ax.set_xlim([0,np.max(nhalf_rng_sort[:,i])])
-            ax.set_xticks(np.arange(0,np.max(nhalf_rng_sort[:,i]+10),10))
+
 
     labels.append('All ('+str(len(final_metric))+' models)')
     handles.append(Patch(edgecolor=hist_color[1], facecolor=hist_color[1], fill=True, alpha=0.5))
@@ -116,7 +120,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
         thresh_name+= str(np.round(thresh*100))
-        if j!=np.shape(threshold_arr)[0]: thresh_name +='_'
+        if j!=np.shape(threshold_arr)[0] or j!=len(threshold_arr)-1: thresh_name +='_'
 
         # ------------------------------------------------------------------------------------------------------
 
@@ -125,10 +129,12 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
         for i in range(n_layers):
 
             ax=axs[i, 0]
-            n, bins,_ = ax.hist(rho_rng_valid_sort_best[:,i],bins = bins_all1[i], alpha=1,color=hist_color[j])
 
             # Fitting Distribution:
             if np.std(rho_rng_valid_sort_best[:,i]) != 0:
+                n, bins,_ = ax.hist(rho_rng_valid_sort_best[:,i],bins = bins_all1[i], alpha=1,color=hist_color[j])
+
+
                 try:
                     func=Gaussian_func
                     bin_centers = (bins[:-1] + bins[1:]) / 2
@@ -159,25 +165,31 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\rho=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(rho[j,i,0], rho[j,i,1],r2), color=hist_color[j])
-                    ax.legend()
+                    # ax.legend()
 
                 except:
                     print('No Fit (Density)')
 
-            ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
-            ax.set_xlabel(r'Density $[kg/m^3]$')
-            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
-            else: ax.set_title(layer_name[i])
+                ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
+                ax.set_xlabel(r'Density $[kg/m^3]$')
+                if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+                else: ax.set_title(layer_name[i])
+
+            else:
+               ax.set_visible(False)
+
+
 
 
             # ------------------------------------------------------------------------------------------------------
 
 
             ax=axs[i, 1]
-            n, bins,_ = ax.hist(radius_rng_valid_sort_best[:,i],bins = bins_all2[i], alpha=1,color=hist_color[j])
             
             # Fitting Distribution:
             if np.std(radius_rng_valid_sort_best[:,i]) != 0:
+                n, bins,_ = ax.hist(radius_rng_valid_sort_best[:,i],bins = bins_all2[i], alpha=1,color=hist_color[j])
+
                 try:
                     func = Gaussian_func
                     bin_centers = (bins[:-1] + bins[1:]) / 2
@@ -208,26 +220,32 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
                             radius[j,i,1] = sigma
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $R=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(radius[j,i,0], radius[j,i,1],r2), color=hist_color[j])
-                    ax.legend()
+                    # ax.legend()
 
                 except:
                     print('No Fit (Radius)')
 
+                ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
+                ax.set_xlabel(r'Radius $[km]$')
+                if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+                else: ax.set_title(layer_name[i])
 
-            ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
-            ax.set_xlabel(r'Radius $[km]$')
-            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
-            else: ax.set_title(layer_name[i])
+
+            else:
+               ax.set_visible(False)
+
+
 
 
             # ------------------------------------------------------------------------------------------------------
 
 
             ax=axs[i, 2]
-            n, bins,_ = ax.hist(nhalf_rng_valid_sort_best[:,i],bins = bins_all3[i], alpha=1,color=hist_color[j])
             
             # Fitting Distribution:
-            if np.max(nhalf_rng_valid_sort_best[:,i])!=0:
+            if np.std(nhalf_rng_valid_sort_best[:,i])!=0:
+                n, bins,_ = ax.hist(nhalf_rng_valid_sort_best[:,i],bins = bins_all3[i], alpha=1,color=hist_color[j])
+
                 try:
                     func=Gaussian_func
                     bin_centers = (bins[:-1] + bins[1:]) / 2
@@ -259,16 +277,18 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $l_{half}=%.f \pm %.f,\ \textit{R}^2=%.3f$' %(n_half[j,i,0], n_half[j,i,1],r2), color=hist_color[j])
-                    ax.legend()
+                    # ax.legend()
                 except:
                     print('No Fit (l_half)')
 
+                ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
+                ax.set_xlabel(r'Degree $l_{half}$')
+                if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
+                else: ax.set_title(layer_name[i])
 
-            ax.grid(visible=True, which='major', linestyle='-', linewidth=0.5)
-            ax.set_xlabel(r'Degree $l_{half}$')
-            if layer_name==[]: ax.set_title(r'Layer '+str(i+1))
-            else: ax.set_title(layer_name[i])
 
+            else:
+               ax.set_visible(False)
 
 
 

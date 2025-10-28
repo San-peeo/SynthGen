@@ -19,38 +19,51 @@ tracemalloc.start()
 # Set up the parameters:
 
 body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 4
-layer_name    = ["Inner Core","Outer Core","Mantle","Crust"]
+n_layers      = 3
 n_min         = 0
 n_max         = 150
-r             = [2440.0*1e+3]
+r             = [2439.4*1e+3] #, 0.0009]
 i_max         = 7
 save_opt      = None
 proj_opt      = ccrs.Mollweide()
 
-
 verbose_opt = False
 
+# ------------------------------------------------------------------------------------------------------
 
 
+# Results directory:
+# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009/"
+saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009_errMoI_0.00089/"
+# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.00089/"
+# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.014/"
 
-# metrics_list  = ["Delta_mean","Delta_std","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
-# metrics_list  = ["SSIM","NCC"]
-metrics_list  = ["SSIM"]
 
-# maps_list  = ["U","Free-Air","Bouguer"]
-maps_list     = ["U","Free-Air","Bouguer"]
+# Real data directory:
+real_dir = "Results/Real/"+body+"/"
+# real_dir = "Results/Synthetic/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/"
+
+
+# ------------------------------------------------------------------------------------------------------
+
+
+# metrics_list  = ["\Delta_{\mu}","\Delta_{\sigma}","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
+metrics_list  = ["SSIM","NCC"]
+# metrics_list  = ["SSIM"]
+
+maps_list  = ["U","Free-Air","Bouguer"]
+# maps_list     = ["Free-Air","Bouguer"]
 
 
 # Decreasing order to see the overlapping histograms:
-# threshold_arr     = [0.2,0.15,0.10]       # n%
-threshold_arr     = [0.05]       # n%
+threshold_arr     = [0.25,0.1,0.05]       # n%
+# threshold_arr     = [0.2]       # n%
 
 
 region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]] or None
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
-plot_results = 'both'   # 'top', 'average','both'
+plot_results = ' '   # 'top', 'average','both'
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -79,13 +92,10 @@ rho_layers          = param_int[0]
 radius_layers       = param_int[1]
 interface_type      = param_int[2]
 interface_addinfo   = param_int[3]
+layers_name         = param_int[4]
 
 
 
-
-
-# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009/"
-saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.00089/"
 if not os.path.isdir(saving_dir):
     print("Creating directory:")
     os.makedirs(saving_dir)
@@ -97,11 +107,6 @@ else:
 
 
 
-
-
-# Reading "Real" data:
-# real_dir = "Results/Real/"+body+"/"
-real_dir = "Results/Synthetic/Mercury/i1_sph_r1_666.577_rho1_8652.52_i2_sphflat_r2_2023.66_rho2_6909.98_i3_dwnbg_r3_2402.61_rho3_3343.35_nhalf3_40_i4_surf_r4_2439.4_rho4_2903.03/"
 
 print(" ")
 print("Selected Metrics:")
@@ -537,7 +542,7 @@ else:
 
 # Selecting chosen metrics
 
-all_metrics = ["Delta_mean","Delta_std","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
+all_metrics  = ["\Delta_{\mu}","\Delta_{\sigma}","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
 
 mask = []
 for metric in all_metrics:
@@ -562,45 +567,34 @@ metrics = np.delete(metrics, mask, axis=2)
 
 
 
-
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
 #  Metrics plotting:
 
 
-fig, axs = plt.subplots(len(metrics_list), np.shape(metrics)[2], figsize=(10,9))
-
-if len(metrics_list) == 1:
-
-    for i,map in enumerate(maps_list):
-        axs[i].set_title(map)
-        n, bins,_ = axs[i].hist(metrics[0,:,i],bins = 'fd')
-        axs[i].grid()
-
-    axs[0].set_ylabel(r'$'+metrics_list[0]+'$')
-
-
-
-else:
-
+fig, axs = plt.subplots(len(metrics_list), len(maps_list), figsize=(9,10))
+for i,metric_name in enumerate(metrics_list):
     for j,map in enumerate(maps_list):
-        axs[0,j].set_title(map)
+        if  len(metrics_list) == 1 and len(maps_list) == 1:
+            ax = axs
+        elif len(metrics_list) == 1:
+            ax = axs[j]
+        elif len(maps_list) == 1:
+            ax = axs[i]
+        else:
+            ax = axs[i,j]
+        ax.set_title(map)
+        n, bins,_ = ax.hist(metrics[i,:,j],bins = 'fd')
+        ax.grid()
 
-        for i,metric_name in enumerate(metrics_list):
-
-            ax=axs[i, j]
-            n, bins,_ = ax.hist(metrics[i,:,j],bins = 'fd')
-            ax.grid()
-
-            axs[i,0].set_ylabel(r'$'+metric_name+'$')
+        if j==0: ax.set_ylabel(r'$'+metric_name+'$')
 
 
 plt.tight_layout()
 name = "metrics"+"".join(str("_"+metric) for metric in metrics_list)
 name += "".join(str("_"+map) for map in maps_list)
 fig.savefig(saving_dir+run_name+name+".png", dpi=600)
-
 
 
 # ------------------------------------------------------------------------------------------------------------------------------
@@ -683,11 +677,11 @@ print("Top thresholds analysis:\n")
 # Top % threshold analysis
 
 rho_stats,radius_stats,n_half_stats,fig = TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort,
-                                                                final_metric, threshold_arr,layer_name,saving_dir=saving_dir+run_name)
+                                                                final_metric, threshold_arr,layers_name,saving_dir=saving_dir+run_name)
 fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
 # rho_stats,radius_stats,fig = TopThreshold_Analysis_nodeg(rho_rng_sort,radius_rng_sort,
-#                                                                 final_metric, threshold_arr,saving_dir=saving_dir+run_name)
+#                                                             final_metric, threshold_arr,layers_name,saving_dir=saving_dir+run_name)
 # fig.canvas.manager.set_window_title(body + ': ' + str(n_layers) + ' layers')
 
 

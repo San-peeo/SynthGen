@@ -18,14 +18,14 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede"
-n_layers      = 7
-n_min         = 3
+body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede","Ceres"
+n_layers      = 2
+n_min         = 1
 n_max         = 50
-r             = [2631.2*1e+3] #, 0.0009]
+r             = [2631.2e+3]
 i_max         = 7
 mode          = 'interface'              # 'layer','interface'
-load_opt      = True
+load_opt      = False
 save_opt      = 'all'            # None,'all', 'total'
 
 proj_opt      = ccrs.Mollweide(central_longitude=180)
@@ -73,7 +73,7 @@ if coeffs_grav is None or coeffs_topo is None:
     print(' - Topography RNG generation: DeltaH = ' + str(interface_info[-1]) + ' km')
     degrees = np.arange(n_max+1, dtype=float)
     degrees[0] = np.inf
-    coeffs_topo = pysh.SHCoeffs.from_random(degrees**(-2), seed=42*n_layers)
+    coeffs_topo = pysh.SHCoeffs.from_random(degrees**(-2), seed=42)
     coeffs_topo.set_coeffs(param_bulk[0],0,0)
     surf = coeffs_topo.expand(lmax=n_max,extend=True)
     deltaH_fact = interface_info[-1]/(np.max(surf.data) - np.min(surf.data))

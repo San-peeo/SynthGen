@@ -76,8 +76,6 @@ def Global_Analysis(coeffs_grav, coeffs_topo, n_max, r, rho_boug, i_max, region=
         print("\n")
 
 
-
-
     # ------------------------------------------------------------------------------------------------------
 
 

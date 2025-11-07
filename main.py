@@ -18,27 +18,26 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
+body          = 'Ceres'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
 n_min         = 3
-n_max         = 150
-r             = [2440*1e+3,0.0009]            # Reference radius [m]
-# r             = [482e+3, 0.075]   # Reference ellipsoid [a,f] (a=semi-major axis, f=flattening=(b-a)/a)  
+n_max         = 18
+r             = [482.0*1e+3, 0.075]            # Reference radius [m] // Reference ellipsoid [a,f] (a=semi-major axis, f=flattening=(b-a)/a)  
 i_max         = 7
 verbose_opt   = True
 plot_opt      = 'single'            # 'single','multiple'
+load_opt      = False               # Load previously saved results if available    
 
 
-
-n_half = 10                         
-delta_rho = 800                     # Density contrast for Crustal Thickness calculation   [kg/m^3]
-mean_crust = 40*1e+3                  # Mean crustal thickness [m]
+n_half = 20                         
+delta_rho = 1500                     # Density contrast for Crustal Thickness calculation   [kg/m^3]
+mean_crust = 45*1e+3                  # Mean crustal thickness [m]
 
 region = None   # [lon_min, lon_max, lat_min, lat_max]
-proj_opt      = ccrs.Mollweide()  # Projection option    ccrs.PlateCarree(),ccrs.Mollweide()
+proj_opt      = ccrs.Mollweide(central_longitude=0)  # Projection option    ccrs.PlateCarree(),ccrs.Mollweide()
 
 # region = [[-180, 180], [0, 90]]   # Mercury
 
-# region = [[184.5,230], [50,76]]   # Venus, Vinmara_Planitia
+# region = [[184.5+180,230+180], [50,76]]   # Venus, Vinmara_Planitia
 # central_lon = (region[0][0] + region[0][1]) / 2 # Region centering
 # proj_opt      = ccrs.Mollweide(central_longitude=central_lon)  # Projection option
 
@@ -90,15 +89,14 @@ print(saving_dir)
 # ------------------------------------------------------------------------------------------------------
 
 
-
 # Global analysis (U, H, FreeAir, Bouguer):
-Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                                                                        i_max=i_max,region=region,saving_dir=saving_dir,plot_opt=plot_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
+Global_Analysis(coeffs_grav=coeffs_grav,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug, i_max=i_max,
+                region=region,saving_dir=saving_dir,load_opt=load_opt,plot_opt=plot_opt,proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
 # Spectrum analysis:
 Spectrum(coeffs=[coeffs_grav],n_min=n_min,n_max=n_max,
-         saving_dir=saving_dir,save_opt='total',plot_opt=True,verbose_opt=verbose_opt)
+         load_opt=load_opt,saving_dir=saving_dir,save_opt='total',plot_opt=True,verbose_opt=verbose_opt)
 
 
 

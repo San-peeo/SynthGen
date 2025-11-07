@@ -34,8 +34,8 @@ class Mercury_ConfigFile():
         ref_mass        = 3.301e+23                                                         # [kg]
         ref_rho         = ref_mass/(4/3*np.pi*ref_radius**3*1e+9)   # [kg/m^3]
         ref_ang_vel     = 8.264e-07                                                         # [rad/sec]
-        ref_MoI         = 0.34597                                                           # (I/MR^2)   Margot et al, 2018
-        err_MoI         = 0.00089                                                                 # formal error = 0.00089, distribution error = 0.014  (different estimates)
+        ref_MoI         = 0.346                                                           # (I/MR^2)   Margot et al, 2018
+        err_MoI         = 0.014                                                           # formal error = 0.00089, distribution error = 0.014  (different estimates)
 
         # Polar Flattening
         r_e = 2440.5             # [km]

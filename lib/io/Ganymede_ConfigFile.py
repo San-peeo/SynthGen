@@ -23,7 +23,7 @@ class Ganymede_ConfigFile():
         ref_rho         = ref_mass/(4/3*np.pi*ref_radius**3*1e+9)                        # [kg/m^3]
         ref_ang_vel     = 8.264e-07                                                      # [rad/sec]
         ref_MoI         = 0.3115                                                         # (I/MR^2)    Schubert, G.; Anderson, J. D.; Spohn, T.; McKinnon, W. B. (2004). "Interior composition, structure and dynamics of the Galilean satellites". In Bagenal, F.; Dowling, T. E.; McKinnon, W. B. (eds.). Jupiter: the planet, satellites, and magnetosphere. New York: Cambridge University Press. pp. 281–306. ISBN 978-0521035453. OCLC 54081598. Archived from the original on April 16, 2023. Retrieved July 23, 2019.   
-        err_MoI         = 0.01
+        err_MoI         = 0.0028                                                         # see Petricca et al., 2024 (pyALMA3 paper)
 
         # Polar Flattening
         r_e = 2633.2             # [km]
@@ -120,15 +120,15 @@ class Ganymede_ConfigFile():
                 # radius_layers   = [588,1837.5,1867.5,2015,2281.5,2594.3,2631.2]
                 # interface_type  = ['sph','sphflat','rng','sph','sph','sph','surf']
 
-                # rho_layers      = [5300, 3300, 2900, 1320, 1235, 1100, 920]
-                # radius_layers   = [620,1750,1800,2014.8,2281.3,2594.1,2631.2]
-                # interface_type  = ['sph','sphflat','rng','rng','sph','sph','surf']
-                # interface_addinfo  = [0,[r_e_fact,r_p_fact],20,2,0,0,5]
+                rho_layers      = [5300, 3300, 2900, 1320, 1235, 1100, 920]
+                radius_layers   = [620,1750,1800,2014.8,2281.3,2594.1,2631.2]
+                interface_type  = ['sph','sphflat','rng','rng','sph','sph','surf']
+                interface_addinfo  = [0,[r_e_fact,r_p_fact],20,2,0,0,5]
 
-                rho_layers      = [5300, 3300, 3650, 1136, 1235, 1100, 1136]
-                radius_layers   = [620,1700,1800,2014.8,2281.3,2594.1,2631.2]
-                interface_type  = ['sph','sph','rng','sph','sph','sph','surf']
-                interface_addinfo  = [0,0,20,0,0,0,5]
+                # rho_layers      = [5300, 3300, 3650, 1136, 1235, 1100, 1136]
+                # radius_layers   = [620,1700,1800,2014.8,2281.3,2594.1,2631.2]
+                # interface_type  = ['sph','sph','rng','sph','sph','sph','surf']
+                # interface_addinfo  = [0,0,20,0,0,0,5]
 
 
    

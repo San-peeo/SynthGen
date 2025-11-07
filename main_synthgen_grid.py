@@ -18,11 +18,11 @@ tracemalloc.start()
 
 # Set up the parameters:
 
-body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon"
-n_layers      = 3
+body          = 'Ceres'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
+n_layers      = 2
 n_min         = 0
-n_max         = 150
-r             = [2439.4*1e+3] #, 0.0009]
+n_max         = 18
+r             = [482.0*1e+3, 0.075]
 i_max         = 7
 save_opt      = None
 proj_opt      = ccrs.Mollweide()
@@ -34,9 +34,9 @@ verbose_opt = False
 
 # Results directory:
 # saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009/"
-saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009_errMoI_0.00089/"
+# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/HgM009_errMoI_0.00089/"
 # saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.00089/"
-# saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/Validation_errMoI_0.014/"
+saving_dir = "Results/Synthetic/"+body + "/Grid/"+str(n_layers)+"_layers/"
 
 
 # Real data directory:
@@ -57,13 +57,13 @@ maps_list  = ["U","Free-Air","Bouguer"]
 
 # Decreasing order to see the overlapping histograms:
 threshold_arr     = [0.25,0.1,0.05]       # n%
-# threshold_arr     = [0.2]       # n%
+# threshold_arr     = [0.25]       # n%
 
 
-region =  [[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]] or None
+region =  None    #[[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]] or None
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
-plot_results = ' '   # 'top', 'average','both'
+plot_results = 'both'   # 'top', 'average','both'
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -146,7 +146,7 @@ run_n_counts = np.sort(np.array(run_n_counts))
 # Setting up the GRID:
 
 
-n_counts,rho_range, radius_range, nhalf_range = InputRange(n_layers,param_int)
+n_counts,rho_range, radius_range, nhalf_range = InputRange(n_layers,param_int,run_n_counts)
 
 
 # Loading Maximum value possible and correspondent ranges
@@ -322,15 +322,18 @@ else:
 
         # LAYERS:
 
-        for i in range(1,n_layers):
+        for i in range(0,n_layers):
 
             if interface_type[i] == 'dwnbg':
                 nhalf_rng[0,i] = random.randint(nhalf_range[i][0],nhalf_range[i][1])
                 interface_addinfo_rng[i] = nhalf_rng[0,i]
+                rho_rng[0,i] = random.uniform(rho_range[i][0],rho_range[i][1])
+                radius_rng[0,i] = random.uniform(radius_range[i][0],radius_range[i][1])
 
-            if interface_type[i] == 'surf':
+            elif interface_type[i] == 'surf':
                 rho_rng[0,i] = random.uniform(rho_range[i][0],rho_range[i][1])
                 radius_rng[0,i] = radius_layers[i]
+
             else:
                 rho_rng[0,i] = random.uniform(rho_range[i][0],rho_range[i][1])
                 radius_rng[0,i] = random.uniform(radius_range[i][0],radius_range[i][1])

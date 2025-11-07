@@ -165,7 +165,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $\rho=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(rho[j,i,0], rho[j,i,1],r2), color=hist_color[j])
-                    # ax.legend()
+                    ax.legend(fontsize=10)
 
                 except:
                     print('No Fit (Density)')
@@ -220,7 +220,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
                             radius[j,i,1] = sigma
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $R=%.1f \pm %.1f,\ \textit{R}^2=%.3f$' %(radius[j,i,0], radius[j,i,1],r2), color=hist_color[j])
-                    # ax.legend()
+                    ax.legend(fontsize=10)
 
                 except:
                     print('No Fit (Radius)')
@@ -277,7 +277,8 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
                     ax.plot(bin_centers, func(bin_centers,*popt), '--', linewidth=1.5, label=r': $l_{half}=%.f \pm %.f,\ \textit{R}^2=%.3f$' %(n_half[j,i,0], n_half[j,i,1],r2), color=hist_color[j])
-                    # ax.legend()
+                    ax.legend(fontsize=10)
+
                 except:
                     print('No Fit (l_half)')
 
@@ -301,7 +302,7 @@ def TopThreshold_Analysis(rho_rng_sort,radius_rng_sort,nhalf_rng_sort, final_met
 
 
 
-    fig.legend(handles=handles,labels=labels, loc = 'upper center', ncol=n_layers+1,fontsize=13)
+    fig.legend(handles=handles,labels=labels, loc = 'upper center', ncol=len(threshold_arr)+1,fontsize=13)
     fig.patch.set_facecolor('white')
     plt.tight_layout()
     plt.subplots_adjust(top=0.9)    

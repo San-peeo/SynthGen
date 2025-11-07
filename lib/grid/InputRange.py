@@ -1,7 +1,7 @@
 from lib.lib_dep import *
 
 
-def InputRange(n_layers,param_int):
+def InputRange(n_layers,param_int,run_n_counts=[]):
 
     """
     Usage
@@ -64,20 +64,21 @@ def InputRange(n_layers,param_int):
     default_Rrange=500
     default_rhorange=500
 
+    inherit_opt="no"
+    if len(run_n_counts)!=0:
+        inherit_opt = input("Inherit previous parameters range (default=yes)? (y/yes/no) : ")
+        print("\n")
 
-
-    inherit_opt = input("Inherit previous parameters range (default=yes)? (y/yes/no)  : ")
-    print("\n")
     if inherit_opt=="" or inherit_opt=="y" or inherit_opt=="yes":
         return n_counts,[],[],[]
 
 
 
-    default_opt = input("Use default ranges? (rho=+/-"+str(default_rhorange)+" [kg/m^3], radius=+/-"+str(default_Rrange)+" [km], n_half=3-100)")
+    default_opt = input("Use default ranges? (rho=+/-"+str(default_rhorange)+" [kg/m^3], radius=+/-"+str(default_Rrange)+" [km], n_half=3-100): ")
     print("\n")
 
-# NB: - starting from 1 because the innermost layer is not part of the grid (M and MoI conservation)
-#     - last layer not radius range (= surface)
+    # NB: - the innermost layer is (usually) not part of the grid (M and MoI conservation)
+    #     - last layer not radius range (= surface)
 
 
     if default_opt=="":
@@ -95,16 +96,22 @@ def InputRange(n_layers,param_int):
 
 
     else:
-        for i in range(1,n_layers):
+        for i in range(0,n_layers):
             print("\n")
 
-            if i == n_layers-1:
+            if i == 0 and interface_type[i] == 'dwnbg':
+                print("Layer: "+ str(i+1) + "(surface)")
+                print("Cutting degree n_half: ",interface_addinfo[i])
+                nhalf_string = input("Cutting degree range : ")
+                nhalf_range[i]  = CheckRange(nhalf_string)
+
+            elif i == n_layers-1:
                 print("Layer: "+ str(i+1) + "(surface)")
                 print("Insert grid range parameters (MIN, MAX values): ")
 
                 print("Average Density [kg/m^3]: ",rho_layers[i])
                 rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string) #,[rho_layers[i-1],0])
+                rho_range[i]  = CheckRange(rho_string)
 
             else:
                 print("Layer: ", i+1)
@@ -112,15 +119,15 @@ def InputRange(n_layers,param_int):
 
                 print("Average Density [kg/m^3]: ",rho_layers[i])
                 rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string) #,[rho_layers[i-1],rho_layers[i+1]])
+                rho_range[i]  = CheckRange(rho_string) 
                 print("Average Radius [km]: ",radius_layers[i])
                 radius_string = input("Radius range [km]: ")
-                radius_range[i]  = CheckRange(radius_string) #,[radius_layers[i-1],radius_layers[i+1]])
-
-            if interface_type[i] == 'dwnbg':
-                print("Cutting degree n_half: ",interface_addinfo[i])
-                nhalf_string = input("Cutting degree range : ")
-                nhalf_range[i]  = CheckRange(nhalf_string)
+                radius_range[i]  = CheckRange(radius_string) 
+                
+                if interface_type[i] == 'dwnbg':
+                    print("Cutting degree n_half: ",interface_addinfo[i])
+                    nhalf_string = input("Cutting degree range : ")
+                    nhalf_range[i]  = CheckRange(nhalf_string)
 
 
 

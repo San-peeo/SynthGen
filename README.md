@@ -62,6 +62,8 @@ pip install -r requirements.txt
 
 - **main_lib.py**: Import file from `lib` directory
   
+- **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
+
 
 ## Planets
 - Configuration module aggregating all planetary body configuration classes. Each class contains three main methods:
@@ -78,7 +80,6 @@ pip install -r requirements.txt
     - Custom (user-defined)
 
     
-- **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
  
 
 ## Scripts

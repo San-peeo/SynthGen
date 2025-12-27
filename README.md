@@ -45,293 +45,93 @@ pip install -r requirements.txt
 ```
 
 
-# Datasets:
-see Planets_ConfigFiles.py;
-In this module, configuration classes for the main terrestrial planets and Ganymede, including their physical parameters, gravity and topography data sources, and interior structure models, are provided.  
-Each planet class contains methods to retrieve bulk parameters (.bulk()), data file information (.data()), and interior structure parameters for different numbers of layers (.interiors()).
-
-## Mercury 
-### Bulk Parameters
-| Parameter         | Value                | Unit         | Description                                 |
-|-------------------|----------------------|--------------|---------------------------------------------|
-| ref_radius        | 2439.4               | km           | Reference radius                            |
-| GM_const          | 2.2031863566e+13     | m³/s²        | Standard gravitational parameter            |
-| ref_mass          | 3.301e+23            | kg           | Reference mass                              |
-| ref_rho           | 5427                 | kg/m³        | Mean density                                |
-| ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.34597              | (I/MR²)      | Moment of inertia factor [6]|
-| r_e_fact          | 1.0005               | -            | Equatorial flattening factor                |
-| r_p_fact          | 0.9995               | -            | Polar flattening factor                     |
-
-### Data Files
-| Data Type   | File Path                                      | Format   | Header | Reference                        |
-|-------------|------------------------------------------------|----------|--------|------------------------------|
-| Gravity     | HgM009.sha                 | shtools  | True   | [4] A. Genova et al., ‘Regional variations of Mercury’s crustal density and porosity from MESSENGER gravity data’, Icarus, 2023, doi: 10.1016/j.icarus.2022.115332.          |
-| Topography  | gtmes_150v05_sha_nohead.txt | shtools  | False  | pds-geosciences.wustl.edu - /messenger/mess-h-rss_mla-5-sdp-v1/messrs_1001/                 |
-
-- **Bouguer density:** 2900 kg/m³  
-- **Crustal thickness filter ($l_{half}$):** 40
-
-### Implemented Interior Models
-
-#### 3 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Core      | 6992            | 2039            | polar flattened sphere| - |
-| Mantle      | 3200            | 2404            | downwarded Bouguer anomalies| $l_{half}$=40 |
-| Crust      | 2900            | 2439.4            | surface| - |
-
-#### 4 Layers [6]
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Inner Core      | 8652.52            | 666.577            | sphere| - |
-| Outer Core      | 6909.98            | 2023.66            | polar flattened sphere| - |
-| Mantle      | 3343.35            |  2402.61            | downwarded Bouguer anomalies| $l_{half}$=40 |
-| Crust      | 2903.03            | 2439.4            | surface| - |
-
-
-
----
-
-## Venus 
-### Bulk Parameters
-| Parameter         | Value                | Unit         | Description                                 |
-|-------------------|----------------------|--------------|---------------------------------------------|
-| ref_radius        | 6051.8               | km           | Reference radius                            |
-| GM_const          | 3.248585920790000e+14| m³/s²        | Standard gravitational parameter            |
-| ref_mass          | 4.8673e+24           | kg           | Reference mass                              |
-| ref_rho           | 5243                 | kg/m³        | Mean density                                |
-| ref_ang_vel       | 3.232e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.337                | (I/MR²)      | Moment of inertia factor (Margot et al 2021)|
-| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
-| r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
-
-### Data Files
-| Data Type   | File Path                        | Format   | Header | References                        |
-|-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | shgj180u_noheader.a01            | shtools  | True   | A. S. Konopliv, W. B. Banerdt, and W. L. Sjogren, ‘Venus Gravity: 180th Degree and Order Model’, Icarus, 1999, doi: 10.1006/icar.1999.6086.                             |
-| Topography  | VenusTopo719.shape               | shtools  | False  | Wieczorek, M. A. (2015). Spherical harmonic model of the planet Venus: VenusTopo719 [Data set]. Zenodo. https://doi.org/10.5281/zenodo.3870926 |
-
-- **Bouguer density:** 2800 kg/m³  
-- **Crustal thickness filter ($l_{half}$):** 80
-
-### Implemented Interior Models
-#### 3 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Core      | 13000            | 3200            | polar flattened sphere| - |
-| Mantle      | 3300            | 6020            | downwarded Bouguer anomalies| $l_{half}$ = 80 |
-| Crust      | 2800            | 6051.8          | surface| - |
-
-
-
----
-
-## Earth 
-### Bulk Parameters
-| Parameter         | Value                | Unit         | Description                                 |
-|-------------------|----------------------|--------------|---------------------------------------------|
-| ref_radius        | 6378.137             | km           | Reference radius                            |
-| GM_const          | 3.986004418e+14      | m³/s²        | Standard gravitational parameter            |
-| ref_mass          | 5.9722e+24           | kg           | Reference mass                              |
-| ref_rho           | 5514                 | kg/m³        | Mean density                                |
-| ref_ang_vel       | 1.992e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.3308               | (I/MR²)      | Moment of inertia factor (Williams and James, 1994)|
-| r_e_fact          | 0.9999               | -            | Equatorial flattening factor                |
-| r_p_fact          | 0.9970               | -            | Polar flattening factor                     |
-
-### Data Files
-| Data Type   | File Path                        | Format   | Header | Notes                        |
-|-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | EGM2008_to2190_TideFree          | shtools  | False  | N. K. Pavlis, S. A. Holmes, S. C. Kenyon, and J. K. Factor, ‘The development and evaluation of the Earth Gravitational Model 2008 (EGM2008)’, Journal of Geophysical Research: Solid Earth, 2012, doi: 10.1029/2011JB008916. |
-| Topography  | Earth2014.BED2014.degree10800.bshc| bshc    | False  | Hirt, C. and M. Rexer (2015), Earth2014: 1 arc-min shape, topography, bedrock and  ice-sheet models - available as gridded data and degree-10,800 spherical harmonics, International Journal of Applied Earth Observation and Geoinformation, doi:10. 10.1016/j.jag.2015.03.001.|
-
-- **Bouguer density:** 1800 kg/m³  
-- **Crustal thickness filter ($l_{half}$):** 80
-
-### Implemented Interior Models
-#### 5 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Inner Core      | 13088.5            | 1221.5            | sphere| - |
-| Outer Core      | 12581.5            | 3480.0            | polar flattened sphere| - |
-| Lower Mantle    | 7956.5             | 5701.0            | polar flattened sphere| - |
-| Upper Mantle    | 7090.9             | 6151.0            | downwarded Bouguer anomalies| $l_{half}$=80 |
-| Crust           | 2800               | 6371.0            | surface| - |
-
-#### 8 Layers 
-| Layer           | Density (kg/m³) | Radius (km) | Interface Type              |Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Inner Core      | 13088.5         | 1221.5      | sphere                      | - |
-| Outer Core      | 12581.5         | 3480.0      | polar flattened sphere      | - |
-| Lower Mantle    | 7956.5          | 5701.0      | polar flattened sphere      | - |
-| Upper Mantle    | 7090.9          | 6151.0      | polar flattened sphere      | - |
-| Transition Zone | 2691.0          | 6346.0      | downwarded Bouguer anomalies| $l_{half}$=80 |
-| Lower Crust     | 2900            | 6356.0      | polar flattened sphere      | - |
-| Upper Crust     | 2600            | 6368.0      | surface                     | - |
-| Sediments       | 1020            | 6371.0      | surface                     | - |
-
-
-
----
-
-## Moon (WIP)
-### Bulk Parameters
-| Parameter         | Value                | Unit         | Description                                 |
-|-------------------|----------------------|--------------|---------------------------------------------|
-| ref_radius        | 1738.1               | km           | Reference radius                            |
-| GM_const          | 4.9028001218467998e+12| m³/s²       | Standard gravitational parameter            |
-| ref_mass          | 0.07346e+24          | kg           | Reference mass                              |
-| ref_rho           | 3344                 | kg/m³        | Mean density                                |
-| ref_ang_vel       | 2.7e-06              | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.3929               | (I/MR²)      | Moment of inertia factor (Williams and James, 1996)|
-| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
-| r_p_fact          | 0.9988               | -            | Polar flattening factor                     |
-
-### Data Files
-| Data Type   | File Path                        | Format   | Header | Notes                        |
-|-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | GRGM1200l_data.txt               | shtools  | True   | Lemoine, F. G., et al. (2014), GRGM900C: A degree 900 lunar gravity model from GRAIL primary and extended mission data, Geophys. Res. Lett., doi:10.1002/2014GL060027, Goossens, S., et al. (2016), A Global Degree and Order 1200 Model of the Lunar Gravity Field using GRAIL Mission Data, Lunar and Planetary Science Conference, Houston, TX, Abstract #1484.|
-| Topography  | MoonTopo2600p.shape              | shtools  | False  |M. A. Wieczorek, «Spherical harmonic model of the shape of Earth's Moon: MoonTopo2600p». Zenodo, 2015. doi: 10.5281/zenodo.3870924.|
-
-- **Bouguer density:** 2900 kg/m³  
-- **Crustal thickness filter ($l_{half}$):** 40
-
-### Implemented Interior Models
-#### 4 Layers
-| Layers | Densities (kg/m³)         | Radii (km)              | Interface Types                | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Inner Core      | 0            | 0            | sphere| - |
-| Outer Core      | 0            | 0            | polar flattened sphere| - |
-| Mantle    | 0            | 0           | downwarded Bouguer anomalies| $l_{half}$=40 |
-| Crust    | 0            | 0           | surface| - |
-
-
-
----
-
-## Ganymede 
-### Bulk Parameters
-| Parameter         | Value                | Unit         | Description                                 |
-|-------------------|----------------------|--------------|---------------------------------------------|
-| ref_radius        | 2631.2               | km           | Reference radius                            |
-| GM_const          | 9.8780e+12           | m³/s²        | Standard gravitational parameter            |
-| ref_mass          | 1.48e+23             | kg           | Reference mass                              |
-| ref_rho           | 1942                 | kg/m³        | Mean density                                |
-| ref_ang_vel       | 8.264e-07            | rad/s        | Angular velocity                            |
-| ref_MoI           | 0.3115               | (I/MR²)      | Moment of inertia factor [8] |                 |
-| r_e_fact          | 1.0                  | -            | Equatorial flattening factor                |
-| r_p_fact          | 1.0                  | -            | Polar flattening factor                     |
-
-### Data Files
-| Data Type   | File Path                        | Format   | Header | Notes                        |
-|-------------|----------------------------------|----------|--------|------------------------------|
-| Gravity     | None                             | shtools  | True   |                              |
-| Topography  | None                             | shtools  | False  |                              |
-
-- **Bouguer density:** 920 kg/m³  
-- **Crustal thickness filter ($l_{half}$):** 25
-
-### Implemented Interior Models
-#### 7 Layers [7]
-| Layer           | Density (kg/m³) | Radius (km) | Interface Type | Interface Additional Info |
-|-----------------|-----------------|-------------|---------------|---------------|
-| Core            | 8000            | 570         | sphere        |-        |
-| Mantle         | 3400            | 1820        | sphere        |-        |
-| Crust         | 3100            | 1870        | rng           |$\Delta H$ = 20 km        |
-| Ice VI         | 1320            | 2000        | sphere        |-        |
-| Ice V         | 1235            | 2280        | sphere        |-        |
-| Ocean         | 1100            | 2460        | sphere        |-        |
-| Ice I       | 920             | 2631.2      | rng       |$\Delta H$ = 10 km        |
-
-
-
   
 
 # Code Description
 
+
 ## Libraries
-- **lib**: Core library main folder, containing all functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project, Each function is provided with documentation and help for the input variables and is divided between subdirectories:
-  - `globe_analysis` = functions for globe analysis, managing datafile and coefficients, plus Spectrum and Crust Thickness evaluations;
-  - `io` = input and config datafile, with planets models implementation (see *Planets_ConfigFiles.py*);
-  - `synthgen` = main SynthGen function;
-  - `grid` = setting up random search grid and metrics analysis of the grid results;
-  - `misc` = miscellaneous function, like custom Map Plotting or M-MoI solver;
-  - `utils` = Python utilities (e.g. freeing memory);
+- **lib**: Core library main folder, containing all functions for model generation, analysis, spectrum computation, metrics evaluation, and utility routines used throughout the project. Each function is provided with documentation and help for the input variables and is divided between subdirectories:
+  - `globe_analysis` = functions for preliminary globe analysis: gravitational maps, crust thicknesses and spectrum analysis;
+  - `io` = configuration classes for planetary bodies (Mercury, Venus, Earth, Moon, Ganymede, Ceres) and data file import/export;
+  - `synthgen` = main SynthGen gravitational modelling function for layer-based gravity synthesis;
+  - `grid` = random parameter space exploration and grid-based metrics analysis routines;
+  - `love_numbers` = Love number computation and complex rheology evaluation;
+  - `misc` = miscellaneous utilities including custom map plotting, M-MoI solver, mass/volume calculations, and data smoothing;
   - *lib_dep.py* = dependencies and required Python packages.
 
 - **main_lib.py**: Import file from `lib` directory
   
-- **Planets_ConfigFiles.py**: Contains configuration classes for each supported planetary body (Mercury, Venus, Earth, Moon, Ganymede). Each class provides bulk parameters, data file paths, and interior structure models. See also the previous dataset section (Moon interior models is WIP).
-  - *interface_type*: choice options for the interface topographies:
-    - `sph`          = perfect sphere (no topography);
-    - `sphflat`      = flattened spheroid, from scaling the global flattening to the interface depth;
-    - `rng`          = random generated topography following Kaula's rule ($l^{-2}$) *$(R_i/R)^l$; the $\Delta H$ can be set in the additional info array;
-    - `custom`       = topography from datafile provided by user: user's responsibility to match the right resolution (same l_max); put the filename (and path) in the additional info array;
-    - `dwnbg`        = mantle-crust interface evaluated through Wieczorek and Phillips (1998) approach (downwarding Bouguer anomalies to interface depth); requires filter cutting degree choice (see additional info array $l_{half}$)
-    - `surf`         = surface topography from main datafile.
+
+## Planets
+- Configuration module aggregating all planetary body configuration classes. Each class contains three main methods:
+  - `bulk()`: Returns reference bulk parameters (mean radius, GM, mass, density, angular velocity, moment of inertia, Love numbers)
+  - `data()`: Returns data file paths and parameters (gravity coefficients, topography, Bouguer density, crustal thickness filter)
+  - `interiors()`: Returns interior structure parameters for different layer configurations (densities, layer radii, interface types, layer names, rheology properties)
+  - Implemented planetary bodies:
+    - Mercury
+    - Venus
+    - Earth
+    - Moon
+    - Ganymede
+    - Ceres
+    - Custom (user-defined)
+
     
 - **requirements.txt**: Lists all Python package dependencies and their required versions for the project.
  
+
 ## Scripts
-- **main.py**: Handles gravity and topography data in spherical harmonics expansion, evaluating also the power spectrum of the gravity field. It visualises projected maps and produces plots and data files.
-  - Inputs:
-    - `body`          = planetary body from which data is collected and studied  (Mercury, Earth, Venus, Moon)
-    - `n_min`         = minimum degree of spherical harmonics expansion (n=0 is GM/R, n=1 is when centre of mass is not the same as the centre of coordinates, n=2 indicates the polar flattening and is usually the strongest)
-    - `n_max`         = maximum degree of spherical harmonics expansion (keep an eye on the grav and topo file maximum degree)
-    - `r`            = evaluation radius in meters [m] (usually = ref_radius)
-    - `i_max`         = Bouguer Taylor series index (usually 7 works)
-    - `proj_opt`      = projection type , default = ccrs.Mollweide() (see ccrs list)
-    - `verbose_opt`   = verbose option to print on the terminal information about the progress and outputs
+- **main.py**: Processes gravitational and topographic data for a planetary body (defined in the config file). Computes gravity power spectra, Free-Air and Bouguer anomalies in spherical harmonics representation, visualizes projected maps, and generates analysis figures and data files.
+  - Input variables:
+    - `body`           = planetary body to study
+    - `n_min`, `n_max` = minimum and maximum degree of spherical harmonics expansion
+    - `r`              = evaluation radius in meters [m]
+    - `i_max`          = Bouguer Taylor series index (default: 7)
+    - `region`         = regional subset as [lon_min, lon_max, lat_min, lat_max] or None (global)
+    - `proj_opt`       = map projection type (default: ccrs.Mollweide())
+    - `load_opt`       = whether to load existing coefficients (True/False)
+    - `verbose_opt`    = verbose output flag (True/False)
 
                 
-- **main_synthgen.py**: Generates and analyses synthetic gravity and topography models for planetary interiors. Allows for custom configuration of interior layers and parameters, and produces synthetic data, maps, and spectra.  
-  - Inputs:
-    - `body`: Planetary body to simulate (Mercury, Earth, Venus, Moon, Ganymede)
-    - `n_layers`: Number of interior layers in the synthetic model
-    - `n_min`, `n_max`: Minimum and maximum spherical harmonic degree for expansion
-    - `r`: Evaluation radius in meters [m]
-    - `i_max`: Bouguer Taylor series index
-    - `mode`: Synthetic generation mode (`layers` or `interface`), distinguishing contributions for each layer or for each interface (density differences)
-    - `save_opt`: Option to save results and figures
-      - `None` = no saving;
-      - `all` = save all layers/interface coefficients and spectra;
-      - `total` =save just the final global synthetic coefficients.
-    - `load_opt`: Option (`True`-`False`) to load existing coefficients (if present) 
-    - `proj_opt`      = projection type , default = ccrs.Mollweide() (see ccrs list)
-    - `verbose_opt`   = verbose option to print on the terminal information about the progress and outputs
+- **main_synthgen.py**: Generates and analyzes synthetic gravitational fields for user-defined planetary interior models. Computes gravity coefficients, spectra, and anomaly maps for multi-layer interior structures with customizable layer properties and interface geometries.
+  - Input variables:
+    - `body`          = planetary body to simulate (Mercury, Earth, Venus, Moon, Ganymede, Ceres)
+    - `n_layers`      = number of interior layers in the synthetic model
+    - `n_min`, `n_max` = minimum and maximum degree of spherical harmonics expansion
+    - `r`            = evaluation radius in meters [m]
+    - `i_max`         = Bouguer Taylor series index (default: 7)
+    - `mode`          = generation mode: 'layer' (contributions per layer) or 'interface' (contributions per interface/density contrast)
+    - `save_opt`      = saving option: None (no saving), 'all' (all layers/interfaces), 'total' (final global coefficients)
+    - `load_opt`      = whether to load existing coefficients (True/False)
+    - `sub_dir`       = subdirectory naming: 'auto' (default) or custom name
+    - `region`       = regional subset or None (global)
+    - `proj_opt`      = map projection type (default: ccrs.Mollweide())
+    - `verbose_opt`   = verbose output flag (True/False)
 
 
-- **main_synthgen_grid.py**: Random grid exploration of the user-input parameters space: it produces *N* models generated within the desired range around a pre-setted initial model (from `Planets_ConfigFiles.py`). The user must insert some input information and/or use default values ( +/- 200 km, +/- 200 kg/m^3 and n_{half}\in[3-100]).
-  - Inputs:
-    - same as `main_synthgen.py`"
-    - User inputs:
-      - n_counts = number of valid models to produce;
-      - range = range of parameters to explore (see `InputRange` function)
+- **main_synthgen_grid.py**: Performs automated grid-based parameter space exploration to generate an ensemble of synthetic interior models. Randomly samples layer densities, interface radii, and crustal filter parameters within user-defined ranges, computes synthetic gravity for each model, and evaluates performance metrics by comparison with real observational data.
+  - Input variables:
+    - `body`          = planetary body to study (Mercury, Earth, Venus, Moon, Ganymede, Ceres)
+    - `n_layers`      = number of interior layers
+    - `n_min`, `n_max` = minimum and maximum degree of spherical harmonics expansion
+    - `r`            = evaluation radius in meters [m]
+    - `i_max`         = Bouguer Taylor series index (default: 7)
+    - `save_opt`      = saving option: None (no saving), 'all' or 'total'
+    - `metrics_list`  = list of statistical metrics to compute (SSIM, NCC, RMSE, MAE, R², PSNR, etc.)
+    - `threshold_arr` = array of percentile thresholds for selecting top models
+    - `region`       = regional subset or None (global)
+    - `proj_opt`      = map projection type
+    - `plot_results`  = visualization option: 'top', 'average', or 'both'
              
        
-- **main_synthgen_grid_loading.py**: Analyse the models' results from the grid evaluations (keep the same main input parameter as `main_synthgen_grid.py` to analyse the same grid). Use must choose the metric list to calculate and then rank the models.  
-  - Inputs:
-    - `body`: Planetary body to simulate (Mercury, Earth, Venus, Moon, Ganymede)
-    - `n_layers`: Number of interior layers in the synthetic model
-    - `n_min`, `n_max`: Minimum and maximum spherical harmonic degree for expansion
-    - `r`: Evaluation radius in meters [m]
-    - `i_max`: Bouguer Taylor series index
-    - `load_opt`: Option (`True`-`False`) to load existing analysis metrics (if present) 
-    - `plot_opt`: Option to visualise results and figures
-      - `all` = plot all of the models' metrics and histograms;
-      - `top` = plot just the top `thresh` % of the models' metrics and histogram
-    - `metrics_list` = statistical metrics to evaluate and rank for performance models measurements
-      - `Delta_mean` = mean of the difference between Synthetic and Real maps;
-      - `Delta_std` = standard deviation of the difference between Synthetic and Real maps;
-      - `MAE` = Mean Absolute Errors;
-      - `RMSE` =  Rott Mean Squared Errors;
-      - `R^2` = Coefficient of Determination;
-      - `PSNR` = Peak Signal-to-Noise Ratio;
-      - `SSIM` = Structure Similarity Index Measure;
-      - `NCC` = Normalized Cross-Correlation;
-    - `threshold_arr` = array of thresholds to select the top % models
-    
+
+
+## Citation
+If you use SynthGen in your research, please cite:
+Santero Mormile, E., et al. "SynthGen: A Gravity Field Simulator For Planetary Interior Modelling", Icarus, 2025.
+
+
 
 
 

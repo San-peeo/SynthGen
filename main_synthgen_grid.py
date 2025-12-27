@@ -48,11 +48,11 @@ real_dir = "Results/Real/"+body+"/"
 
 
 # metrics_list  = ["\Delta_{\mu}","\Delta_{\sigma}","MAE","RMSE","R^2","SSIM","PSNR","NCC"]
-metrics_list  = ["SSIM","NCC"]
-# metrics_list  = ["SSIM"]
+# metrics_list  = ["SSIM","NCC"]
+metrics_list  = ["SSIM"]
 
-maps_list  = ["U","Free-Air","Bouguer"]
-# maps_list     = ["Free-Air","Bouguer"]
+# maps_list  = ["U","Free-Air","Bouguer"]
+maps_list     = ["Bouguer"]
 
 
 # Decreasing order to see the overlapping histograms:
@@ -63,7 +63,7 @@ threshold_arr     = [0.25,0.1,0.05]       # n%
 region =  None    #[[-180, 180], [0, 90]]   # [[lon_min, lon_max], [lat_min, lat_max]] or None
 proj_opt     = ccrs.Mollweide(central_longitude=180)  # Projection option
 
-plot_results = 'both'   # 'top', 'average','both'
+plot_results = 'average'   # 'top', 'average','both'
 
 
 # ------------------------------------------------------------------------------------------------------
@@ -709,7 +709,7 @@ if plot_results == 'top' or plot_results == 'both':
     
     print(" ")
 
-    M   = Mass(radius,rho)
+    _,M = Mass(radius,rho)
     MoI = MomentofInertia(radius,rho)
 
     print("Total mass : " + str(format(M,'.3E')) + " [kg]")
@@ -744,7 +744,7 @@ if plot_results == 'average' or plot_results == 'both':
 
     print(" ")
 
-    M   = Mass(avg_radius,avg_rho)
+    _,M = Mass(avg_radius,avg_rho)
     MoI = MomentofInertia(avg_radius,avg_rho)
 
     print("Total mass : " + str(format(M,'.3E')) + " [kg]")

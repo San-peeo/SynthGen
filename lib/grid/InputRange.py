@@ -8,7 +8,7 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
     ----------
     Input range for the parameters grid:
     - n_counts = number of simulations
-    - ranges for densty, radius and (eventually) cutting degree n_half
+    - ranges for density, radius and (eventually) cutting degree n_half, and rheology parameters as rigidity and viscosity 
     Option for default values: rho and radius +/- 100, n_half= 5-50
 
 
@@ -21,6 +21,8 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
                         rho_layers          [kg/m^3]
                         radius_layers       [km]
                         interface_type      [string]    
+                        rigid_layers        [Pa]    
+                        visc_layers         [Pa s]    
 
 
 
@@ -41,13 +43,13 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
 
     # Maximum value possible
     if n_counts=="":
-        return n_counts,[],[],[]
+        return n_counts,[],[],[],[],[]
 
 
 
 
 # ------------------------------------------------------------------------------------------------------------------------------------
-    # Paramters ranges
+    # Parameters ranges
 
 
     n_counts = int(n_counts)
@@ -56,13 +58,20 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
     radius_layers       = param_int[1]
     interface_type      = param_int[2]
     interface_addinfo   = param_int[3]
+    rigid_layers        = param_int[4]
+    visc_layers         = param_int[5]
+    rheo_layers         = param_int[6]
 
-    rho_range = np.zeros((n_layers,2))
-    radius_range = np.zeros((n_layers,2))
-    nhalf_range = np.zeros((n_layers,2))
 
-    default_Rrange=500
-    default_rhorange=500
+    rho_range       = np.zeros((n_layers,2))
+    radius_range    = np.zeros((n_layers,2))
+    nhalf_range     = np.zeros((n_layers,2))
+    rigid_range     = np.zeros((n_layers,2))
+    visc_range      = np.zeros((n_layers,2))
+
+
+
+
 
     inherit_opt="no"
     if len(run_n_counts)!=0:
@@ -70,68 +79,44 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
         print("\n")
 
     if inherit_opt=="" or inherit_opt=="y" or inherit_opt=="yes":
-        return n_counts,[],[],[]
+        return n_counts,[],[],[],[],[]
 
 
 
-    default_opt = input("Use default ranges? (rho=+/-"+str(default_rhorange)+" [kg/m^3], radius=+/-"+str(default_Rrange)+" [km], n_half=3-100): ")
-    print("\n")
+    # Inserting parameters ranges:
+    print("GRID:")
+    print("Insert grid range parameters (MIN, MAX values): ")
 
-    # NB: - the innermost layer is (usually) not part of the grid (M and MoI conservation)
-    #     - last layer not radius range (= surface)
+    for i in range(0,n_layers):
+        print("\n")
 
+        print("Layer: ", i+1)
 
-    if default_opt=="":
-        for i in range(1,n_layers):
-            rho_range[i]  = [rho_layers[i]-default_rhorange, rho_layers[i]+default_rhorange]
-            if i == n_layers-1:
-                radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i]]
-            else:
-                if radius_layers[i]+default_Rrange>radius_layers[n_layers-1]:
-                    radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i+1]-5]
-                else:
-                    radius_range[i]  = [radius_layers[i]-default_Rrange, radius_layers[i]+default_Rrange]
-            if interface_type[i] == 'dwnbg':
-                nhalf_range[i]  = [3, 100]
+        print("Average Density [kg/m^3]: ",rho_layers[i])
+        rho_string = input("Density range [kg/m^3]: ")
+        rho_range[i]  = CheckRange(rho_string,rho_layers[i]) 
+        print("Average Radius [km]: ",radius_layers[i])
+        radius_string = input("Radius range [km]: ")
+        radius_range[i]  = CheckRange(radius_string,radius_layers[i]) 
+        if interface_type[i] == 'dwnbg':
+            print("Cutting degree n_half: ",interface_addinfo[i])
+            nhalf_string = input("Cutting degree range: ")
+            nhalf_range[i]  = CheckRange(nhalf_string)
 
-
-    else:
-        for i in range(0,n_layers):
-            print("\n")
-
-            if i == 0 and interface_type[i] == 'dwnbg':
-                print("Layer: "+ str(i+1) + "(surface)")
-                print("Cutting degree n_half: ",interface_addinfo[i])
-                nhalf_string = input("Cutting degree range : ")
-                nhalf_range[i]  = CheckRange(nhalf_string)
-
-            elif i == n_layers-1:
-                print("Layer: "+ str(i+1) + "(surface)")
-                print("Insert grid range parameters (MIN, MAX values): ")
-
-                print("Average Density [kg/m^3]: ",rho_layers[i])
-                rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string)
-
-            else:
-                print("Layer: ", i+1)
-                print("Insert grid range parameters (min , max): ")
-
-                print("Average Density [kg/m^3]: ",rho_layers[i])
-                rho_string = input("Density range [kg/m^3]: ")
-                rho_range[i]  = CheckRange(rho_string) 
-                print("Average Radius [km]: ",radius_layers[i])
-                radius_string = input("Radius range [km]: ")
-                radius_range[i]  = CheckRange(radius_string) 
-                
-                if interface_type[i] == 'dwnbg':
-                    print("Cutting degree n_half: ",interface_addinfo[i])
-                    nhalf_string = input("Cutting degree range : ")
-                    nhalf_range[i]  = CheckRange(nhalf_string)
+        print("Rheology: "+rheo_layers[i])
+        print("Average Rigidity [Pa]: ",rigid_layers[i])
+        rigid_string = input("Rigidity range [Pa]: ")
+        rigid_range[i]  = CheckRange(rigid_string,rigid_layers[i])
+        print("Average Viscosity log10 [Pa s]: ",np.log10(visc_layers[i]))
+        visc_string = input("Viscosity range exponent log10[Pa s]: ")
+        visc_range[i]  = CheckRange(visc_string,np.log10(visc_layers[i]))
 
 
 
-    return n_counts,rho_range, radius_range, nhalf_range
+
+    return n_counts,rho_range, radius_range, nhalf_range, rigid_range, visc_range
+
+
 
 
 
@@ -140,7 +125,7 @@ def InputRange(n_layers,param_int,run_n_counts=[]):
 
 
 
-def CheckRange(array):
+def CheckRange(array,default_value=None):
 
     """
     Usage
@@ -155,14 +140,18 @@ def CheckRange(array):
     ----------
     array          : string
                      Input string inserted by the user. To be splitted into two values (min, max)
-    array_control  : float, default = None
-                     Control array to compare with the input array to constraint the range.
+
 
     Output
     ----------
     range-arr       : tuple
                       A tuple with the min and max values of the input range
     """
+
+    if array=="":
+        range_arr=default_value,default_value
+        return range_arr 
+
 
     if np.size(array.split(",")) != 2:
         print("ERROR: Invalid input. Please insert two numbers separated by a comma.")

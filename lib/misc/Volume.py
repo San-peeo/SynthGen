@@ -1,6 +1,6 @@
 from lib.lib_dep import *
 
-def Mass(radius_layers,rho_layers):
+def Volume(radius_layers):
 
     """
     Usage
@@ -11,31 +11,29 @@ def Mass(radius_layers,rho_layers):
     ----------
     radius_layers : list or numpy.ndarray
                     Radii of the layers (in km).
-    rho_layers    : list or numpy.ndarray
-                    Densities of the layers (in kg/m^3).
 
     Output
     ----------
-    M             : float
-                    Total mass of the body (in kg).
+    V             : float
+                    Total mass of the body (in km^3).
     """
 
 
     n_layers = len(radius_layers)
 
 
-    M=0
-    M_layers=[]
+    V=0
+    V_layers=[]
     for i in range(n_layers):
         if i != 0:
-            M_layers.append(4*np.pi/3*rho_layers[i]*(radius_layers[i]**3*1e+9 - radius_layers[i-1]**3*1e+9))
-            M += M_layers[-1]
+            V_layers.append(4*np.pi/3*(radius_layers[i]**3 - radius_layers[i-1]**3))
+            V += V_layers[-1]
         else:
-            M_layers.append( 4*np.pi/3*rho_layers[i]*radius_layers[i]**3*1e+9)
-            M += M_layers[-1]
+            V_layers.append( 4*np.pi/3*radius_layers[i]**3)
+            V += V_layers[-1]
 
 
-    return M_layers, M
+    return V_layers, V
 
 ##########################################################################################################################
 ##########################################################################################################################

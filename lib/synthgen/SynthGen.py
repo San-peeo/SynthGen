@@ -4,7 +4,7 @@ from lib.globe_analysis.CrustThickness import *
 
 
 def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: Literal['all','total',None],region=None,
-             mode: Literal['layer','interface'] ='layer',load_opt=False,layers_name=[],plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
+             mode: Literal['layer','interface'] ='layer',load_opt=False,plot_opt=False,proj_opt=ccrs.Mollweide(), verbose_opt=False):
 
     """
     Usage
@@ -47,8 +47,6 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
     load_opt    : bool, default = False
                   If True, load previously calculated coefficients from files
                   IF False, generate new coefficients
-    layer_name  : list, default = []
-                  List of layers name for plotting title.
     plot_opt    : bool, default = False
                   Plotting Interface - U 
     proj_opt    : cartopy.crs, default = ccrs.Mollweide()
@@ -63,6 +61,10 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
                       Total synthetic gravitational coefficients
     coeffs_list     : list
                       List of pyshtools.SHGravCoeffs objects for each layer
+    surf_list       : list
+                      List of pyshtools.SHGrid objects for each interface
+    M_layers         : list
+                      List of masses for each layer [kg]
     """
 
 
@@ -74,9 +76,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
     interface_addinfo  = param_int[3]
     n_layers= np.size(rho_layers)
 
+    layers_name     = param_int[8]
 
-    if layers_name == []:
-        layers_name = ['Layer '+str(i+1) for i in range(n_layers)]
 
 
     if not load_opt or os.path.isfile(saving_dir+"/coeffs_tot.dat") is False:
@@ -88,8 +89,9 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
         delta_phi = np.diff(phi)[0]
         cos_theta = np.reshape(np.repeat(np.cos(theta),np.size(phi),axis=0),np.shape(surf_prec.data))
 
-        M_layer=[]
-        coeffs_list=[]
+        M_layers     = []
+        coeffs_list = []
+        surf_list   = []
         coeffs_tot = pysh.SHGravCoeffs.from_zeros(lmax=n_max, gm=coeffs_grav.gm, r0=coeffs_grav.r0)
 
 
@@ -186,14 +188,14 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
                     # MapPlotting([fig, axs[i, 0]], surf.data, region=region, proj_opt=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
                     topog_conflict.plot(projection=proj_opt, title='Interface conflict Layer '+str(i+1)+'-th - '+str(i)+'-th', colorbar='right')
                     surf.plot(ax=axs[i,0], colorbar='right',projection=proj_opt, title='Interface '+str(i+1), cb_label='$km$',cmap=cmap)
-                return None,None           
+                return None,None,None,None          
 
 
             # ------------------------------------------------------------------------------------------------------
 
             # Layer's mass:
-            M_layer.append((1e+9*(surf.data**3 - surf_prec.data**3)  * rho_layers[i]/3 * cos_theta * delta_theta * delta_phi).sum())
-            if verbose_opt: print("Layer's mass: " + str(M_layer[-1]) + " kg\n")
+            M_layers.append((1e+9*(surf.data**3 - surf_prec.data**3)  * rho_layers[i]/3 * cos_theta * delta_theta * delta_phi).sum())
+            if verbose_opt: print("Layer's mass: " + str(M_layers[-1]) + " kg\n")
 
             # ------------------------------------------------------------------------------------------------------
             # ------------------------------------------------------------------------------------------------------
@@ -208,7 +210,7 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
             if mode == 'layer':
 
                 # inizializing layer coefficients to zero
-                coeffs_i = pysh.SHGravCoeffs.from_zeros(lmax=n_max, r0=radius_layers[i]*1e+3, gm=G_const*M_layer[i])
+                coeffs_i = pysh.SHGravCoeffs.from_zeros(lmax=n_max, r0=radius_layers[i]*1e+3, gm=G_const*M_layers[i])
 
 
                 # First layer
@@ -260,11 +262,13 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
 
             # ------------------------------------------------------------------------------------------------------
 
-            # Save coefficients (gravity and topography)
+            # Save coefficients (gravity and topography and mass)
             if save_opt == 'all':
                 if mode=='layer':coeffs_i.to_file(saving_dir+"/coeffs_layer"+str(i+1)+".dat")
                 if mode=='interface':coeffs_i.to_file(saving_dir+"/coeffs_interface"+str(i+1)+".dat")
                 surf.to_file(saving_dir+"/interface"+str(i+1)+".dat")
+                np.savetxt(saving_dir+"/M_layers.dat",M_layers)
+
 
 
 
@@ -289,6 +293,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
             coeffs_list.append(coeffs_i)
             coeffs_tot += coeffs_i
 
+            # List of surface:
+            surf_list.append(surf)
             surf_prec = surf
             if verbose_opt: print("\n")
             gc.collect()
@@ -303,7 +309,7 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
 
         if verbose_opt:
             print("Synthetic Generation: DONE")
-            # print("Total's mass: " + str(np.array(M_layer).sum()) + " kg\n")
+            # print("Total's mass: " + str(np.array(M_layers).sum()) + " kg\n")
             print("Synthetic coefficients saved in: " + saving_dir + '\n')
             print(" ")
             print("# ------------------------------------------------------------------------------------------------------\n")
@@ -315,6 +321,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
 
         # Loading coefficients:
         coeffs_list=[]
+        surf_list=[]
+        M_layers = np.loadtxt(saving_dir+"M_layers.dat")
 
         if plot_opt:
             fig, axs = plt.subplots(n_layers, 2, figsize =(9,9),subplot_kw={'projection': proj_opt})
@@ -322,6 +330,8 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
         for i in range(0,n_layers):
             if mode=='layer': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_layer"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name=layers_name[i]+" (layer)")
             if mode=='interface': coeffs_i =  pysh.SHGravCoeffs.from_file(saving_dir+"/coeffs_interface"+str(i+1)+".dat", format="shtools", lmax=n_max, header=True, name=layers_name[i]+" (interface)")
+            
+            surf_list.append(pysh.SHGrid.from_file(saving_dir+"/interface"+str(i+1)+".dat"))
             coeffs_list.append(coeffs_i)
 
             surf =  pysh.SHGrid.from_file(saving_dir+"/interface"+str(i+1)+".dat")
@@ -350,7 +360,7 @@ def SynthGen(param_int,n_max,coeffs_grav,coeffs_topo,i_max,saving_dir,save_opt: 
 
 
 
-    return coeffs_tot,coeffs_list
+    return coeffs_tot,coeffs_list,surf_list,M_layers
 
 
 

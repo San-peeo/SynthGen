@@ -18,10 +18,10 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ceres'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
+body          = 'Mercury'            # "Mercury", "Earth", "Venus", "Moon","Ceres"
 n_min         = 3
-n_max         = 18
-r             = [482.0*1e+3, 0.075]            # Reference radius [m] // Reference ellipsoid [a,f] (a=semi-major axis, f=flattening=(b-a)/a)  
+n_max         = 150
+r             = [2440.0*1e+3]            # Reference radius [m] // Reference ellipsoid [a,f] (a=semi-major axis, f=flattening=(b-a)/a)  
 i_max         = 7
 verbose_opt   = True
 plot_opt      = 'single'            # 'single','multiple'
@@ -40,7 +40,6 @@ proj_opt      = ccrs.Mollweide(central_longitude=0)  # Projection option    ccrs
 # region = [[184.5+180,230+180], [50,76]]   # Venus, Vinmara_Planitia
 # central_lon = (region[0][0] + region[0][1]) / 2 # Region centering
 # proj_opt      = ccrs.Mollweide(central_longitude=central_lon)  # Projection option
-
 
 
 

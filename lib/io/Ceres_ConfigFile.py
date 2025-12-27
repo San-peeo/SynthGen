@@ -25,10 +25,10 @@ class Ceres_ConfigFile():
         ref_radius      = 470.0                                                             # [km]
         GM_const        = 0.6262905361210000E+11                                            # [m^3/sec^2]
         errGM_const     = 0.3500000000000000E+06
-        ref_mass        = 9.38416e+20                                                       # [kg]  Park et al, 2016 
+        ref_mass        = 9.38361380400941e+20                                              # [kg]  Gravity file
         ref_rho         = ref_mass/(4/3*np.pi*ref_radius**3*1e+9)   # [kg/m^3]
         ref_ang_vel     = 2.502e-04                                                         # [rad/sec]
-        ref_MoI         = 0.36                                                              # (I/MR^2)   
+        ref_MoI         = 0.364                                                             # (I/MR^2)   
         err_MoI         = 0.022                                                             # 0.15 (estimate), 0.022 Mao and McKinnon 2018
 
         # Polar Flattening  
@@ -45,6 +45,7 @@ class Ceres_ConfigFile():
         return param_bulk
 
 
+    # ---------------------------------------------------------------------------------------------------------------------------
     # ---------------------------------------------------------------------------------------------------------------------------
 
 
@@ -77,6 +78,7 @@ class Ceres_ConfigFile():
     
 
     # ---------------------------------------------------------------------------------------------------------------------------
+    # ---------------------------------------------------------------------------------------------------------------------------
 
 
     def interiors(n_layers):
@@ -89,12 +91,12 @@ class Ceres_ConfigFile():
 
             case 2:                     
 
-                rho_layers      = [2400,1300]
-                radius_layers   = [420,470.0]
+                rho_layers      = [2429,1215]
+                radius_layers   = [420.9,470.0]
                 interface_type  = ['dwnbg','surf']
 
                 # Additional information for the interface (dwnbg, rng or custom)
-                n_half = 10  # Cutting degree n_half (crust thickness filtering)
+                n_half = 18  # Cutting degree n_half (crust thickness filtering)
                 interface_addinfo  = [n_half,0]
 
                 layer_name    = ["Core","Crust"]
@@ -108,7 +110,7 @@ class Ceres_ConfigFile():
 
                 # Additional information for the interface (dwnbg, rng or custom)
                 n_half = 10  # Cutting degree n_half (crust thickness filtering)
-                interface_addinfo  = [n_half,0,0]
+                interface_addinfo  = [[r_e_fact,r_p_fact],0,0]
 
                 layer_name    = ["Core","Mantle","Crust"]
 
@@ -131,6 +133,7 @@ class Ceres_ConfigFile():
         param_int = [rho_layers,radius_layers,interface_type, interface_addinfo,layer_name]
 
         return param_int
+    
 
 
 

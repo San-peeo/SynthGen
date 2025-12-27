@@ -20,18 +20,22 @@ def MomentofInertia(radius_layers,rho_layers):
                     Moment of inertia of the body (in kg·m²).
     """
 
+
     n_layers = len(radius_layers)
 
 
     MoI=0
+    MoI_layers=[]
     for i in range(n_layers):
         if i != 0:
-            MoI += 8*np.pi/15*rho_layers[i]*(radius_layers[i]**5*1e+15 - radius_layers[i-1]**5*1e+15)
+            MoI_layers.append(8*np.pi/15*rho_layers[i]*(radius_layers[i]**5*1e+15 - radius_layers[i-1]**5*1e+15))
+            MoI += MoI_layers[-1]
         else:
-            MoI += 8*np.pi/15*rho_layers[i]*radius_layers[i]**5*1e+15
+            MoI_layers.append(8*np.pi/15*rho_layers[i]*radius_layers[i]**5*1e+15)
+            MoI += MoI_layers[-1]
 
 
-    return MoI
+    return MoI_layers,MoI
 
 ##########################################################################################################################
 ##########################################################################################################################

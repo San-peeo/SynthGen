@@ -1,11 +1,14 @@
 from lib.lib_dep import *
 from lib.synthgen.SynthGen import *
+from lib.misc.Mass import *
+from lib.love_numbers.Love_number_gen import *
 from lib.globe_analysis.Global_Analysis import *
 from lib.globe_analysis.Spectrum import *
 
 
-def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,region,proj_opt,
-                   rho,radius,nhalf, real_dir,
+def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,ref_period,
+                   body,region,proj_opt,
+                   rho,radius,nhalf,rigidity,viscosity, real_dir,
                    saving_dir,folder_prefix:Literal['TOP','AVG']='AVG'):
 
 
@@ -43,6 +46,10 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
                     Radii of the layers for the selected model.
     nhalf         : list
                     n_half values for the selected model (if applicable).
+    rigidity      : list
+                    Elastic rigidity (shear modulus) for each layer [Pa] used to regenerate the model.
+    viscosity     : list
+                    Viscosity for each layer [Pa·s] used to regenerate the model.
     real_dir      : str
                     Directory containing real data matrices.
     saving_dir    : str
@@ -61,9 +68,16 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
 # Plotting the results of the analysis:
 
 
-    interface_type  = param_int[2]
-    interface_addinfo  = param_int[3]
-    layers_name = param_int[4]
+
+    rho_layers          = param_int[0]
+    radius_layers       = param_int[1]
+    interface_type      = param_int[2]
+    interface_addinfo   = param_int[3]
+    rigid_layers        = param_int[4]
+    visc_layers         = param_int[5]
+    rheo_layers         = param_int[6]
+    rheo_addinfo        = param_int[7]
+
     n_layers = len(param_int[0])  
 
 
@@ -81,6 +95,10 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
             interface_addinfo[i] = int(nhalf[i])
         if i!= n_layers-1:
             plot_dir+='_'
+        
+        if rigidity[i]!=0: rigid_layers[i] = rigidity[i]
+        if viscosity[i]!=1: visc_layers[i] = viscosity[i]
+
 
 
 
@@ -95,8 +113,11 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
         print('rho = ' + str(rho[i]) + ' kg/m^3')
         print('radius = ' + str(radius[i]) + ' km')
         if interface_type[i] == 'dwnbg':
-            print('nhalf = ' + str(nhalf[i]))
+            print('nhalf = ' + str(int(nhalf[i])))
+        print('rigidity = ' + str(rigid_layers[i]   ) + ' Pa')
+        print('viscosity = ' + str(visc_layers[i]) + ' Pa s')
         print(" ")
+
 
     if not os.path.isdir(saving_dir+plot_dir):
         os.makedirs(saving_dir+plot_dir)
@@ -109,20 +130,30 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
     param_int[1] = radius
     param_int[2] = interface_type
     param_int[3] = interface_addinfo
-    coeffs_tot,coeffs_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+plot_dir,mode='layer',
-                                        layers_name=layers_name,save_opt=True,plot_opt=True,load_opt=False,verbose_opt=False)
+    param_int[4] = rigid_layers
+    param_int[5] = visc_layers
+
+
+
+
+    coeffs_tot,coeffs_layers,_,_ = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir+plot_dir,mode='layer',
+                                            save_opt=True,plot_opt=True,load_opt=False,verbose_opt=False)
+
+
+    LN = Love_number_gen(param_int[1], param_int[0], rheo_layers, rigid_layers, visc_layers, rheo_addinfo, ref_period, l=2,saving_dir=saving_dir+plot_dir)
+
+
 
 
     if coeffs_tot is not None:
 
         # SynthGen top model (U, H, FreeAir, Bouguer):
         U_synth,_,deltag_freeair_synth,deltag_boug_synth = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=[radius[-1]],rho_boug=rho[-1],
-                                                                        i_max=i_max,saving_dir=saving_dir+plot_dir,verbose_opt=False)
+                                                                            i_max=i_max,saving_dir=saving_dir+plot_dir,verbose_opt=False)
 
 
 
         # Real data model (U, H, FreeAir, Bouguer):
-        # real_dir = "Results/Real/"+body+"/"
         U_real = np.loadtxt(real_dir+'U_matrix_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_freeair_real = np.loadtxt(real_dir+'deltag_freeair_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
         deltag_boug_real = np.loadtxt(real_dir+'deltag_boug_nmin'+str(n_min)+'_nmax'+str(n_max)+'.dat')
@@ -153,8 +184,8 @@ def PlottingTopAvg(param_int,coeffs_grav,coeffs_topo,n_min,n_max,i_max,body,regi
 
 
 
-        return fig_maps,fig_spectrum
+        return fig_maps,fig_spectrum, LN
     
 
     else:
-        return [],[]
+        return [],[],[]

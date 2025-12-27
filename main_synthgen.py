@@ -18,23 +18,24 @@ t_start = time.time()
 
 # Set up the parameters:
 
-body          = 'Ganymede'            # "Mercury", "Earth", "Venus", "Moon","Ganymede","Ceres"
-n_layers      = 2
-n_min         = 1
-n_max         = 50
-r             = [2631.2e+3]
+body          = 'Mercury'              # "Mercury", "Earth", "Venus", "Moon","Ganymede","Ceres"
+n_layers      = 4
+n_min         = 0
+n_max         = 150
+r             = [2440.0*1e+3]
 i_max         = 7
-mode          = 'interface'              # 'layer','interface'
-load_opt      = False
-save_opt      = 'all'            # None,'all', 'total'
+mode          = 'layer'             # 'layer','interface'
+load_opt      = True
+save_opt      = 'all'                   # None,'all', 'total'
+sub_dir       = 'auto'                  # 'auto' for default naming (interface_rho_R_ name) 
 
-proj_opt      = ccrs.Mollweide(central_longitude=180)
+proj_opt      = ccrs.Mollweide(central_longitude=0)
 
 
 verbose_opt   = True
 
 
-region = [[-180, 180], [0, 90]]     # None,    Mercury = [[-180, 180], [0, 90]]
+region = None     # None,    Mercury = [[-180, 180], [0, 90]]
 
 
 
@@ -54,13 +55,25 @@ param_bulk,param_body,param_int, coeffs_grav, coeffs_topo = DataReader(body, n_m
 
 
 # Extract useful parameters
-rho_boug        = param_body[7]
-interface_info  = param_int[3]
-
+ref_radius      = param_bulk[0]
+GM_const        = param_bulk[1]
 ref_mass        = param_bulk[3]
 ref_MoI         = param_bulk[6]
+err_MoI         = param_bulk[7]
+ref_period      = param_bulk[11]
 
-layers_name     = param_int[4]
+rho_boug        = param_body[7]
+
+
+rho_layers          = param_int[0]
+radius_layers       = param_int[1]
+interface_type      = param_int[2]
+interface_addinfo   = param_int[3]
+rigid_layers        = param_int[4]
+visc_layers         = param_int[5]
+rheo_layers         = param_int[6]
+rheo_addinfo        = param_int[7]
+layers_name         = param_int[8]
 
 
 
@@ -70,13 +83,13 @@ if coeffs_grav is None or coeffs_topo is None:
     print(' - Gravity coefficients set to zero')
     coeffs_grav = pysh.SHGravCoeffs.from_zeros(lmax=n_max, gm=param_bulk[1], r0=param_bulk[0]*1e+3)
 
-    print(' - Topography RNG generation: DeltaH = ' + str(interface_info[-1]) + ' km')
+    print(' - Topography RNG generation: DeltaH = ' + str(interface_addinfo[-1]) + ' km')
     degrees = np.arange(n_max+1, dtype=float)
     degrees[0] = np.inf
     coeffs_topo = pysh.SHCoeffs.from_random(degrees**(-2), seed=42)
     coeffs_topo.set_coeffs(param_bulk[0],0,0)
     surf = coeffs_topo.expand(lmax=n_max,extend=True)
-    deltaH_fact = interface_info[-1]/(np.max(surf.data) - np.min(surf.data))
+    deltaH_fact = interface_addinfo[-1]/(np.max(surf.data) - np.min(surf.data))
     coeffs_topo.coeffs *= deltaH_fact
     coeffs_topo.set_coeffs(param_bulk[0],0,0)
     print('\n')
@@ -84,19 +97,19 @@ if coeffs_grav is None or coeffs_topo is None:
 
 
 # Save folder ( + Checking/Making the saving directory)
-rho_layers      = param_int[0]
-radius_layers   = param_int[1]
-interface_type  = param_int[2]
-sub_dir=''
-for i in range(n_layers):
-    sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_layers[i]) + '_rho'+str(i+1)+'_'+str(rho_layers[i])
-    if interface_type[i] == 'dwnbg':
-        sub_dir += '_nhalf'+str(i+1)+'_'+str(np.round(interface_info[i]))
-    if interface_type[i] == 'rng':
-        sub_dir += '_'+str(interface_info[i])+'km'   
-    if i!= n_layers-1:
-        sub_dir+='_'
-
+if sub_dir == 'auto':
+    rho_layers      = param_int[0]
+    radius_layers   = param_int[1]
+    interface_type  = param_int[2]
+    sub_dir=''
+    for i in range(n_layers):
+        sub_dir += 'i'+str(i+1)+'_'+interface_type[i] + '_r'+str(i+1)+'_'+str(radius_layers[i]) + '_rho'+str(i+1)+'_'+str(rho_layers[i])
+        if interface_type[i] == 'dwnbg':
+            sub_dir += '_nhalf'+str(i+1)+'_'+str(np.round(interface_addinfo[i]))
+        if interface_type[i] == 'rng':
+            sub_dir += '_'+str(interface_addinfo[i])+'km'   
+        if i!= n_layers-1:
+            sub_dir+='_'
 
 saving_dir = "Results/Synthetic/"+body + "/" + sub_dir    
 if not os.path.isdir(saving_dir):
@@ -105,6 +118,9 @@ if not os.path.isdir(saving_dir):
 else:
     print("Already existing directory:")
 print(saving_dir)
+
+
+DataWriter(param_bulk, param_body, param_int, saving_dir + "/config_parameters.txt")
 
 
 
@@ -116,17 +132,18 @@ print("# -----------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
+
 # Synthetic gravitational coefficients generation:
 
 t_start2 = time.time()
 
-coeffs_tot,coeffs_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
-                                    save_opt=save_opt,plot_opt=True,layers_name=layers_name,
-                                    load_opt=load_opt,verbose_opt=verbose_opt)
+coeffs_tot,coeffs_layers,surf_list,M_layers = SynthGen(param_int,n_max,coeffs_grav, coeffs_topo,i_max,saving_dir,mode=mode,
+                                                        save_opt=save_opt,plot_opt=True,
+                                                        load_opt=load_opt,verbose_opt=verbose_opt)
 
 
-M   = Mass(param_int[1],param_int[0])
-MoI = MomentofInertia(param_int[1],param_int[0])
+M   = np.sum(M_layers)
+MoI_layers,MoI = MomentofInertia(param_int[1],param_int[0])
 print("Total mass : " + str(format(M,'.3E')) + " [kg]")
 print("Reference mass : " + str(format(ref_mass,'.3E')) + " [kg]\n")
 print("Total MoI (norm) : " + str(np.round(MoI/(M*param_int[1][-1]**2*1e+6),3)))
@@ -137,16 +154,45 @@ print("Reference MoI (norm) : " + str(np.round(ref_MoI,3)) + " +/- " + str(np.ro
 
 t_end2 = time.time()
 print(f"SynthGen Execution Time: {t_end2 - t_start2:.2f} seconds")
+print(" ")
+print("# ------------------------------------------------------------------------------------------------------")
+print("# ------------------------------------------------------------------------------------------------------\n")
+
+# ------------------------------------------------------------------------------------------------------
+
+
+
+# Love number generation:
+
+
+t_start3 = time.time()
+
+
+[h2,l2,k2] = Love_number_gen(radius_layers, rho_layers, rheo_layers, rigid_layers, visc_layers, rheo_addinfo, ref_period, l=2,saving_dir=saving_dir)
+print("h_2 : " + mp.nstr(h2,6))
+print("l_2 : " + mp.nstr(l2,6))
+print("k_2 : " + mp.nstr(k2,6))
+
+
+
+t_end3 = time.time()
+print(f"Love number generation Execution Time: {t_end3 - t_start3:.2f} seconds")
+
+
+print(" ")
+print("# ------------------------------------------------------------------------------------------------------")
+print("# ------------------------------------------------------------------------------------------------------\n")
 
 
 # ------------------------------------------------------------------------------------------------------
 # ------------------------------------------------------------------------------------------------------
 
+# Gravitational maps:
 if coeffs_tot is not None:
 
     # Global analysis (U, H, FreeAir, Bouguer):
     [U_matrix, topog_matrix, deltag_freeair, deltag_boug] = Global_Analysis(coeffs_grav=coeffs_tot,coeffs_topo=coeffs_topo,n_min=n_min-1,n_max=n_max,r=r,rho_boug=rho_boug,
-                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='multiple',proj_opt=proj_opt,verbose_opt=verbose_opt)
+                                                                            i_max=i_max,saving_dir=saving_dir,plot_opt='single',proj_opt=proj_opt,verbose_opt=verbose_opt)
 
 
     # Spectrum analysis:
@@ -160,8 +206,10 @@ if coeffs_tot is not None:
 
     # ------------------------------------------------------------------------------------------------------
 
+    # Comparison with real data (if available):
+
+
     if body != 'Ganymede':
-        # Comparison with real data (if available):
 
         print("Comparison with real data: ")
 

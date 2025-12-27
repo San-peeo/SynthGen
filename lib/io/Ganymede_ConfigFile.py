@@ -24,15 +24,21 @@ class Ganymede_ConfigFile():
         ref_ang_vel     = 8.264e-07                                                      # [rad/sec]
         ref_MoI         = 0.3115                                                         # (I/MR^2)    Schubert, G.; Anderson, J. D.; Spohn, T.; McKinnon, W. B. (2004). "Interior composition, structure and dynamics of the Galilean satellites". In Bagenal, F.; Dowling, T. E.; McKinnon, W. B. (eds.). Jupiter: the planet, satellites, and magnetosphere. New York: Cambridge University Press. pp. 281–306. ISBN 978-0521035453. OCLC 54081598. Archived from the original on April 16, 2023. Retrieved July 23, 2019.   
         err_MoI         = 0.0028                                                         # see Petricca et al., 2024 (pyALMA3 paper)
+        ref_period      = 7.155*24*3600                                                  # [sec]  
+
+
+
 
         # Polar Flattening
         r_e = 2633.2             # [km]
         r_p = 2628.8             # [km]
         r_e_fact = r_e/ref_radius
         r_p_fact = r_p/ref_radius
+        f = (r_e - r_p)/r_e
+
 
         # Output:
-        param_bulk = [ref_radius,GM_const,errGM_const,ref_mass,ref_rho,ref_ang_vel,ref_MoI,err_MoI,r_e_fact,r_p_fact]
+        param_bulk = [ref_radius,GM_const,errGM_const,ref_mass,ref_rho,ref_ang_vel,ref_MoI,err_MoI,r_e_fact,r_p_fact,f,ref_period]
 
         return param_bulk
 
@@ -94,6 +100,14 @@ class Ganymede_ConfigFile():
                 interface_type      = ['rng','surf']
                 interface_addinfo   = [20,5]
 
+                # Rheology:
+                rigid_layers    = [0,0]                    # rigidity [Pa] / shear modulus
+                visc_layers     = [0,0]                     # viscosity [Pa s]
+                rheo_layers     = ['newton', 'newton' ]       # rheology type
+                rheo_addinfo    = [None, None]                    # additional info for rheology (e.g., andrade exponent)
+
+
+
                 layers_name    = ["Rocky interior","Hydrosphere"]          
 
             case 7:                     
@@ -131,6 +145,13 @@ class Ganymede_ConfigFile():
                 # interface_addinfo  = [0,0,20,0,0,0,5]
 
 
+                # Rheology:
+                rigid_layers    = [0,0,0,0,0,0,0]                    # rigidity [Pa] / shear modulus
+                visc_layers     = [0,0,0,0,0,0,0]                     # viscosity [Pa s]
+                rheo_layers     = ['newton', 'newton', 'newton', 'newton', 'newton', 'newton', 'newton']       # rheology type
+                rheo_addinfo    = [None, None, None, None, None, None, None]                    # additional info for rheology (e.g., andrade exponent)
+
+
    
                 layers_name    = ["Core","Mantle","Crust","Ice VI","Ice V","Ocean","Ice I"]                         
 
@@ -147,7 +168,7 @@ class Ganymede_ConfigFile():
         # ----------------------------------------------------------------------------------------------------------------
 
         # Output:
-        param_int = [rho_layers,radius_layers,interface_type,interface_addinfo,layers_name]
+        param_int = [rho_layers,radius_layers,interface_type, interface_addinfo, rigid_layers, visc_layers, rheo_layers, rheo_addinfo, layers_name]
 
         return param_int
     

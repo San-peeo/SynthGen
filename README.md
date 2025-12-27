@@ -308,15 +308,7 @@ Each planet class contains methods to retrieve bulk parameters (.bulk()), data f
     - User inputs:
       - n_counts = number of valid models to produce;
       - range = range of parameters to explore (see `InputRange` function)
-
-
-- **main_synthgen_grid.py**: Random grid exploration of the user-input parameters space: it produces *N* models generated within the desired range around a pre-setted initial model (from `Planets_ConfigFiles.py`). The user must insert some input information and/or use default values ( +/- 200 km, +/- 200 kg/m^3 and n_{1/2} € [3-100]).
-  - Inputs:
-    - same as `main_synthgen.py`"
-    - User inputs:
-      - n_counts = number of valid models to produce;
-      - range = range of parameters to explore (see `InputRange` function)
-     
+             
        
 - **main_synthgen_grid_loading.py**: Analyse the models' results from the grid evaluations (keep the same main input parameter as `main_synthgen_grid.py` to analyse the same grid). Use must choose the metric list to calculate and then rank the models.  
   - Inputs:

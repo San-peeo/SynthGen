@@ -128,7 +128,7 @@ pip install -r requirements.txt
        
 
 
-## Citation
+# Citation
 If you use SynthGen in your research, please cite:
 Santero Mormile, E., et al. "SynthGen: A Gravity Field Simulator For Planetary Interior Modelling", Icarus, 2025.
 
